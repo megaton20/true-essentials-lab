@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="slide.css">
+    <title>Home</title>
+</head>
+<body>
+    <!-- nav -->
+    <%-include('./partials/nav')  %>
+
+
+     <main>
+        <div class="hero">
+          
+            <div class="container">
+            <h1>Welcome to <span class="primary-text">Techathon</span>  <br> Skills at your finger tips</h1>
+            <p>Supabase is an open source Firebase alternative.
+                Start your project with a  <br>Postgres database, Authentication,
+                 instant APIs, Edge Functions, Realtime subscriptions, <br> Storage, and Vector embeddings.
+            </p>
+
+            <div class="btn-grp">
+                <a class="btn-basic primary-btn" href="#">Start your project</a>
+                <a class="btn-basic secondary-btn" href="/read-more">Read more</a>
+            </div>
+
+
+            <br>
+            <br>
+            <br>
+            <br>
+           
+            <div class="container">
+                <div class="logo-slider-wrapper">
+                    <div class="logo-slider">
+                    <div class="logo-track">
+                        <!-- Repeat logos for seamless loop -->
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        
+                        <img src="./images/slide.png" alt="Logo 1" />
+                      
+
+                        <!-- Duplicate for infinite effect -->
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                        <img src="./images/slide.png" alt="Logo 1" />
+                       
+                    </div>
+                    </div>
+                </div>
+            </div>
+           
+
+            <div class="hero-footer">
+                <p>Trusted by fast-growing companies worldwide</p>
+            </div>
+            </div>
+        </div>
+      
+
+
+
+        <!-- <section class="courses" id="courses">
+              <div class="container">
+                  <div class="center">
+                    <div class="section-header">
+                        <h1>Start building in seconds</h1>
+                        <p>Kickstart your next project with templates built by us and our community.</p>
+                        
+                        <div class="btn-grp">
+                            <a class="btn-basic secondary-btn" href="#">Start your project</a>
+                            <a class="btn-basic secondary-btn" href="#">Read more</a>
+                        </div>
+                        
+                    </div>
+                </div>
+
+
+                <div class="grid">
+                    <div class="item">
+                        <div class="simple-card">
+                            <div class="image-layer">
+                                 <img src="./images/1.avif" alt="image">
+                            </div>
+                            <div class="text-layer"></div>
+                            <div class="action-layer"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                         <div class="simple-card">
+                            <div class="image-layer">
+                                <img src="./images/3.webp" alt="image">
+                            </div>
+                            <div class="text-layer"></div>
+                            <div class="action-layer"></div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                         <div class="simple-card">
+                            <div class="image-layer">
+                                 <img src="./images/2.jpg" alt="image">
+                            </div>
+                            <div class="text-layer"></div>
+                            <div class="action-layer"></div>
+                        </div>
+                    </div>
+
+                    <div class="item">
+                         <div class="simple-card">
+                            <div class="image-layer">
+                                 <img src="./images/4.jpeg" alt="image">
+                            </div>
+                            <div class="text-layer"></div>
+                            <div class="action-layer"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                         <div class="simple-card">
+                            <div class="image-layer">
+                                 <img src="./images/4.jpeg" alt="image">
+                            </div>
+                            <div class="text-layer"></div>
+                            <div class="action-layer"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                         <div class="simple-card">
+                            <div class="image-layer">
+                                 <img src="./images/4.jpeg" alt="image">
+                            </div>
+                            <div class="text-layer"></div>
+                            <div class="action-layer"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                         <div class="simple-card">
+                            <div class="image-layer">
+                                 <img src="./images/4.jpeg" alt="image">
+                            </div>
+                            <div class="text-layer"></div>
+                            <div class="action-layer"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                         <div class="simple-card">
+                            <div class="image-layer">
+                                 <img src="./images/4.jpeg" alt="image">
+                            </div>
+                            <div class="text-layer"></div>
+                            <div class="action-layer"></div>
+                        </div>
+                    </div>
+                  
+                </div>
+              </div>
+        </section>
+
+
+        <footer class="footer">
+            <div class="container">
+                <hr>
+                <br>
+                <div class="grid">
+                    <div class="footer-item">
+                        <div class="logo-area">
+
+                        </div>
+                    </div>
+                    <div class="footer-item">
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-item">
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-item">
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Home</a></li>
+                        </ul>
+                    </div>
+         
+                </div>
+            </div>
+        </footer> -->
+     </main>
+
+
+
+
+     <script>
+  const track = document.getElementById('logoTrack');
+  const nextBtn = document.querySelector('.next-btn');
+  const prevBtn = document.querySelector('.prev-btn');
+  let position = 0;
+  const slideWidth = 250 + 32; // logo width + padding (2rem = 32px)
+
+  let autoSlide = setInterval(() => {
+    slideNext();
+  }, 1000); // 3s
+
+  function slideNext() {
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    if (position + slideWidth < maxScroll) {
+      position += slideWidth;
+    } else {
+      position = 0;
+    }
+    track.style.transform = `translateX(-${position}px)`;
+  }
+
+  function slidePrev() {
+    if (position - slideWidth >= 0) {
+      position -= slideWidth;
+    } else {
+      position = 0;
+    }
+    track.style.transform = `translateX(-${position}px)`;
+  }
+
+  nextBtn.addEventListener('click', () => {
+    slideNext();
+    resetAutoSlide();
+  });
+
+  prevBtn.addEventListener('click', () => {
+    slidePrev();
+    resetAutoSlide();
+  });
+
+  // Pause on hover
+  const slider = document.querySelector('.logo-slider');
+  slider.addEventListener('mouseenter', () => clearInterval(autoSlide));
+  slider.addEventListener('mouseleave', () => {
+    autoSlide = setInterval(slideNext, 3000);
+  });
+
+  function resetAutoSlide() {
+    clearInterval(autoSlide);
+    autoSlide = setInterval(slideNext, 3000);
+  }
+</script>
+
+</body>
+</html>

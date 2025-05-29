@@ -1,0 +1,39 @@
+const pool = require('../config/db');
+const { v4: uuidv4 } = require('uuid');
+
+class ClassSession {
+  static async create({ title, description, scheduledAt, meetLink, createdBy }) {
+    const joinCode = uuidv4().split('-')[0]; // Generate a short unique join code
+    const result = await pool.query(`
+      INSERT INTO class_sessions (title, description, scheduled_at, meet_link, join_code, created_by)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+    `, [title, description, scheduledAt, meetLink, joinCode, createdBy]);
+
+    return result.rows[0];
+  }
+
+  static async listAll() {
+    const result = await pool.query(`SELECT * FROM class_sessions ORDER BY scheduled_at DESC`);
+    return result.rows;
+  }
+
+  static async findByJoinCode(joinCode) {
+    const result = await pool.query(`SELECT * FROM class_sessions WHERE join_code = $1`, [joinCode]);
+    return result.rows[0];
+  }
+
+  static async toggleLinkVisibility(id, visible) {
+    await pool.query(`UPDATE class_sessions SET show_link = $1 WHERE id = $2`, [visible, id]);
+  }
+
+  static async getVisibleLink(joinCode) {
+    const result = await pool.query(`
+      SELECT meet_link FROM class_sessions
+      WHERE join_code = $1 AND show_link = TRUE;
+    `, [joinCode]);
+    return result.rows[0]?.meet_link || null;
+  }
+}
+
+module.exports = ClassSession;
