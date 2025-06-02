@@ -60,7 +60,7 @@ header{
 .navlinks ul li{
  display: inline;
  margin-left: 20px;
- color: var(--text-light);/
+ color: var(--text-light);
 }
 
 .navlinks ul li a{
@@ -131,6 +131,26 @@ main{
     height: 100vh;
     display: flex;
     color: var(--text-light);
+}
+
+.divider{
+    display: flex;
+    align-items: center;
+    color: red;
+    border: 1px solid red;
+}
+.divider::before, .divider::after{
+    content: "-----------";
+    flex: 1;
+    color: #7eb702;
+    border-top: 1px solod green ;
+}
+.divider::before{
+    margin-right: 10px;
+}
+
+.divider::after{
+    margin-left: 10px;
 }
 
 .sides{

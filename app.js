@@ -2,20 +2,32 @@ require('dotenv').config();
 const express = require('express')
 const app = express()
 const session = require('express-session');
+const bodyParser = require('body-parser')
 const env = process.env
 const database = require("./config/db")
 const flash = require('connect-flash');
 const passport = require('passport');
 const path = require('path')
 
-const PORT = env.PORT
 
+const initAllModels = require('./initAllModels');
+initAllModels();
+
+
+const PORT = env.PORT
 // const user = require('./models/User')
 const openRoutes = require('./routes/index')
+const authRoutes = require('./routes/authRoutes')
+const userRoutes = require('./routes/userRoutes')
+const classRoutes = require('./routes/classRoutes')
+const adminRoutes = require('./routes/adminRoutes')
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, './', 'public')));
 // Middleware
+// Middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
@@ -38,6 +50,10 @@ app.use((req, res, next) => {
 
 
 app.use('/', openRoutes); // open less secure routes
+app.use('/auth', authRoutes); // open less secure routes
+app.use('/user', userRoutes); // open less secure routes
+app.use('/class', classRoutes); // open less secure routes
+app.use('/admin', adminRoutes); // open less secure routes
 
 
 app.listen(PORT, ()=>{

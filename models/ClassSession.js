@@ -1,7 +1,32 @@
 const pool = require('../config/db');
 const { v4: uuidv4 } = require('uuid');
 
+const createTableIfNotExists = require('../utils/createTableIfNotExists');
+
 class ClassSession {
+
+   // Auto-create table on class load
+  static async init() {
+    const createTableQuery = `
+            CREATE TABLE class_sessions (
+          id VARCHAR PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          description TEXT,
+          scheduled_at TIMESTAMP NOT NULL,
+          meet_link TEXT NOT NULL,
+          join_code VARCHAR(12) UNIQUE NOT NULL,
+          show_link BOOLEAN DEFAULT FALSE, -- to control visibility
+          created_by VARCHAR REFERENCES users(id) ON DELETE CASCADE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          status BOOLEAN DEFAULT FALSE
+        );
+        
+    `;
+
+     await createTableIfNotExists('class_sessions', createTableQuery);
+  }
+
+
   static async create({ title, description, scheduledAt, meetLink, createdBy }) {
     const joinCode = uuidv4().split('-')[0]; // Generate a short unique join code
     const result = await pool.query(`

@@ -15,6 +15,7 @@ CREATE TABLE users (
 );
 
 
+
 CREATE TABLE referral_codes (
 	id VARCHAR PRIMARY KEY,
   code TEXT UNIQUE NOT NULL,

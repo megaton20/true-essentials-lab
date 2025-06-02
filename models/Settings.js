@@ -1,7 +1,22 @@
 const pool = require('../config/db');
+const createTableIfNotExists = require('../utils/createTableIfNotExists');
 
 
 class Setting {
+
+        // Auto-create table on class load
+  static async init() {
+    const createTableQuery = `
+        CREATE TABLE settings (
+          key TEXT PRIMARY KEY,
+          value TEXT NOT NULL
+        );
+    `;
+
+      await createTableIfNotExists('settings', createTableQuery);
+  }
+
+
   static async get(key) {
     const res = await pool.query(`SELECT value FROM settings WHERE key = $1`, [key]);
     return res.rows[0]?.value;

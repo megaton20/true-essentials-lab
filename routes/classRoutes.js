@@ -3,6 +3,30 @@ const ClassSession = require('../models/ClassSession');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
+
+router.get('/:link', async (req, res) => {
+    // error message
+   const link = req.params.link
+   
+      res.render('./student/join', {
+        link
+      })
+});
+
+router.get('/join/:link', async (req, res) => {
+  const link = req.params.link
+
+  
+    if (1 == 1) {
+      // success msg
+       res.render('./student/joined')
+    }else{
+      // error message
+      res.redirect('/user')
+    }
+});
+
+
 // Admin creates a class
 router.post('/create', admin, async (req, res) => {
   const { title, description, scheduledAt, meetLink } = req.body;
