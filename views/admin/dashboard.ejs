@@ -43,19 +43,15 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <div class="dashboard-header text-center">
-    <h1>Admin Dashboard</h1>
-    <p class="lead">Manage Courses, Referrals, and Users</p>
-  </div>
 
   <!-- Main Content -->
   <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h3>Dashboard Overview</h3>
       <div>
-        <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#createCourseModal">
-          <i class="fas fa-plus"></i> Create Course
+        <!-- <a class="btn-outline-secondary btn" href="/admin/attendance">View attendance</a> -->
+        <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#createClassModal">
+          <i class="fas fa-plus"></i> Create Class
         </button>
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#referralModal">
           <i class="fas fa-code"></i> Generate Referral
@@ -64,27 +60,38 @@
     </div>
 
     <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card text-white bg-primary shadow">
+      <div class="col-md-3">
+        <div class="card text-white bg-secondary shadow">
           <div class="card-body">
             <h5 class="card-title"><i class="fas fa-users"></i> Students</h5>
-            <p class="card-text">Total: 120</p>
+            <p class="card-text"> <a href="/admin/users"> <%=stats.totalStudents%></a></p>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+
+       <div class="col-md-3">
+        <div class="card text-white bg-danger shadow">
+          <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-times"></i> unverified users</h5>
+            <p class="card-text"><%=stats.pendingVerifications%> </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
         <div class="card text-white bg-success shadow">
           <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-book"></i> Courses</h5>
-            <p class="card-text">Active: 15</p>
+            <h5 class="card-title"><i class="fas fa-book"></i> Classes held</h5>
+            <p class="card-text"><a href="/admin/classes"><%=stats.totalClasses%> </a></p>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+     
+      <div class="col-md-3">
         <div class="card text-white bg-dark shadow">
           <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-code"></i> Referral Codes</h5>
-            <p class="card-text">Active Codes: 8</p>
+            <h5 class="card-title"><i class="fas fa-code"></i> Active Codes</h5>
+            <p class="card-text"> <a href="/admin/referral"> <%=stats.activeCodes%> </a></p>
           </div>
         </div>
       </div>
@@ -92,59 +99,81 @@
   </div>
 
   <!-- Modal: Create Course -->
-  <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <form class="modal-content" id="courseForm">
-        <div class="modal-header">
-          <h5 class="modal-title" id="createCourseModalLabel">Create New Course</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<div class="modal fade" id="createClassModal" tabindex="-1" aria-labelledby="createClassModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="classForm" method="post" action="/admin/class">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createClassModalLabel">Create New Class</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="mb-3">
+          <label for="classTitle" class="form-label">Class Title</label>
+          <input type="text" class="form-control" id="classTitle" name="title" required>
         </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="courseTitle" class="form-label">Course Title</label>
-            <input type="text" class="form-control" id="courseTitle" name="courseTitle" required>
-          </div>
-          <div class="mb-3">
-            <label for="courseDesc" class="form-label">Description</label>
-            <textarea class="form-control" id="courseDesc" name="courseDesc" rows="3" required></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="courseCategory" class="form-label">Category</label>
-            <input type="text" class="form-control" id="courseCategory" name="courseCategory">
-          </div>
-          <div class="mb-3">
-            <label for="coursePrice" class="form-label">Price ($)</label>
-            <input type="number" class="form-control" id="coursePrice" name="coursePrice" step="0.01" min="0">
-          </div>
+
+        <div class="mb-3">
+          <label for="classDesc" class="form-label">Description</label>
+          <textarea class="form-control" id="classDesc" name="description" rows="3" required></textarea>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Create Course</button>
+
+        <div class="mb-3">
+          <label for="scheduledAt" class="form-label">Scheduled Date & Time</label>
+          <input type="datetime-local" class="form-control" id="scheduledAt" name="scheduled_at" required>
         </div>
-      </form>
-    </div>
+
+        <div class="mb-3">
+          <label for="meetLink" class="form-label">Meeting Link</label>
+          <input type="url" class="form-control" id="meetLink" name="meet_link" placeholder="https://meet.example.com/class" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="joinCode" class="form-label">Join Code</label>
+          <input type="text" class="form-control" id="joinCode" name="join_code" maxlength="12" required>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Class</button>
+      </div>
+    </form>
   </div>
+</div>
+
 
   <!-- Modal: Generate Referral -->
   <div class="modal fade" id="referralModal" tabindex="-1" aria-labelledby="referralModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <form class="modal-content" id="referralForm">
+      <form class="modal-content" id="referralForm" action="/admin/referral" method="post">
         <div class="modal-header">
           <h5 class="modal-title" id="referralModalLabel">Generate Referral Code</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
+
           <div class="mb-3">
-            <label for="referralEmail" class="form-label">User Email (optional)</label>
-            <input type="email" class="form-control" id="referralEmail" name="referralEmail">
+            <label for="code" class="form-label">Referral Code</label>
+            <input type="text" class="form-control" id="code" name="code" required>
           </div>
           <div class="mb-3">
-            <label for="referralCode" class="form-label">Referral Code</label>
-            <input type="text" class="form-control" id="referralCode" name="referralCode" required>
+            <label for="location" class="form-label">Location Point</label>
+            <input type="text" class="form-control" id="location" name="location" required>
           </div>
+            <div class="mb-3">
+            <label for="discount" class="form-label">Applied Discount</label>
+            <input type="number" class="form-control" id="discount" name="discount">
+          </div>
+
           <div class="mb-3">
-            <label for="referralExpires" class="form-label">Expires On</label>
-            <input type="date" class="form-control" id="referralExpires" name="referralExpires">
+            <label for="maxUses" class="form-label">Maximum Users</label>
+            <input type="number" class="form-control" id="maxUses" name="maxUses">
+          </div>
+
+          <div class="mb-3">
+            <label for="expire" class="form-label">Expired date</label>
+            <input type="date" class="form-control" id="expire" name="expire">
           </div>
         </div>
         <div class="modal-footer">
@@ -160,19 +189,19 @@
 
   <!-- Simple JS Feedback -->
   <script>
-    document.getElementById('courseForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      alert('Course created successfully!');
-      this.reset();
-      bootstrap.Modal.getInstance(document.getElementById('createCourseModal')).hide();
-    });
+    // document.getElementById('courseForm').addEventListener('submit', function (e) {
+    //   e.preventDefault();
+    //   alert('Course created successfully!');
+    //   this.reset();
+    //   bootstrap.Modal.getInstance(document.getElementById('createCourseModal')).hide();
+    // });
 
-    document.getElementById('referralForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      alert('Referral code generated!');
-      this.reset();
-      bootstrap.Modal.getInstance(document.getElementById('referralModal')).hide();
-    });
+    // document.getElementById('referralForm').addEventListener('submit', function (e) {
+    //   e.preventDefault();
+    //   alert('Referral code generated!');
+    //   this.reset();
+    //   bootstrap.Modal.getInstance(document.getElementById('referralModal')).hide();
+    // });
   </script>
 </body>
 </html>

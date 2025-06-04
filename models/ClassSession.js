@@ -27,25 +27,49 @@ class ClassSession {
   }
 
 
-  static async create({ title, description, scheduledAt, meetLink, createdBy }) {
+  static async create({ title, description, scheduledAt, meetLink, id }) {
     const joinCode = uuidv4().split('-')[0]; // Generate a short unique join code
-    const result = await pool.query(`
-      INSERT INTO class_sessions (title, description, scheduled_at, meet_link, join_code, created_by)
+    try {
+         const result = await pool.query(`
+      INSERT INTO class_sessions (title, description, scheduled_at, meet_link, join_code, id)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
-    `, [title, description, scheduledAt, meetLink, joinCode, createdBy]);
+    `, [title, description, scheduledAt, meetLink, joinCode, id]);
 
     return result.rows[0];
+    } catch (error) {
+      console.log(`error creating class: ${error}`);
+      return []
+    }
   }
 
   static async listAll() {
-    const result = await pool.query(`SELECT * FROM class_sessions ORDER BY scheduled_at DESC`);
+   try {
+     const result = await pool.query(`SELECT * FROM class_sessions ORDER BY scheduled_at DESC`);
     return result.rows;
+   } catch (error) {
+    console.log(`error getting all classes: ${error}`);
+    return []
+    
+   }
+  }
+
+  static async findById(id) {
+    try {
+         const result = await pool.query(`SELECT * FROM class_sessions WHERE id = $1`, [id]);
+        return result.rows[0];
+    } catch (error) {
+      return []
+    }
   }
 
   static async findByJoinCode(joinCode) {
-    const result = await pool.query(`SELECT * FROM class_sessions WHERE join_code = $1`, [joinCode]);
-    return result.rows[0];
+    try {
+         const result = await pool.query(`SELECT * FROM class_sessions WHERE join_code = $1`, [joinCode]);
+        return result.rows[0];
+    } catch (error) {
+      return []
+    }
   }
 
   static async toggleLinkVisibility(id, visible) {

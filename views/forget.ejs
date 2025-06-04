@@ -5,45 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/style.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous" />
-  <title>Login</title>
+  <title>Forgot Password</title>
 
-    <style>
-    .bg-grad{
-      background: linear-gradient(135deg, #0eb819, #076a25); 
+  <style>
+    .bg-grad {
+      background: linear-gradient(135deg, #0eb819, #076a25);
     }
   </style>
-
 </head>
 <body>
   <div class="container-fluid vh-100">
     <div class="row h-100">
-      
-      <!-- Login Section -->
+
+      <!-- Forgot Password Section -->
       <div class="col-md-6 d-flex align-items-center justify-content-center bg-white shadow">
         <div class="w-100 px-4" style="max-width: 400px;">
           <div class="text-center mb-4">
             <a href="/"><img src="/images/logo.png" alt="Logo" class="img-fluid mb-3" style="max-height: 60px;" /></a>
-            <h2>Welcome Back!</h2>
-            <p class="text-muted">Enter to join an available class</p>
+            <h2>Reset Password</h2>
+            <p class="text-muted">Enter your email and we'll send you a reset link</p>
           </div>
 
-          <form action="/auth/login" method="post">
+          <form action="/auth/forgot-password" method="POST">
             <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="text" class="form-control" id="email" name="email" placeholder="Enter email" required />
-            </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required />
-            </div>
-            <div class="mb-3 text-end">
-              <a href="/auth/forget-password">Forgot password?</a>
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required />
             </div>
             <div class="d-grid mb-3">
-              <button class="btn btn-success" type="submit">Sign In</button>
+              <button class="btn btn-success" type="submit">Send Reset Link</button>
             </div>
             <div class="text-center">
-              <p>Don't have an account? <a href="/auth/register">Sign Up now</a></p>
+              <a href="/auth/login">Back to Login</a>
+            </div>
+            <div class="text-center">
+              <a href="/auth/otp">simulte</a>
             </div>
           </form>
         </div>
@@ -53,9 +48,9 @@
       <div class="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-grad text-white p-5">
         <div class="text-center">
           <blockquote class="blockquote">
-            <p>"Education is the passport to the future, for tomorrow belongs to those who prepare for it today."</p>
+            <p>"The beautiful thing about learning is that no one can take it away from you."</p>
           </blockquote>
-          <footer class="blockquote-footer text-white-50 mt-3">— Malcolm X</footer>
+          <footer class="blockquote-footer text-white-50 mt-3">— B.B. King</footer>
         </div>
       </div>
     </div>

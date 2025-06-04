@@ -162,102 +162,43 @@
 
 
   <!-- Email not verified message -->
-  <% if (1==11) { %>
-    <div id="verifyBlock" class="verify-message d-none">
-      Please verify your email to continue.
+  <% if (sessions == 0) { %>
+    <div id="emptyBlock" class="verify-message d-none">
+      No Class History...
     </div>
   <% } else { %>
     <div id="classCards" class="row g-4 d-none ">
-  <h4>Welcome back Michael</h4>
+      <h4>Welcome back <%=user.name%></h4>
 
     <p> Class History</p>
+      <% sessions.forEach(function (session) { %>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card border-<%= session.cardColor %>">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fas fa-book-open text-<%= session.cardColor %>"></i> 
+                <%= session.title %>
+              </h5>
 
-    <!-- Class Cards -->
-      <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-warning">
-          <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-book-open text-warning"></i> HTML Basics</h5>
-            <p class="k mb-1"><i class="far fa-calendar-alt"></i> May 25 · 10:00 AM</p>
-            <p class="small">Intro to HTML tags and document structure.</p>
-            <span class="badge bg-warning badge-status"><i class="fas fa-bell"></i> </span>
-            <a href="/class/1234" class="btn btn-outline-warning mt-3 w-100"> Joine Now</a>
+              <p class="mb-1">
+                <i class="far fa-calendar-alt"></i> <%= session.dateString %>
+              </p>
+
+              <!-- <p class="small"><%= session.description %></p> -->
+
+              <% if (!session.buttonState.disabled) { %>
+                <a href="/class/<%= session.join_code %>" class="btn btn-outline-<%= session.cardColor %> mt-3 w-100">
+                  <i class="fas <%= session.buttonState.icon %>"></i> <%= session.buttonState.text %>
+                </a>
+              <% } else { %>
+                <button class="btn btn-outline-<%= session.cardColor %> mt-3 w-100" disabled>
+                  <i class="fas <%= session.buttonState.icon %>"></i> <%= session.buttonState.text %>
+                </button>
+              <% } %>
+            </div>
           </div>
         </div>
-      </div>
-
-          <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-danger">
-          <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-book-open text-danger"></i> HTML Basics</h5>
-            <p class=" mb-1"><i class="far fa-calendar-alt"></i> May 25 · 10:00 AM</p>
-            <p class="small">Intro to HTML tags and document structure.</p>
-            <span class="badge bg-danger badge-status"><i class="fas fa-times-circle"></i> </span>
-            <button class="btn btn-outline-danger mt-3 w-100" disabled><i class="fas fa-times"></i> Missed Class</button>
-          </div>
-        </div>
-      </div>
-
-
-          <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-success">
-          <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-book-open text-success"></i> HTML Basics</h5>
-            <p class=" mb-1"><i class="far fa-calendar-alt"></i> May 25 · 10:00 AM</p>
-            <p class="small">Intro to HTML tags and document structure.</p>
-            <span class="badge bg-success badge-status"><i class="fas fa-check-circle"></i> </span>
-            <button class="btn btn-outline-success mt-3 w-100" disabled><i class="fas fa-check"></i> Joined</button>
-          </div>
-        </div>
-      </div>
-
-          <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-success">
-          <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-book-open text-success"></i> HTML Basics</h5>
-            <p class=" mb-1"><i class="far fa-calendar-alt"></i> May 25 · 10:00 AM</p>
-            <p class="small">Intro to HTML tags and document structure.</p>
-            <span class="badge bg-success badge-status"><i class="fas fa-check-circle"></i> </span>
-            <button class="btn btn-outline-success mt-3 w-100" disabled><i class="fas fa-check"></i> Joined</button>
-          </div>
-        </div>
-      </div>
-
-
-          <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-success">
-          <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-book-open text-success"></i> HTML Basics</h5>
-            <p class=" mb-1"><i class="far fa-calendar-alt"></i> May 25 · 10:00 AM</p>
-            <p class="small">Intro to HTML tags and document structure.</p>
-            <span class="badge bg-success badge-status"><i class="fas fa-check-circle"></i> </span>
-            <button class="btn btn-outline-success mt-3 w-100" disabled><i class="fas fa-check"></i> Joined</button>
-          </div>
-        </div>
-      </div>
-
-          <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-success">
-          <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-book-open text-success"></i> HTML Basics</h5>
-            <p class=" mb-1"><i class="far fa-calendar-alt"></i> May 25 · 10:00 AM</p>
-            <p class="small">Intro to HTML tags and document structure.</p>
-            <span class="badge bg-success badge-status"><i class="fas fa-check-circle"></i> </span>
-            <button class="btn btn-outline-success mt-3 w-100" disabled><i class="fas fa-check"></i> Joined</button>
-          </div>
-        </div>
-      </div>
-
-          <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-success">
-          <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-book-open text-success"></i> HTML Basics</h5>
-            <p class=" mb-1"><i class="far fa-calendar-alt"></i> May 25 · 10:00 AM</p>
-            <p class="small">Intro to HTML tags and document structure.</p>
-            <span class="badge bg-success badge-status"><i class="fas fa-check-circle"></i> </span>
-            <button class="btn btn-outline-success mt-3 w-100" disabled><i class="fas fa-check"></i> Joined</button>
-          </div>
-        </div>
-      </div>
+      <% }) %>
 
     </div>
   <% } %>
@@ -268,12 +209,22 @@
     document.getElementById("sidebar").classList.toggle("show");
   }
 
-  window.onload = function () {
-    setTimeout(() => {
-      document.getElementById("loader").classList.add("d-none");
-      document.getElementById("classCards").classList.remove("d-none");
-    }, 1000);
-  };
+  const messg =  document.getElementById("emptyBlock")
+  const classCards = document.getElementById("classCards")
+
+  
+    window.onload = function () {
+      setTimeout(() => {
+        document.getElementById("loader").classList.add("d-none");
+
+        const classCards = document.getElementById("classCards");
+        const messg = document.getElementById("emptyBlock");
+
+        if (classCards) classCards.classList.remove("d-none");
+        if (messg) messg.classList.remove("d-none");
+      }, 500);
+    };
+
 
   // Simulate notification update every 5 seconds
 let notificationCount = 0;

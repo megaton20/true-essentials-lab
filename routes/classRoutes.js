@@ -7,9 +7,15 @@ const admin = require('../middleware/admin');
 router.get('/:link', async (req, res) => {
     // error message
    const link = req.params.link
+  const code = await ClassSession.findByJoinCode(link)
+  
+  //  if (!code.status) {
+  //     return res.redirect('/user')
+  // hide link till time
+  //  }
    
       res.render('./student/join', {
-        link
+        link:code.meet_link
       })
 });
 
@@ -42,10 +48,10 @@ router.post('/:id/toggle', admin, async (req, res) => {
 });
 
 // Student requests class link via join code
-router.get('/:joinCode/join', auth, async (req, res) => {
-  const link = await ClassSession.getVisibleLink(req.params.joinCode);
-  if (!link) return res.status(403).json({ error: 'Class link not available yet' });
-  res.json({ meetLink: link });
-});
+// router.get('/:joinCode/join', async (req, res) => {
+//   const link = await ClassSession.getVisibleLink(req.params.joinCode);
+//   if (!link) return res.status(403).json({ error: 'Class link not available yet' });
+//   res.json({ meetLink: link });
+// });
 
 module.exports = router;

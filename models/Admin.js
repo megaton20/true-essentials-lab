@@ -1,45 +1,52 @@
 const pool = require('../config/db');
 const User = require('../models/User'); // adjust path if needed
+const ClassSession = require('./ClassSession');
 
 class Admin extends User {
-// Dashboard statistics for admin panel
-  static async getDashboardStats() {
-    try {
-      const totalStudentsRes = await pool.query(
-        'SELECT COUNT(*) FROM users WHERE role = $1',
-        ['student']
-      );
-      const pendingVerificationsRes = await pool.query(
-        "SELECT COUNT(*) FROM users WHERE role = $1 AND is_email_verified = false",
-        ['student']
-      );
-      const activeCodesRes = await pool.query(
-        'SELECT COUNT(*) FROM referral_codes WHERE is_active = true'
-      );
-    //   const verifiedPaymentsRes = await pool.query(
-    //     'SELECT COUNT(*) FROM payments WHERE status = $1',
-    //     ['verified']
-    //   );
+        // Dashboard statistics for admin panel
+          static async getDashboardStats() {
+            try {
+              const totalStudentsRes = await pool.query(
+                'SELECT COUNT(*) FROM users WHERE role = $1',
+                ['student']
+              );
+              const pendingVerificationsRes = await pool.query(
+                "SELECT COUNT(*) FROM users WHERE role = $1 AND is_email_verified = false",
+                ['student']
+              );
+              const activeCodesRes = await pool.query(
+                'SELECT COUNT(*) FROM referral_codes WHERE is_active = true'
+              );
+                 const totalClasses = await pool.query(
+                'SELECT COUNT(*) FROM class_sessions'
+              );
 
-      return {
-        totalStudents: parseInt(totalStudentsRes.rows[0]?.count || 0, 10),
-        // pendingVerifications: parseInt(pendingVerificationsRes.rows[0]?.count || 0, 10),
-        activeCodes: parseInt(activeCodesRes.rows[0]?.count || 0, 10),
-        // verifiedPayments: parseInt(verifiedPaymentsRes.rows[0]?.count || 0, 10),
-      };
-    } catch (error) {
-      console.error("Error getting dashboard stats:", error.message);
-      return {
-        totalStudents: 0,
-        pendingVerifications: 0,
-        activeCodes: 0,
-        // verifiedPayments: 0,
-        error: true, // for frontend to detect fallback
-      };
-    }
-  }
+            //   const verifiedPaymentsRes = await pool.query(
+            //     'SELECT COUNT(*) FROM payments WHERE status = $1',
+            //     ['verified']
+            //   );
 
-  // Class session status for control
+              return {
+                totalStudents: parseInt(totalStudentsRes.rows[0]?.count || 0, 10),
+                pendingVerifications: parseInt(pendingVerificationsRes.rows[0]?.count || 0, 10),
+                activeCodes: parseInt(activeCodesRes.rows[0]?.count || 0, 10),
+                totalClasses:parseInt(totalClasses.rows[0]?.count || 0,10)
+                // verifiedPayments: parseInt(verifiedPaymentsRes.rows[0]?.count || 0, 10),
+              };
+            } catch (error) {
+              console.error("Error getting dashboard stats:", error.message);
+              return {
+                totalStudents: 0,
+                pendingVerifications: 0,
+                activeCodes: 0,
+                ClassSession: totalClasses,
+                // verifiedPayments: 0,
+                error: true, // for frontend to detect fallback
+              };
+            }
+          }
+
+      // Class session status for control
         static async getClassStatus() {
         try {
             const res = await pool.query("SELECT status FROM class_sessions LIMIT 1");
@@ -65,10 +72,11 @@ class Admin extends User {
 
         static async allUsers(){
           try {
-            return pool.query(`SELECT * FROM users ORDER BY createdAt DESC`)
+            const result = await pool.query(`SELECT * FROM users ORDER BY created_at DESC`)
+             return result.rows;
           } catch (error) {
             console.log(error);
-            
+            return []
           }
         }
 

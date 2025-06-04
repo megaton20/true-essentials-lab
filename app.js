@@ -8,6 +8,9 @@ const database = require("./config/db")
 const flash = require('connect-flash');
 const passport = require('passport');
 const path = require('path')
+const { ensureAuthenticated } = require("./config/auth");
+
+
 
 
 const initAllModels = require('./initAllModels');
@@ -51,9 +54,9 @@ app.use((req, res, next) => {
 
 app.use('/', openRoutes); // open less secure routes
 app.use('/auth', authRoutes); // open less secure routes
-app.use('/user', userRoutes); // open less secure routes
-app.use('/class', classRoutes); // open less secure routes
-app.use('/admin', adminRoutes); // open less secure routes
+app.use('/user',ensureAuthenticated, userRoutes); // open less secure routes
+app.use('/class',ensureAuthenticated, classRoutes); // open less secure routes
+app.use('/admin',ensureAuthenticated, adminRoutes); // open less secure routes
 
 
 app.listen(PORT, ()=>{

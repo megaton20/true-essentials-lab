@@ -45,7 +45,11 @@ class User {
   static async findByEmail(email) {
     try {
        const result = await pool.query(`SELECT * FROM users WHERE email = $1;`, [email]);
-    return result.rows[0];
+
+       if (result.rows.length > 0) {
+        return result.rows[0];
+      }
+      return [];
     } catch (error) {
       
       console.log(error);
@@ -66,8 +70,13 @@ class User {
   }
 
   static async getById(userId) {
-    const res = await pool.query(`SELECT * FROM users WHERE id = $1`, [userId]);
+    try {
+        const res = await pool.query(`SELECT * FROM users WHERE id = $1`, [userId]);
     return res.rows[0];
+    } catch (error) {
+      console.log(`error getting user: ${error.message}`);
+      
+    }
   }
 }
 

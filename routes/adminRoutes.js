@@ -1,27 +1,28 @@
 const router = require('express').Router();
 const admin = require('../controllers/adminController');
-const adminMiddleware = require('../middleware/admin');
-const Attendance = require('../models/Attendance');
-
-router.get('/', adminMiddleware, admin.adminDashboard);
-router.get('/users', adminMiddleware, admin.getAllUsers);
-router.get('/users/:id', adminMiddleware, admin.getAllUsers);
-router.get('/attendance', adminMiddleware, admin.getAttendanceForSession);
-
-router.get('/class', adminMiddleware, admin.getAllClass);
-// router.get('/class/:id', adminMiddleware, admin.createReferral);
-// router.put('/class/:id', adminMiddleware, admin.createReferral);
+const {ensureAdmin} = require('../middleware/auth');
 
 
-router.get('/referral', adminMiddleware, admin.getReferrals);
-router.post('/referral', adminMiddleware, admin.createReferral);
-router.put('/referral/:id', adminMiddleware, admin.findReferralCode);
+router.get('/', ensureAdmin, admin.adminDashboard);
+router.get('/users', ensureAdmin, admin.getAllUsers);
+router.get('/users/:id', ensureAdmin, admin.findOneUsers);
+
+router.get('/classes', ensureAdmin, admin.getAllClass);
+router.post('/class/', ensureAdmin, admin.createClass);
+router.get('/class/:id', ensureAdmin, admin.findById);
+// router.put('/class/:id', ensureAdmin, admin.createReferral);
+
+
+router.post('/referral', ensureAdmin, admin.createReferral);
+router.get('/referral', ensureAdmin, admin.getReferrals);
+router.put('/referral/:id', ensureAdmin, admin.findReferralCode);
 
 
 
-router.post('/setting', adminMiddleware, admin.toggleSetting);
+router.post('/setting', ensureAdmin, admin.toggleSetting);
 
-router.get('/session/:id/attendance',adminMiddleware, admin.getAttendanceForSession);
+// router.get('/attendance', ensureAdmin, admin.);
+router.get('/session/:id/attendance',ensureAdmin, admin.getAttendanceForSession);
 
 
 module.exports = router;

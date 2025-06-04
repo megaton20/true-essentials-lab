@@ -48,8 +48,8 @@ header{
     justify-content: space-between;
     align-items: center;
 }
-.logo h1{
-    color: var(--primary-color) !important;
+.logo-image{
+    max-width: 20%;
 }
 
 .navlinks{
@@ -73,8 +73,9 @@ header{
 }
 .center{
     width: 90%;
-    margin: 0 auto;
+    margin: 0px auto;
 }
+
 main{
     margin-top: 80px;
     color: var(--text-light);
@@ -94,6 +95,10 @@ main{
     margin-top: 40px;
 }
 
+
+.slider-img{
+    border-radius: 15px;
+}
 .hero-footer{
     margin-top: 170px;
     text-align: center;
@@ -133,66 +138,12 @@ main{
     color: var(--text-light);
 }
 
-.divider{
-    display: flex;
-    align-items: center;
-    color: red;
-    border: 1px solid red;
-}
-.divider::before, .divider::after{
-    content: "-----------";
-    flex: 1;
-    color: #7eb702;
-    border-top: 1px solod green ;
-}
-.divider::before{
-    margin-right: 10px;
-}
 
-.divider::after{
-    margin-left: 10px;
-}
-
-.sides{
-    height: 770px;
-}
-
-.side-a{
-    width: 40%;
-}
-.side-a h1 a{
-    font-size: 20px;
-    margin: 10px 20px;
-    color: var(--primary-color);
-}
-.side-a .center{
-    width: 80%;
-    margin: 100px auto;
-}
 
 .form-control {
     background: transparent !important;
     border: 1px solid var(--primary-color) !important;
 }
-
-label{
-    color: var(--text-light);
-}
-.side-b{
-    width: 60%;
-}
-
-.side-b .center{
-    width: 80%;
-
-    margin: 300px auto;
-}
-.side-b p{
-    text-align: center;
-    color: var(--text-light);
-    font-size: 30px;
-}
-
 
 
 

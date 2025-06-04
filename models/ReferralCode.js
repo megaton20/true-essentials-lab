@@ -28,7 +28,7 @@ class ReferralCode {
   
   static async lisAll() {
     const result = await pool.query(`SELECT * FROM referral_codes`);
-    return result.rows[0];
+    return result.rows;
   }
 
   static async findByCode(code) {
@@ -52,13 +52,19 @@ class ReferralCode {
     return res.rows[0];
   }
 
-  static async create({ code, locationName, discountPercentage, maxUses, expiresAt = null }) {
-    const result = await pool.query(`
-      INSERT INTO referral_codes (code, location_name, discount_percentage, max_uses, expires_at)
-      VALUES ($1, $2, $3, $4, $5)
+  static async create({ code, location, discount, maxUses, expires, id }) {
+    try {
+        const result = await pool.query(`
+      INSERT INTO referral_codes (code, location_name, discount_percentage, max_uses, expires_at, id)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
-    `, [code, locationName, discountPercentage, maxUses, expiresAt]);
+    `, [code, location, discount, maxUses, expires, id]);
     return result.rows[0];
+    } catch (error) {
+      console.log(`error creating code: ${error}`);
+      return null
+      
+    }
   }
 }
 
