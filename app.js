@@ -3,11 +3,13 @@ const express = require('express')
 const app = express()
 const session = require('express-session');
 const bodyParser = require('body-parser')
+const ejsLayouts = require('express-ejs-layouts');
 const env = process.env
 const database = require("./config/db")
 const flash = require('connect-flash');
 const passport = require('passport');
 const path = require('path')
+const methodOverride = require('method-override');
 const { ensureAuthenticated } = require("./config/auth");
 
 
@@ -26,6 +28,7 @@ const classRoutes = require('./routes/classRoutes')
 const adminRoutes = require('./routes/adminRoutes')
 
 app.set('view engine', 'ejs');
+// app.use(ejsLayouts);
 app.use(express.static(path.join(__dirname, './', 'public')));
 // Middleware
 // Middleware
@@ -53,6 +56,13 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(methodOverride((req, res) => {
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+      let method = req.body._method;
+      delete req.body._method;
+      return method;
+  }
+}));
 
 
 // Handle when the user clicks "Later" or visits the Black Friday page

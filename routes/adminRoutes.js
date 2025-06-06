@@ -16,7 +16,7 @@ router.get('/users/:id', ensureAdmin, admin.findOneUsers);
 router.get('/classes', ensureAdmin, admin.getAllClass);
 router.post('/class/', ensureAdmin, admin.createClass);
 router.get('/class/:id', ensureAdmin, admin.findById);
-// router.put('/class/:id', ensureAdmin, admin.createReferral);
+router.put('/class/:id/edit', ensureAdmin, admin.updateById);
 
 
 router.post('/referral', ensureAdmin, admin.createReferral);

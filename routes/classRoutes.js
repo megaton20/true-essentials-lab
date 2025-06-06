@@ -18,7 +18,7 @@ router.get('/:code', async (req, res) => {
   const sessionId = session.id
 
 
-   if (!code.status) {
+   if (!session.status) {
       req.flash('warning_msg', "class has not started")
         return res.redirect('/user')
      }

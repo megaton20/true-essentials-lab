@@ -59,12 +59,22 @@ static async markAttendance(sessionId, userId, id) {
     return res.rows;
   }
 
-  static async listAllForStudent(studentId) {
+  static async studentClassHistory(studentId) {
+
     const res = await pool.query(`
-      SELECT u.id, u.full_name, a.joined_at
-      FROM class_attendance a
-      JOIN users u ON a.user_id = u.id
-      WHERE a.user_id = $1
+          SELECT 
+        cs.id AS session_id,
+        cs.title,
+        cs.scheduled_at,
+        cs.status,
+        cs.join_code,
+        CASE WHEN ca.id IS NULL THEN false ELSE true END AS is_joined
+      FROM class_sessions cs
+      LEFT JOIN class_attendance ca 
+        ON ca.session_id = cs.id AND ca.user_id = $1
+      
+      ORDER BY cs.scheduled_at DESC
+      LIMIT 6;
     `, [studentId]);
 
     return res.rows;

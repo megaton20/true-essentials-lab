@@ -1,39 +1,35 @@
 const User = require('../models/User');
 const ReferralCode = require('../models/ReferralCode');
 const ClassSession = require('../models/ClassSession');
+const Attendance = require('../models/Attendance');
 
 
 exports.getDashboard = async (req, res) => {
 
     
-   let sessions = await ClassSession.listAll()
-    const now = new Date();
-        sessions = sessions.map(s => {
-        const classTime = new Date(s.scheduled_at);
-        const isFuture = classTime > now;
-        
-        let cardColor = 'secondary'; // default gray
-        let buttonState = { text: 'Unavailable', disabled: true };
+   let sessions = await Attendance.studentClassHistory(req.user.id)
+  
+          sessions = sessions.map(session => {
+  const now = new Date();
+  const scheduled = new Date(session.scheduled_at);
 
-        if (s.status === true) {
-            cardColor = 'success'; // green
-            buttonState = { text: 'Joined', disabled: true, icon: 'fa-check' };
-        } else if (s.status === false && !isFuture) {
-            cardColor = 'danger'; // red for closed
-            buttonState = { text: 'Closed', disabled: true, icon: 'fa-lock' };
-        } else if (s.status !== true && isFuture) {
-            cardColor = 'warning'; // yellow for upcoming
-            buttonState = { text: 'Join Now', disabled: false, icon: 'fa-bell' };
-        }
+  if (session.is_joined) {
+    session.statusText = 'Attended'; // or whatever you want for joined classes
+    session.statusClass = 'status-attended';
+  } else if (scheduled > now) {
+    session.statusText = 'Coming Up';
+    session.statusClass = 'status-upcoming';
+  } else if (session.status === true) {
+    session.statusText = 'Attended';
+    session.statusClass = 'status-attended';
+  } else {
+    session.statusText = 'Missed';
+    session.statusClass = 'status-missed';
+  }
+  return session;
+});
 
-        return {
-            ...s,
-            dateString: classTime.toLocaleString(),
-            cardColor,
-            buttonState,
-        };
-        });
-
+            
         
     res.render('./student/dashboard',{
         sessions,
@@ -43,11 +39,30 @@ exports.getDashboard = async (req, res) => {
 
 exports.studentClassRecord = async (req, res) => {
 
-    
-   let sessions = await ClassSession.listAll()
-    // let lastFiveSessrions = ClassSession.listAllForStudent(req.user.id)
+   let sessions = await Attendance.studentClassHistory(req.user.id)
+
+          sessions = sessions.map(session => {
+  const now = new Date();
+  const scheduled = new Date(session.scheduled_at);
+
+  if (session.is_joined) {
+    session.statusText = 'Attended'; // or whatever you want for joined classes
+    session.statusClass = 'status-attended';
+  } else if (scheduled > now) {
+    session.statusText = 'Coming Up';
+    session.statusClass = 'status-upcoming';
+  } else if (session.status === true) {
+    session.statusText = 'Attended';
+    session.statusClass = 'status-attended';
+  } else {
+    session.statusText = 'Missed';
+    session.statusClass = 'status-missed';
+  }
+  return session;
+});
+
         
-    res.render('./student/dashboard',{
+    res.render('./student/classes',{
         sessions,
         user:{name: req.user.full_name, email: req.user.email}
     })

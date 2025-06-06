@@ -43,6 +43,21 @@ class ClassSession {
     }
   }
 
+  static async update({ title, description, scheduledAt, meetLink, id }) {
+    try {
+         const result = await pool.query(`
+              UPDATE class_sessions 
+                SET title = $1, scheduled_at = $2, description = $3, meet_link = $4
+                WHERE id = $5
+    `, [title,scheduledAt, description,  meetLink, id]);
+
+    return result.rows[0];
+    } catch (error) {
+      console.log(`error editing class: ${error}`);
+      return []
+    }
+  }
+
   static async listAll() {
    try {
      const result = await pool.query(`SELECT * FROM class_sessions ORDER BY scheduled_at DESC`);

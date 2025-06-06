@@ -95,6 +95,19 @@ exports.findById = async (req, res) => {
     })
 };
 
+exports.updateById = async (req, res) => {
+  const {title, description, scheduledAt, meetLink }= req.body
+  const id = req.params.id
+
+  try {
+    const singleClass = await ClassSession.update(title, description, scheduledAt, meetLink, id); 
+    res.redirect(`/admin/class${id}`) 
+  } catch (error) {
+    console.log(`error updating class: ${error}`);
+    
+  }
+};
+
 exports.findByJoinCode = async (req, res) => {
   const code = req.params.code
     const getClass = await ClassSession.findByJoinCode(code); 

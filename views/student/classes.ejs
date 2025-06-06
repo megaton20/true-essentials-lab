@@ -21,21 +21,10 @@
       <%-include('./partials/sidenav')%>
 
       <div class=" border bg-white col-md-10">
+         <a href="/user" class="mt-2">back</a>
         <!-- top info -->
-        <div class="container mt-4 mb-2">
-          <div class="row">
-            <div class="col-10">
-              <h2>Hello, <%=user.name%></h2>
-              <p class="welcome-msg">Welcome Back</p>
-            </div>
-            <div class="col-2">
-              <!-- <div class="top-btn d-md-flex justify-content-center mb-4">
-                        <a href="#" class="btn btn-success  text-center"> <i class="fa fa-plus"></i> Add Class</a>
-                      </div> -->
-            </div>
-
+        <div class="container  mb-2">
              <%- include('../partials/messages') %>
-          </div>
           <!-- top info ends -->
         </div>
 
@@ -43,33 +32,6 @@
           <!-- middle Message -->
           <div class="col-md-9">
             <div class="container">
-              <section class="box mb-5">
-                <div class="he bg-grad text-white">
-                  <div class="icon">
-                    <img src="/images/zap.png" alt="zap">
-                  </div>
-                  <div class="text">
-                    <h3>Membership</h3>
-                    <p>Basic</p>
-                  </div>
-                </div>
-                <div class="he">
-                 <div class="progress">
-                    <img src="/images/video-call.png" alt="zap" style="max-width: 100%;">
-                  </div>
-                  <div class="text">
-                    <h3>Avialable Videos<h3>
-                  </div>
-                </div>
-                <div class="he">
-                  <div class="progress">
-                    <img src="/images/checked.png" alt="zap" style="max-width: 100%;">
-                  </div>
-                  <div class="text">
-                    <h3>Videos watched</h3>
-                  </div>
-                </div>
-              </section>
 
               <section class="week-wraper mt-5">
                 <p>Your History</p>
@@ -104,7 +66,7 @@
                             showJoinButton = false;  // missed classes no join button
                           }
                       %>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                           <div class="week-item class-card <%= statusClass %>">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                               <span class="status-badge"><%= statusText %></span>
