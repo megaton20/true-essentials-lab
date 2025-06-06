@@ -15,6 +15,10 @@ router.get('/email-sent', async (req, res) => {
     res.render('email-sent')
 });
 
+router.get('/das', async (req, res) => {
+    res.render('dash')
+});
+
 
 
 router.get('/handler', (req, res) => {

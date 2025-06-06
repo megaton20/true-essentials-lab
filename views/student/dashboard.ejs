@@ -11,242 +11,216 @@
   <!-- Font Awesome -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-
-  <style>
-    p{
-        font-size: 12px;
-        color: #fff;
-      }
-      h4{
-        
-        color: #fff;
-    }
-    .sidebar {
-      height: 100vh;
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 240px;
-      background-color: #212529;
-      color: white;
-      padding: 1.5rem 1rem;
-    }
-
-    .sidebar a {
-      color: white;
-      display: block;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
-      text-decoration: none;
-      transition: all 0.2s ease-in-out;
-    }
-
-    .sidebar a:hover {
-      background-color: #343a40;
-    }
-    /* Desktop layout */
-    @media (min-width: 768px) {
-      .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 220px;
-        height: 100vh;
-        overflow-y: auto;
-      }
-      #mainContent {
-        margin-left: 220px;
-      }
-    }
-
-    /* Mobile toggle */
-    .toggle-btn {
-      display: none;
-    }
-
-    @media (max-width: 767px) {
-      .toggle-btn {
-        display: block;
-        margin-bottom: 1rem;
-      }
-
-      .sidebar {
-        display: none;
-        position: relative;
-        width: 100%;
-        height: auto;
-      }
-
-      .sidebar.show {
-        display: block;
-      }
-
-      #mainContent {
-        margin-left: 0;
-      }
-    }
-
-    .card {
-      border-radius: 15px;
-      background: #1515157a;
-      color: #fff;
-      backdrop-filter: blur(8px);
-    }
-
-    .badge-status {
-      font-size: 0.9rem;
-      padding: 0.5em;
-      border-radius: 0.5rem;
-    }
-
-
-    .skeleton-card {
-      background: #1515157a;
-      backdrop-filter: blur(8px);
-      border-radius: 15px;
-      color: transparent;
-    }
-
-    .skeleton {
-      background: linear-gradient(-90deg, #676767 0%, #3d3d3d 50%, #000000 100%);
-      background-size: 400% 400%;
-      animation: shimmer 1.4s ease-in-out infinite;
-      border-radius: 10px;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 100% 0; }
-      100% { background-position: -100% 0; }
-    }
-
-    .verify-message {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #d9534f;
-      text-align: center;
-      margin-top: 3rem;
-    }
-  </style>
 </head>
 <body>
 
-  <%-include('./partials/dashnav')%>
+  <div class="container-fluid vh-100">
+    <div class="row h-100">
+      <!-- left side nav -->
 
-<!-- Main Content -->
-<div id="mainContent" class="p-4">
+      <%-include('./partials/sidenav')%>
 
-    <!-- Loader (Shimmer Effect) -->
-    <div id="loader" class=" ">
+      <div class=" border bg-white col-md-10">
+        <!-- top info -->
+        <div class="container mt-4 mb-2">
+          <div class="row">
+            <div class="col-10">
+              <h2>Hello, <%=user.name%></h2>
+              <p class="welcome-msg">Welcome Back</p>
+            </div>
+            <div class="col-2">
+              <!-- <div class="top-btn d-md-flex justify-content-center mb-4">
+                        <a href="#" class="btn btn-success  text-center"> <i class="fa fa-plus"></i> Add Class</a>
+                      </div> -->
+            </div>
 
-      <div class="container">
-        <div class="skeleton skeleton-title mb-3" style="height: 20px; width: 60%; margin-bottom: 40px;"></div>
-      <br>
-      <div class="skeleton skeleton-title mb-3" style="height: 20px; width: 10%;"></div>
-      </div>
-      <div class="row g-4">
-           <% for(let i = 0; i < 8; i++) { %>
-        <div class="col-12 col-sm-6 col-lg-3">
-          <div class="card skeleton-card p-3">
-            <div class="skeleton skeleton-title mb-3" style="height: 20px; width: 60%;"></div>
-            <div class="skeleton skeleton-date mb-2" style="height: 14px; width: 50%;"></div>
-            <div class="skeleton skeleton-desc mb-3" style="height: 14px; width: 80%;"></div>
-            <div class="skeleton skeleton-badge mb-3" style="height: 20px; width: 40%; border-radius: 8px;"></div>
-            <div class="skeleton skeleton-button" style="height: 36px; width: 100%; border-radius: 10px;"></div>
+             <%- include('../partials/messages') %>
           </div>
+          <!-- top info ends -->
         </div>
-      <% } %>
-      </div>
-    </div>
+
+        <div class="row">
+          <!-- middle Message -->
+          <div class="col-md-9">
+            <div class="container">
+              <section class="box mb-5">
+                <div class="he bg-grad text-white">
+                  <div class="icon">
+                    <img src="/images/zap.png" alt="zap">
+                  </div>
+                  <div class="text">
+                    <h3>Membership</h3>
+                    <p>Basic</p>
+                  </div>
+                </div>
+                <div class="he">
+                 <div class="progress">
+                    <img src="/images/video-call.png" alt="zap" style="max-width: 100%;">
+                  </div>
+                  <div class="text">
+                    <h3>Avialable Videos<h3>
+                  </div>
+                </div>
+                <div class="he">
+                  <div class="progress">
+                    <img src="/images/checked.png" alt="zap" style="max-width: 100%;">
+                  </div>
+                  <div class="text">
+                    <h3>Videos watched</h3>
+                  </div>
+                </div>
+              </section>
+
+              <section class="week-wraper mt-5">
+                <p>Class summary</p>
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="week mb-5">
+
+                      <div class="row">
+                        <%sessions.forEach(function(data,index) {%>
+                      <div class="col-md-4 mb-3 ">
+                        <div class="week-item class-card status-upcoming">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="status-badge">Coming Up</span>
+                          </div>
+                          <p class="text-muted mb-0">June 7, 2025 • 5:00 PM</p>
+                          <a href="/class/<%= data.join_code%>">Join</a>
+                        </div>
+                      </div>
+                      <%}) %>
+                      
+                      <!-- <div class="col-md-4 mb-3 ">
+                        <div class="week-item class-card status-upcoming">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="status-badge">Coming Up</span>
+                          </div>
+                          <p class="text-muted mb-0">June 7, 2025 • 5:00 PM</p>
+                        </div>
+                      </div>
 
 
+                      <div class="col-md-4 mb-3">
+                        <div class=" week-item class-card  status-attended ">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="status-badge">Attended</span>
+                          </div>
+                          <p class="text-muted mb-0">June 3, 2025 • 2:00 PM</p>
+                        </div>
+                      </div>
 
-  <!-- Email not verified message -->
-  <% if (sessions == 0) { %>
-    <div id="emptyBlock" class="verify-message d-none">
-      No Class History...
-    </div>
-  <% } else { %>
-    <div id="classCards" class="row g-4 d-none ">
-       <%- include('../partials/messages') %>
+                      <div class="col-md-4 mb-3">
+                        <div class=" week-item class-card status-missed">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="status-badge">Missed</span>
+                          </div>
+                          <p class="text-muted mb-0">June 4, 2025 • 3:00 PM</p>
+                        </div>
+                      </div>
 
-      <h4>Welcome back <%=user.name%></h4>
+                         <div class="col-md-4 mb-3">
+                        <div class=" week-item class-card  status-attended ">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="status-badge">Attended</span>
+                          </div>
+                          <p class="text-muted mb-0">June 3, 2025 • 2:00 PM</p>
+                        </div>
+                      </div> -->
 
-    <p> Class History</p>
-      <% sessions.forEach(function (session) { %>
-        <div class="col-12 col-sm-6 col-lg-3">
-          <div class="card border-<%= session.cardColor %>">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="fas fa-book-open text-<%= session.cardColor %>"></i> 
-                <%= session.title %>
-              </h5>
+                      
+           
 
-              <p class="mb-1">
-                <i class="far fa-calendar-alt"></i> <%= session.dateString %>
-              </p>
 
-              <!-- <p class="small"><%= session.description %></p> -->
+                      </div>
 
-              <% if (!session.buttonState.disabled) { %>
-                <a href="/class/<%= session.join_code %>" class="btn btn-outline-<%= session.cardColor %> mt-3 w-100">
-                  <i class="fas <%= session.buttonState.icon %>"></i> <%= session.buttonState.text %>
-                </a>
-              <% } else { %>
-                <button class="btn btn-outline-<%= session.cardColor %> mt-3 w-100" disabled>
-                  <i class="fas <%= session.buttonState.icon %>"></i> <%= session.buttonState.text %>
-                </button>
-              <% } %>
+                    </div>
+
+                  </div>
+
+                  <div class="col-md-4 mb-5">
+                    <div class=" rounded d-md-flex align-items-center justify-content-center bg-grad text-white p-5">
+                      <div class="text-center">
+                        <blockquote class="blockquote">
+                          <p>"Knowledge is power. Information is liberating. Education is the premise of progress."</p>
+                        </blockquote>
+                        <footer class="blockquote-footer text-white-50 mt-3">— Kofi Annan</footer>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </section>
+
+       
+
             </div>
           </div>
+
+          <!-- right side -->
+        <%-include ('./partials/meta-info') %>
         </div>
-      <% }) %>
 
+      </div>
     </div>
-  <% } %>
-</div>
 
-<script>
-  function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("show");
-  }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 
-  const messg =  document.getElementById("emptyBlock")
-  const classCards = document.getElementById("classCards")
+    <script>
+      const calendarHeader = document.getElementById('calendar-header');
+      const calendarBody = document.getElementById('calendar-body');
 
-  
-    window.onload = function () {
-      setTimeout(() => {
-        document.getElementById("loader").classList.add("d-none");
+      const now = new Date();
+      const month = now.getMonth();
+      const year = now.getFullYear();
 
-        const classCards = document.getElementById("classCards");
-        const messg = document.getElementById("emptyBlock");
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
 
-        if (classCards) classCards.classList.remove("d-none");
-        if (messg) messg.classList.remove("d-none");
-      }, 500);
-    };
+      function generateCalendar(month, year) {
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+        const prevLastDate = new Date(year, month, 0).getDate();
 
+        // Update header
+        calendarHeader.innerHTML = `<h5 class="mb-0">${monthNames[month]} ${year}</h5>`;
 
-  // Simulate notification update every 5 seconds
-let notificationCount = 0;
-function updateNotifications() {
-  notificationCount = (notificationCount + 1) % 6; // cycle 0 to 5
-  const badge = document.getElementById('notificationBadge');
-  if (notificationCount > 0) {
-    badge.textContent = notificationCount;
-    badge.style.display = 'inline-block';
-  } else {
-    badge.style.display = 'none';
-  }
-}
+        // Create weekday headers
+        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        let daysHTML = '<div class="d-flex flex-wrap justify-content-center">';
+        weekdays.forEach(day => {
+          daysHTML += `<div class="day text-muted">${day}</div>`;
+        });
 
-// Call every 5 seconds to simulate new notifications
-setInterval(updateNotifications, 50000);
-updateNotifications();
+        // Add previous month's trailing days
+        for (let i = firstDay - 1; i >= 0; i--) {
+          daysHTML += `<div class="day text-muted other-month">${prevLastDate - i}</div>`;
+        }
 
+        // Add current month's days
+        for (let i = 1; i <= lastDate; i++) {
+          const isToday = (i === now.getDate() && month === now.getMonth() && year === now.getFullYear());
+          daysHTML += `<div class="day ${isToday ? 'today' : ''}">${i}</div>`;
+        }
 
-</script>
+        // Add trailing next month's days to complete rows
+        const totalCells = firstDay + lastDate;
+        const nextDays = (7 - (totalCells % 7)) % 7;
+        for (let i = 1; i <= nextDays; i++) {
+          daysHTML += `<div class="day text-muted other-month">${i}</div>`;
+        }
+
+        daysHTML += '</div>';
+        calendarBody.innerHTML = daysHTML;
+      }
+
+      generateCalendar(month, year);
+    </script>
 
 </body>
 </html>
+
+
+
+

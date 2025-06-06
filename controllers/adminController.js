@@ -9,13 +9,15 @@ exports.adminDashboard = async (req, res) => {
 
     try {
     const stats = await Admin.getDashboardStats(); 
+    const sessions = await ClassSession.listAll(); 
     
     const classStatus = await Admin.getClassStatus();
 
     res.render('./admin/dashboard',
        { 
-        stats, 
-        classStatus 
+        stats,
+        sessions, 
+        classStatus
 
        });
   } catch (err) {
@@ -74,11 +76,16 @@ exports.createClass = async (req, res) => {
   
   try {
     const stats = await ClassSession.create({title, description, scheduledAt: scheduled_at,meetLink: meet_link,id:uuidv4()});
-    res.json(stats) 
+    res.redirect('/admin/success') 
   } catch (error) {
+    res.redirect('/admin/error') 
+    console.log("error on create class line 82: "+ error);
+    
     
   }
 };
+
+
 
 exports.findById = async (req, res) => {
   const id = req.params.id

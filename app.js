@@ -54,11 +54,37 @@ app.use((req, res, next) => {
 });
 
 
+
+// Handle when the user clicks "Later" or visits the Black Friday page
+app.post('/dismiss-modal', (req, res) => {
+  // Set the session flag to indicate the modal has been dismissed
+  req.session.blackFridayShown = true;
+  res.redirect('/');
+});
+
+
 app.use('/', openRoutes); // open less secure routes
 app.use('/auth', authRoutes); // open less secure routes
 app.use('/user',ensureAuthenticated, userRoutes); // open less secure routes
 app.use('/class',ensureAuthenticated, classRoutes); // open less secure routes
 app.use('/admin',ensureAuthenticated, adminRoutes); // open less secure routes
+
+
+app.use((req, res) => {
+  let userActive = req.user ? true : false;
+  res.render('404', {
+    pageTitle: `404`,
+    userActive
+  });
+});
+
+// General error handling middleware
+app.use((err, req, res, next) => {
+  console.log(err);
+  let userActive = req.user ? true : false;
+  res.redirect('/')
+});
+
 
 
 app.listen(PORT, ()=>{

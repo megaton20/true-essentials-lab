@@ -1,7 +1,7 @@
 
 
 module.exports =  {
-    farwardVerifyAlert: function(req, res, next){
+    forwardVerifyAlert: function(req, res, next){
       
       if (req.user.is_email_verified) {
         console.log("already verified email...");
@@ -25,7 +25,8 @@ module.exports =  {
       if (req.user.role == 'admin') {
         return  next()
       }
-       return res.redirect('/')
+      req.flash('error_msg', "invalid request...")
+       return res.redirect('/user')
     }
 
 };

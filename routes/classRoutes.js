@@ -2,35 +2,40 @@ const router = require('express').Router();
 const ClassSession = require('../models/ClassSession');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
+const Attendance = require('../models/Attendance');
+const { v4: uuidv4 } = require('uuid');
 
 
-router.get('/:link', async (req, res) => {
+
+router.get('/:code', async (req, res) => {
     // error message
-   const link = req.params.link
-  const code = await ClassSession.findByJoinCode(link)
-  
-  //  if (!code.status) {
-  //     return res.redirect('/user')
-  // hide link till time
-  //  }
-   
+   const code = req.params.code
+  const session = await ClassSession.findByJoinCode(code)
+    if (!session) {
+    return res.status(404).send('Session not found');
+  }
+
+  const sessionId = session.id
+
+
+   if (!code.status) {
+      req.flash('warning_msg', "class has not started")
+        return res.redirect('/user')
+     }
+    
+    // mark attendance
+  const isPresent = await Attendance.markAttendance(sessionId, req.user.id, uuidv4());
+
+  // console.log('Attendance record:', isPresent);
+
+  // limit number of designs and rejoin
+
       res.render('./student/join', {
-        link:code.meet_link
+        link:session.meet_link,
+        session
       })
 });
 
-router.get('/join/:link', async (req, res) => {
-  const link = req.params.link
-
-  
-    if (1 == 1) {
-      // success msg
-       res.render('./student/joined')
-    }else{
-      // error message
-      res.redirect('/user')
-    }
-});
 
 
 // Admin creates a class

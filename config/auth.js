@@ -7,7 +7,7 @@ module.exports = {
     if (openSession) {
       return next();
     }
-    req.flash("error_msg", "Please sign in to view our store")
+    req.flash("error_msg", "Please sign in to view our resources")
     res.redirect('/auth/login')
     return
   },

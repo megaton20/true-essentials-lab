@@ -29,8 +29,8 @@ exports.register = async (req, res) => {
   const { firstname, lastname, email, password, referralCode } = req.body;
 
   const existingUser = await User.findByEmail(email)
-
-  if (existingUser) {
+  
+  if (existingUser.length > 0) {
     req.flash('error_msg', "email already taken...")
     return res.redirect('/auth/register')
   }

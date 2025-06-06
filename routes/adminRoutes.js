@@ -2,6 +2,12 @@ const router = require('express').Router();
 const admin = require('../controllers/adminController');
 const {ensureAdmin} = require('../middleware/auth');
 
+router.get('/success',ensureAdmin, (req,res)=>{
+    return res.render('./admin/success') 
+})
+router.get('/error',ensureAdmin, (req,res)=>{
+    return res.render('./admin/error') 
+})
 
 router.get('/', ensureAdmin, admin.adminDashboard);
 router.get('/users', ensureAdmin, admin.getAllUsers);
