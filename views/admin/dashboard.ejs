@@ -102,56 +102,15 @@
                         <%sessions.forEach(function(data,index) {%>
                       <div class="col-md-4 mb-3 ">
                         <div class="week-item class-card status-upcoming">
-                          <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="status-badge">Coming Up</span>
-                          </div>
-                          <p class="text-muted mb-0">June 7, 2025 • 5:00 PM</p>
+                      
+                          <p class="text-muted mb-0"><%= data.title%></p>
+                          <p class="text-muted mb-0"><%= data.created_by%></p>
+                          <p class="text-muted mb-0" style="font-size: 11px;">June 7, 2025 • 5:00 PM</p>
                           <a href="/admin/class/<%= data.id%>">view</a>
                         </div>
                       </div>
                       <%}) %>
                       
-                      <!-- <div class="col-md-4 mb-3 ">
-                        <div class="week-item class-card status-upcoming">
-                          <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="status-badge">Coming Up</span>
-                          </div>
-                          <p class="text-muted mb-0">June 7, 2025 • 5:00 PM</p>
-                        </div>
-                      </div>
-
-
-                      <div class="col-md-4 mb-3">
-                        <div class=" week-item class-card  status-attended ">
-                          <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="status-badge">Attended</span>
-                          </div>
-                          <p class="text-muted mb-0">June 3, 2025 • 2:00 PM</p>
-                        </div>
-                      </div>
-
-                      <div class="col-md-4 mb-3">
-                        <div class=" week-item class-card status-missed">
-                          <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="status-badge">Missed</span>
-                          </div>
-                          <p class="text-muted mb-0">June 4, 2025 • 3:00 PM</p>
-                        </div>
-                      </div>
-
-                         <div class="col-md-4 mb-3">
-                        <div class=" week-item class-card  status-attended ">
-                          <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="status-badge">Attended</span>
-                          </div>
-                          <p class="text-muted mb-0">June 3, 2025 • 2:00 PM</p>
-                        </div>
-                      </div> -->
-
-                      
-           
-
-
                       </div>
 
                     </div>
@@ -214,11 +173,6 @@
               <div class="mb-3">
                 <label for="meetLink" class="form-label">Meeting Link</label>
                 <input type="url" class="form-control" id="meetLink" name="meet_link" placeholder="https://meet.example.com/class" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="joinCode" class="form-label">Join Code</label>
-                <input type="text" class="form-control" id="joinCode" name="join_code" maxlength="12" required>
               </div>
 
             </div>

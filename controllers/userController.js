@@ -6,30 +6,7 @@ const Attendance = require('../models/Attendance');
 
 exports.getDashboard = async (req, res) => {
 
-    
-   let sessions = await Attendance.studentClassHistory(req.user.id)
-  
-          sessions = sessions.map(session => {
-  const now = new Date();
-  const scheduled = new Date(session.scheduled_at);
-
-  if (session.is_joined) {
-    session.statusText = 'Attended'; // or whatever you want for joined classes
-    session.statusClass = 'status-attended';
-  } else if (scheduled > now) {
-    session.statusText = 'Coming Up';
-    session.statusClass = 'status-upcoming';
-  } else if (session.status === true) {
-    session.statusText = 'Attended';
-    session.statusClass = 'status-attended';
-  } else {
-    session.statusText = 'Missed';
-    session.statusClass = 'status-missed';
-  }
-  return session;
-});
-
-            
+   const sessions = await Attendance.studentClassHistory(req.user.id)
         
     res.render('./student/dashboard',{
         sessions,

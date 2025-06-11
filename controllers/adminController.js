@@ -87,21 +87,55 @@ exports.createClass = async (req, res) => {
 
 
 
-exports.findById = async (req, res) => {
+exports.getClassSession = async (req, res) => {
   const id = req.params.id
+    const attendance = await Attendance.getAttendanceForSession(id)
+
     const singleClass = await ClassSession.findById(id); 
         res.render('./admin/class', {
-      singleClass
+      singleClass,
+      attendance
     })
 };
 
+exports.grantAccess = async (req, res) => {
+  
+  try {
+    const { classId, userId } = req.params;
+    const granted = req.body.granted 
+    let grant 
+    if (granted == "on") {
+      grant = true
+    }else{
+      grant = false
+    }
+    
+   const stats =  await Attendance.approveAttendance(classId, userId, grant);
+
+   
+    if (stats === 1 || stats === true) {
+      req.flash("success_msg", "Access status updated.");
+    } else {
+      req.flash("error_msg", "Check failed");
+    }
+    
+   return res.redirect(`/admin/class/${classId}`);
+
+
+  } catch (err) {
+    console.error(`error in grant access controller: ${err}`);
+  }
+}
+
 exports.updateById = async (req, res) => {
-  const {title, description, scheduledAt, meetLink }= req.body
+  const {title, description, scheduled_at, meet_link }= req.body
   const id = req.params.id
 
+  
   try {
-    const singleClass = await ClassSession.update(title, description, scheduledAt, meetLink, id); 
-    res.redirect(`/admin/class${id}`) 
+ 
+    const singleClass = await ClassSession.update(title, description, scheduled_at, meet_link, id); 
+    res.redirect(`/admin/class/${id}`) 
   } catch (error) {
     console.log(`error updating class: ${error}`);
     
@@ -116,12 +150,26 @@ exports.findByJoinCode = async (req, res) => {
     })
 };
 
-exports.toggleClasssVisibility = async (req, res) => {
-  try {
-    const stats = await ClassSession.toggleLinkVisibility(IdleDeadline, visible); 
-  } catch (error) {
-    
+exports.toggleClasssVisibility = async (req, res) => {  
+  const id = req.params.id
+  const visible = req.params.status
+try {
+  const stats = await ClassSession.toggleLinkVisibility(id, visible); 
+
+  if (stats === 1 || stats === true) {
+    req.flash("success_msg", "Class status was updated successfully");
+  } else {
+    req.flash("error_msg", "Class status update failed");
   }
+
+  return res.redirect(`/admin/class/${id}`);
+
+} catch (error) {
+  console.error(`Error updating class status: ${error}`);
+  req.flash("error_msg", "Something went wrong while updating status.");
+  return res.redirect(`/admin/class/${id}`);
+}
+
 };
 
 exports.getVisibleLink = async (req, res) => {

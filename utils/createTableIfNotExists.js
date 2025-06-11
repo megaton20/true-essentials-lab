@@ -13,7 +13,7 @@ async function createTableIfNotExists(tableName, createQuery) {
       await pool.query(createQuery);
       console.log(`✅ Table '${tableName}' created successfully.`);
     } else {
-      console.log(`ℹ️ Table '${tableName}' already exists.`);
+      // console.log(`ℹ️ Table '${tableName}' already exists.`);
     }
   } catch (error) {
     console.error(`❌ Error while checking/creating table '${tableName}':`, error.message);

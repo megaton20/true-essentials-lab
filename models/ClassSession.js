@@ -43,7 +43,8 @@ class ClassSession {
     }
   }
 
-  static async update({ title, description, scheduledAt, meetLink, id }) {
+  static async update(title, description, scheduledAt, meetLink, id ) {
+    
     try {
          const result = await pool.query(`
               UPDATE class_sessions 
@@ -88,7 +89,15 @@ class ClassSession {
   }
 
   static async toggleLinkVisibility(id, visible) {
-    await pool.query(`UPDATE class_sessions SET show_link = $1 WHERE id = $2`, [visible, id]);
+   try {
+     const result = await pool.query(`UPDATE class_sessions SET show_link = $1, status = $1 WHERE id = $2`, [visible, id]);
+    return result.rowCount
+   } catch (error) {
+
+     console.log(`error in toggle func`);
+    return null
+    
+   }
   }
 
   static async getVisibleLink(joinCode) {

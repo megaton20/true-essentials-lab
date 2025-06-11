@@ -26,6 +26,7 @@ const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
 const classRoutes = require('./routes/classRoutes')
 const adminRoutes = require('./routes/adminRoutes')
+const affiliateRoutes = require('./routes/affiliateRoutes')
 
 app.set('view engine', 'ejs');
 // app.use(ejsLayouts);
@@ -78,6 +79,7 @@ app.use('/auth', authRoutes); // open less secure routes
 app.use('/user',ensureAuthenticated, userRoutes); // open less secure routes
 app.use('/class',ensureAuthenticated, classRoutes); // open less secure routes
 app.use('/admin',ensureAuthenticated, adminRoutes); // open less secure routes
+app.use('/affiliate',ensureAuthenticated, affiliateRoutes); // open less secure routes
 
 
 app.use((req, res) => {

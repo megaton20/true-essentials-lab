@@ -281,7 +281,6 @@ main{
       padding: 1rem;
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-      background-color: #7ee88587;
     }
 
     .status-badge {
@@ -306,8 +305,20 @@ main{
       background-color: #ee8f99a9;
       color: #fff;
     }
+  
 
     .status-missed .status-badge {
+      background-color: #f8d7da;
+      color: #842029;
+    }
+
+      .status-closed {
+      border-color: #dc3545;
+      background-color: #ee8f99a9;
+      color: #fff;
+    }
+
+       .status-closed .status-badge {
       background-color: #f8d7da;
       color: #842029;
     }

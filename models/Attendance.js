@@ -20,6 +20,24 @@ class Attendance {
   }
 
 
+  static async approveAttendance(classId, userId, grant) {
+    
+    
+    try {
+      const result = await pool.query(`
+        UPDATE class_attendance
+        SET status = $1
+        WHERE session_id = $2 AND user_id = $3
+      `, [grant, classId, userId]);
+
+      return result.rowCount;
+      
+    } catch (err) {
+      console.error('Marking attendance error:', err);
+      return null;
+    }
+
+}
 
 static async markAttendance(sessionId, userId, id) {
   
@@ -50,7 +68,7 @@ static async markAttendance(sessionId, userId, id) {
 
   static async getAttendanceForSession(sessionId) {
     const res = await pool.query(`
-      SELECT u.id, u.full_name, a.joined_at
+      SELECT u.id, u.full_name,u.email, a.joined_at, a.status
       FROM class_attendance a
       JOIN users u ON a.user_id = u.id
       WHERE a.session_id = $1
