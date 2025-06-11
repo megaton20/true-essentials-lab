@@ -1,24 +1,28 @@
-     <header>
-       <div class="container">
-        <div class="nav">
-             <div class="logo"><a href="/"><img class="logo-image" src="./images/logo.png" alt="" srcset=""></a></div>
-             
-        <div class="navlinks">
-            
-             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="#">Courses</a></li>
-                <li><a href="#">About Us</a></li>
-            </ul>
-            
+<header class="bg-white shadow-sm">
+  <nav class="navbar navbar-expand-lg navbar-light container">
+    <a class="navbar-brand" href="/">
+      <img src="./images/logo.png" alt="Logo" class="logo-image" style="height: 40px;">
+    </a>
 
-            <div class="ml-10">
-                <a class="btn-basic primary-btn" href="/auth/login">Join project</a>
-            </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-                
-    
-        </div>
-        </div>
-       </div>
-     </header>
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link fw-medium" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-medium" href="#">Courses</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-medium" href="#">About Us</a>
+        </li>
+      </ul>
+      <div class="d-flex">
+        <a href="/auth/login" class="btn btn-primary">Join project</a>
+      </div>
+    </div>
+  </nav>
+</header>

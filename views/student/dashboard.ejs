@@ -42,125 +42,134 @@
         <div class="row">
           <!-- middle Message -->
           <div class="col-md-9">
-            <div class="container">
-              <section class="box mb-5">
-                <div class="he bg-grad text-white">
-                  <div class="icon">
-                    <img src="/images/zap.png" alt="zap">
-                  </div>
-                  <div class="text">
-                    <h3>Membership</h3>
-                    <p>Basic</p>
-                  </div>
+           <div class="container">
+
+          <% if (user.payment) { %>
+            <!-- ========== PAID CONTENT ========== -->
+
+            <section class="box mb-5">
+              <div class="he bg-grad text-white">
+                <div class="icon">
+                  <img src="/images/zap.png" alt="zap">
                 </div>
-                <div class="he">
-                 <div class="progress">
-                    <img src="/images/video-call.png" alt="zap" style="max-width: 100%;">
-                  </div>
-                  <div class="text">
-                    <h3>Avialable Videos<h3>
-                  </div>
+                <div class="text">
+                  <h3>Membership</h3>
+                  <p>Basic</p>
                 </div>
-                <div class="he">
-                  <div class="progress">
-                    <img src="/images/checked.png" alt="zap" style="max-width: 100%;">
-                  </div>
-                  <div class="text">
-                    <h3>Videos watched</h3>
-                  </div>
+              </div>
+              <div class="he">
+                <div class="progress">
+                  <img src="/images/video-call.png" alt="zap" style="max-width: 100%;">
                 </div>
-              </section>
+                <div class="text">
+                  <h3>Available Videos</h3>
+                </div>
+              </div>
+              <div class="he">
+                <div class="progress">
+                  <img src="/images/checked.png" alt="zap" style="max-width: 100%;">
+                </div>
+                <div class="text">
+                  <h3>Videos watched</h3>
+                </div>
+              </div>
+            </section>
 
-              <section class="week-wraper mt-5">
-                <p>Your History</p>
-                <div class="row">
-                  <div class="col-md-8">
-                    <div class="week mb-5">
-<div class="row">
-  <% sessions.forEach(function(data) { 
-    const scheduled = new Date(data.scheduled_at);
-    const now = new Date();
+            <section class="week-wraper mt-5">
+              <p>Your History</p>
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="week mb-5">
+                    <div class="row">
+                      <% sessions.forEach(function(data) { 
+                        const scheduled = new Date(data.scheduled_at);
+                        const now = new Date();
+                        const scheduledDate = new Date(scheduled.getFullYear(), scheduled.getMonth(), scheduled.getDate());
+                        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        let statusText = '';
+                        let statusClass = '';
+                        let showJoinButton = false;
+                        let showRejoinButton = false;
+                        const isToday = scheduledDate.getTime() === today.getTime();
+                        const isFuture = scheduledDate > today;
+                        const isPast = scheduledDate < today;
 
-    // Date-only comparison (ignore time)
-    const scheduledDate = new Date(scheduled.getFullYear(), scheduled.getMonth(), scheduled.getDate());
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        if (data.status === false) {
+                          statusText = 'Pending';
+                          statusClass = 'status-upcoming';
+                        } else if (data.is_joined && isToday && data.status === true) {
+                          statusText = 'Attended';
+                          statusClass = 'status-attended';
+                          showRejoinButton = true;
+                        } else if (!data.is_joined && (isToday || isFuture) && data.status === true) {
+                          statusText = isToday ? 'Today' : 'Coming Up';
+                          statusClass = isToday ? 'status-inprogress' : 'status-upcoming';
+                          showJoinButton = true;
+                        } else if (isPast && !data.is_joined) {
+                          statusText = 'Missed';
+                          statusClass = 'status-missed';
+                        } else {
+                          statusText = 'Done';
+                          statusClass = 'status-unknown';
+                        }
+                      %>
+                      <div class="col-md-4 mb-3">
+                        <div class="week-item class-card <%= statusClass %>">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="status-badge"><%= statusText %></span>
+                          </div>
+                          <p class="text-muted mb-0" style="font-size: 15px;"><%= data.title %></p>
+                          <p class="text-muted mb-0" style="font-size: 10px;">
+                            <%= scheduled.toLocaleString('en-US', {
+                              year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'
+                            }) %>
+                          </p>
 
-    let statusText = '';
-    let statusClass = '';
-    let showJoinButton = false;
-    let showRejoinButton = false;
-
-    const isToday = scheduledDate.getTime() === today.getTime();
-    const isFuture = scheduledDate > today;
-    const isPast = scheduledDate < today;
-
-    if (data.status === false) {
-      statusText = 'Pending';
-      statusClass = 'status-upcoming';
-    } else if (data.is_joined && isToday && data.status === true) {
-      statusText = 'Attended';
-      statusClass = 'status-attended';
-      showRejoinButton = true;
-    } else if (!data.is_joined && (isToday || isFuture) && data.status === true) {
-      statusText = isToday ? 'Today' : 'Coming Up';
-      statusClass = isToday ? 'status-inprogress' : 'status-upcoming';
-      showJoinButton = true;
-    } else if (isPast && !data.is_joined) {
-      statusText = 'Missed';
-      statusClass = 'status-missed';
-    } else {
-      statusText = 'done';
-      statusClass = 'status-unknown';
-    }
-  %>
-
-  <div class="col-md-4 mb-3">
-    <div class="week-item class-card <%= statusClass %>">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <span class="status-badge"><%= statusText %></span>
-      </div>
-      <p class="text-muted mb-0" style="font-size: 15px;"><%= data.title %></p>
-      <p class="text-muted mb-0" style="font-size: 10px;">
-        <%= scheduled.toLocaleString('en-US', {
-          year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'
-        }) %>
-      </p>
-
-      <% if (data.status === false) { %>
-        <p class="text-muted mt-2">Please wait...</p>
-      <% } else if (showRejoinButton) { %>
-        <a href="/class/<%= data.join_code %>" class="btn btn-sm btn-outline-success mt-2">Rejoin</a>
-      <% } else if (showJoinButton) { %>
-        <a href="/class/<%= data.join_code %>" class="btn btn-sm btn-outline-primary mt-2">Join</a>
-      <% } %>
-    </div>
-  </div>
-  <% }) %>
-</div>
-
-
-
-                    </div>
-
-                  </div>
-
-                  <div class="col-md-4 mb-5">
-                    <div class=" rounded d-md-flex align-items-center justify-content-center bg-grad text-white p-5">
-                      <div class="text-center">
-                        <blockquote class="blockquote">
-                          <p>"Knowledge is power. Information is liberating. Education is the premise of progress."</p>
-                        </blockquote>
-                        <footer class="blockquote-footer text-white-50 mt-3">— Kofi Annan</footer>
+                          <% if (data.status === false) { %>
+                            <p class="text-muted mt-2">Please wait...</p>
+                          <% } else if (showRejoinButton) { %>
+                            <a href="/class/<%= data.join_code %>" class="btn btn-sm btn-outline-success mt-2">Rejoin</a>
+                          <% } else if (showJoinButton) { %>
+                            <a href="/class/<%= data.join_code %>" class="btn btn-sm btn-outline-primary mt-2">Join</a>
+                          <% } %>
+                        </div>
                       </div>
+                      <% }) %>
                     </div>
                   </div>
                 </div>
 
-              </section>
+                <div class="col-md-4 mb-5">
+                  <div class="rounded d-md-flex align-items-center justify-content-center bg-grad text-white p-5">
+                    <div class="text-center">
+                      <blockquote class="blockquote">
+                        <p>"Knowledge is power. Information is liberating. Education is the premise of progress."</p>
+                      </blockquote>
+                      <footer class="blockquote-footer text-white-50 mt-3">— Kofi Annan</footer>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-       
+          <% } else { %>
 
+            <!-- ========== UNPAID USERS SEE THIS ========== -->
+            <div class="text-center p-5 bg-light border rounded">
+              <h3 class="mb-4">Unlock Full Access</h3>
+              <p class="lead">Pay ₦3,000 to unlock all classes and history features.</p>
+              <button 
+                class="btn btn-primary mt-3"
+                onclick="payWithPaystack()"
+              >
+                Pay Now with Paystack
+              </button>
             </div>
+
+
+          <% } %>
+        </div>
+
           </div>
 
           <!-- right side -->
@@ -223,6 +232,28 @@
       }
 
       generateCalendar(month, year);
+    </script>
+
+
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script>
+      function payWithPaystack() {
+        var handler = PaystackPop.setup({
+          key: '<%= process.env.PAYSTACK_PUBLIC_KEY %>', // Replace with your public key
+          email: '<%= user.email %>',
+          amount: 300000, // kobo (₦3,000)
+          currency: 'NGN',
+          ref: '' + Math.floor((Math.random() * 1000000000) + 1),
+          callback: function(response) {
+            // You can make an AJAX call here to verify payment and update the backend
+            window.location.href = "/payment/verify/" + response.reference;
+          },
+          onClose: function() {
+            alert('Payment cancelled');
+          }
+        });
+        handler.openIframe();
+      }
     </script>
 
 </body>

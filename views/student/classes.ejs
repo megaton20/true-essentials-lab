@@ -28,68 +28,74 @@
           <!-- top info ends -->
         </div>
 
-        <div class="row">
-          <!-- middle Message -->
-          <div class="col-md-9">
             <div class="container">
 
               <section class="week-wraper mt-5">
                 <p>Your History</p>
                 <div class="row">
                   <div class="col-md-8">
-                    <div class="week mb-5">
 
                     <div class="row">
                         <% sessions.forEach(function(data) { 
                           const scheduled = new Date(data.scheduled_at);
                           const now = new Date();
 
+                          // Date-only comparison (ignore time)
+                          const scheduledDate = new Date(scheduled.getFullYear(), scheduled.getMonth(), scheduled.getDate());
+                          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
                           let statusText = '';
                           let statusClass = '';
                           let showJoinButton = false;
+                          let showRejoinButton = false;
 
-                          if (data.is_joined) {
-                            statusText = 'Attended';
-                            statusClass = 'status-attended';
-                            showJoinButton = true;   // show join button for rejoining
-                          } else if (scheduled > now) {
-                            statusText = 'Coming Up';
+                          const isToday = scheduledDate.getTime() === today.getTime();
+                          const isFuture = scheduledDate > today;
+                          const isPast = scheduledDate < today;
+
+                          if (data.status === false) {
+                            statusText = 'Pending';
                             statusClass = 'status-upcoming';
-                            showJoinButton = true;   // join button for upcoming classes
-                          } else if (data.status === true) {
+                          } else if (data.is_joined && isToday && data.status === true) {
                             statusText = 'Attended';
                             statusClass = 'status-attended';
-                            showJoinButton = false;  // attended but not joined? rare, so no join button
-                          } else {
+                            showRejoinButton = true;
+                          } else if (!data.is_joined && (isToday || isFuture) && data.status === true) {
+                            statusText = isToday ? 'Today' : 'Coming Up';
+                            statusClass = isToday ? 'status-inprogress' : 'status-upcoming';
+                            showJoinButton = true;
+                          } else if (isPast && !data.is_joined) {
                             statusText = 'Missed';
                             statusClass = 'status-missed';
-                            showJoinButton = false;  // missed classes no join button
+                          } else {
+                            statusText = 'done';
+                            statusClass = 'status-unknown';
                           }
-                      %>
-                        <div class="col-md-6 mb-3">
+                        %>
+
+                        <div class="col-md-4 mb-3">
                           <div class="week-item class-card <%= statusClass %>">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                               <span class="status-badge"><%= statusText %></span>
                             </div>
-                            <p class="text-muted mb-0"><%= scheduled.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' }) %></p>
+                            <p class="text-muted mb-0" style="font-size: 15px;"><%= data.title %></p>
+                            <p class="text-muted mb-0" style="font-size: 10px;">
+                              <%= scheduled.toLocaleString('en-US', {
+                                year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'
+                              }) %>
+                            </p>
 
-                            <% if (showJoinButton) { %>
-                              <a href="/class/<%= data.join_code %>" class="btn btn-sm btn-outline-primary mt-2">
-                                <% if (statusText === 'Attended') { %>
-                                  Rejoin
-                                <% } else { %>
-                                  Join
-                                <% } %>
-                              </a>
+                            <% if (data.status === false) { %>
+                              <p class="text-muted mt-2">Please wait...</p>
+                            <% } else if (showRejoinButton) { %>
+                              <a href="/class/<%= data.join_code %>" class="btn btn-sm btn-outline-success mt-2">Rejoin</a>
+                            <% } else if (showJoinButton) { %>
+                              <a href="/class/<%= data.join_code %>" class="btn btn-sm btn-outline-primary mt-2">Join</a>
                             <% } %>
                           </div>
                         </div>
-                      <% }) %>
-
-                  </div>
-
-                    </div>
-
+                        <% }) %>
+                      </div>
                   </div>
 
                   <div class="col-md-4 mb-5">
@@ -105,15 +111,8 @@
                 </div>
 
               </section>
-
-       
-
             </div>
-          </div>
 
-          <!-- right side -->
-        <%-include ('./partials/meta-info') %>
-        </div>
 
       </div>
     </div>

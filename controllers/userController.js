@@ -10,7 +10,7 @@ exports.getDashboard = async (req, res) => {
         
     res.render('./student/dashboard',{
         sessions,
-        user:{name: req.user.full_name, email: req.user.email}
+        user:{name: req.user.full_name, email: req.user.email, payment:req.user.has_paid}
     })
 }
 

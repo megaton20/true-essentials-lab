@@ -21,6 +21,12 @@ router.get('/verify-email-sent', ensureAuthenticated, forwardVerifyAlert, async 
             user: {name: req.user.full_name, email: req.user.email}
       })
 })
+
+router.post('/verify-email-sent', ensureAuthenticated, forwardVerifyAlert, auth.verifyEmailRequest)
+router.get('/verify-email',ensureAuthenticated, forwardVerifyAlert,auth.verifyEmailCallBack);
+
+
+
 router.get('/verify-email-completed', ensureAuthenticated, forwardVerifyAlert, async (req, res)=>{
       return res.render('verify-success',{
             user: {name: req.user.full_name, email: req.user.email}
@@ -39,7 +45,6 @@ router.get('/reset-success', forwardAuthenticated, async (req, res) => {
       return  res.render('reset-success',);
 })
 
-router.get('/verify',ensureAuthenticated, auth.verifyEmail);
 
 
 

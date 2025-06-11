@@ -21,15 +21,24 @@
       <!-- Confirmation Message -->
       <div class="col-md-6 d-flex align-items-center justify-content-center bg-white shadow">
         <div class="w-100 px-4 text-center" style="max-width: 500px;">
+           <%- include('./partials/messages') %>
+
           <a href="/"><img src="/images/logo.png" alt="Logo" class="img-fluid mb-4" style="max-height: 60px;" /></a>
           <h2 class="mb-3 text-success">Verification Email Sent!</h2>
           <p class="text-muted mb-4">We've sent a verification code to <strong><%= user.email %></strong>. Please check your inbox and follow the link to verify your account.</p>
 
-          <div class="d-grid mb-3">
-            <a href="/logout" class="btn btn-success">Or quit!</a>
-          </div>
+        
 
-          <p class="small text-muted">Didn’t receive the email? <a href="/auth/send-verification">Resend it</a></p>
+          <p class="small text-muted">Didn’t receive the email?
+             
+            <form action="/auth/verify-email-sent" method="post" class="status-form">
+                 <input type="hidden" value="<%=user.email%>" name="email">
+                 <button type="submit" class="btn btn-success w-100"><i class="fas fa-exclamation-circle"></i> Resend it</button>
+               </form>
+
+          <div class="d-grid mt-3">
+            <a href="/logout" class="btn btn-danger">Or quit!</a>
+          </div>
         </div>
       </div>
 
@@ -39,7 +48,7 @@
           <blockquote class="blockquote">
             <p>"Sometimes the smallest step in the right direction ends up being the biggest step of your life."</p>
           </blockquote>
-          <footer class="blockquote-footer text-white-50 mt-3">— Techathon Team <a href="/auth/verify-email-completed">simulate</a></footer>
+          <footer class="blockquote-footer text-white-50 mt-3">— Techathon Team </footer>
         </div>
       </div>
 

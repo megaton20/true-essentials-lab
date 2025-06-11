@@ -5,12 +5,14 @@ const { v4: uuidv4 } = require('uuid');
 
 
 // Affiliate actions
-router.post('/affiliate/apply', affiliateController.applyAsAffiliate);
-router.get('/affiliate/code', affiliateController.getReferralCode);
-router.post('/affiliate/redeem', affiliateController.redeemReferral);
+router.get('/signup', affiliateController.signup);
 
-router.get('/affiliate/stats', affiliateController.getAffiliateStats);
-router.post('/affiliate/request-payout', affiliateController.requestAffiliatePayout);
+router.post('/apply', affiliateController.applyAsAffiliate);
+router.get('/code', affiliateController.getReferralCode);
+router.post('/redeem', affiliateController.redeemReferral);
+
+router.get('/stats', affiliateController.getAffiliateStats);
+router.post('/request-payout', affiliateController.requestAffiliatePayout);
 
 
 

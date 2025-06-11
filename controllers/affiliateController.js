@@ -1,13 +1,27 @@
 const Affiliate = require('../models/Affiliate');
+const { v4: uuidv4 } = require('uuid');
 
 const AffiliateController = {
+      async signup(req, res) {
+    try {
+    //   const result = await Affiliate.applyAsAffiliate(req.user.id, applicationText);
+      res.render('affiliate-form')
+    } catch (err) {
+        console.log(err);
+        
+    //   res.status(400).json({ error: err.message });
+    }
+  },
+
   async applyAsAffiliate(req, res) {
     try {
       const { applicationText } = req.body;
       const result = await Affiliate.applyAsAffiliate(req.user.id, applicationText);
       res.json(result);
     } catch (err) {
-      res.status(400).json({ error: err.message });
+        console.log(err);
+        
+    //   res.status(400).json({ error: err.message });
     }
   },
 

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous" />
+  <title>Affiliate Application | YourApp</title>
+
+  <style>
+    .bg-grad {
+      background: linear-gradient(135deg, #0eb819, #076a25);
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid vh-100">
+    <div class="row h-100">
+
+      <!-- Left Column (Form) -->
+      <div class="col-md-6 d-flex align-items-center justify-content-center bg-white shadow">
+        <div class="w-100 px-4" style="max-width: 500px;">
+          <div class="text-center mb-4">
+            <img class="img-fluid mb-3" style="max-height: 60px;" src="/images/affiliate-icon.png" alt="Affiliate Icon" />
+            <h2 class="fw-bold">Apply to Become an Affiliate</h2>
+            <p class="text-muted small">Join our mission and start earning by promoting YourApp.</p>
+          </div>
+
+          <form action="/affiliate/submit" method="POST" class="mt-3">
+
+            <div class="mb-3">
+              <label for="refSource" class="form-label">How did you hear about us?</label>
+              <select class="form-select" id="refSource" name="refSource" required>
+                <option value="">Choose one</option>
+                <option value="social">Social Media</option>
+                <option value="friend">Friend or Referral</option>
+                <option value="ad">Online Advertisement</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="experience" class="form-label">Do you have affiliate marketing experience?</label>
+              <select class="form-select" id="experience" name="experience" required>
+                <option value="">Choose one</option>
+                <option value="yes">Yes, I have experience</option>
+                <option value="no">No, I'm new to this</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="whyJoin" class="form-label">Why do you want to join our affiliate program?</label>
+              <textarea class="form-control" id="whyJoin" name="whyJoin" rows="4" placeholder="Share your motivation..." required></textarea>
+            </div>
+
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="agree" required>
+              <label class="form-check-label" for="agree">
+                I agree to the <a href="/info/affiliate/terms" target="_blank">Affiliate Terms & Conditions</a>.
+              </label>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">Submit Application</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column (Quote) -->
+      <div class="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-grad text-white p-5">
+        <div class="text-center">
+          <blockquote class="blockquote">
+            <p>"Opportunities don't happen. You create them."</p>
+          </blockquote>
+          <footer class="blockquote-footer text-white-50 mt-3">— Chris Grosser</footer>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+</body>
+</html>

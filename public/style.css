@@ -29,52 +29,14 @@ p{
     --bg-dark : #0d0c0c;
 }
 body{
-    background-color: var(--bg-dark) !important;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
-
-
-
 
 .primary-text{
     color: var(--primary-color);
 }
-header{
-    background-color: var(--bg-dark);
-    height: 50px;
-    padding: 10px 10px;
-    position: fixed;
-    width: 100%;
-    top: 0;
-}
-.nav{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.logo-image{
-    max-width: 20%;
-}
 
-.navlinks{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.navlinks ul li{
- display: inline;
- margin-left: 20px;
- color: var(--text-light);
-}
 
-.navlinks ul li a{
- color: var(--text-light);
- transition: .2s ease-in-out;
-}
-
-.navlinks ul li a:hover{
- color: var(--primary-color-light);
-}
 .center{
     width: 90%;
     margin: 0px auto;

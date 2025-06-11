@@ -56,4 +56,15 @@ router.get('/logout', (req, res) => {
   });
 });
 
+
+
+router.get('/info/affiliate',(req, res)=>{
+  res.render('affiliate')
+});
+
+router.get('/info/affiliate/terms',(req, res)=>{
+  res.render('affiliate-terms')
+});
+
+
 module.exports = router

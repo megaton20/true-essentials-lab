@@ -9,6 +9,8 @@ class User {
         id VARCHAR PRIMARY KEY,
         full_name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
+        token_expires TIMESTAMP DEFAULT NOW(),
+        token VARCHAR,
         phone TEXT NOT NULL,
         password_hash TEXT NOT NULL,
         role TEXT DEFAULT 'student',
@@ -57,9 +59,6 @@ class User {
     }
   }
 
-  static async verifyEmail(userId) {
-    await pool.query(`UPDATE users SET is_email_verified = true WHERE id = $1;`, [userId]);
-  }
 
   static async markAsPaid(userId, discount, reference) {
     await pool.query(`
