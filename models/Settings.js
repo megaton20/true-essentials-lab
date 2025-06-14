@@ -8,37 +8,40 @@ class Setting {
   static async init() {
     const createTableQuery = `
         CREATE TABLE settings (
-          key TEXT PRIMARY KEY,
-          value TEXT NOT NULL
+           id VARCHAR PRIMARY KEY,
+           is_registration_open BOOLEAN DEFAULT FALSE,
+           is_payment_open BOOLEAN DEFAULT TRUE
         );
     `;
-
       await createTableIfNotExists('settings', createTableQuery);
   }
 
 
-  static async get(key) {
-    const res = await pool.query(`SELECT value FROM settings WHERE key = $1`, [key]);
-    return res.rows[0]?.value;
+  static async getAll() {
+   const {rows:settings} = await pool.query('SELECT * FROM settings');
+    return settings
   }
 
-  static async set(key, value) {
-    await pool.query(`
-      INSERT INTO settings (key, value)
-      VALUES ($1, $2)
-      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
-    `, [key, value]);
-  }
+  static async toggleColumn(column) {
+    const validColumns = ['is_registration_open', 'is_payment_open'];
+    if (!validColumns.includes(column)) {
+      throw new Error('Invalid setting column');
+    }
 
-  static async isRegistrationOpen() {
-    const value = await this.get('registrationOpen');
-    return value === 'true';
-  }
+    // Ensure row exists
+    const { rows } = await pool.query('SELECT * FROM settings LIMIT 1');
+    if (rows.length === 0) {
+      await pool.query(`
+        INSERT INTO settings (id, is_registration_open, is_payment_open)
+        VALUES ($1, $2, $3)
+      `, ['default', false, true]);
+    }
 
-  static async isPaymentEnabled() {
-    const value = await this.get('paymentEnabled');
-    return value === 'true';
+    // Toggle the column
+    await pool.query(`UPDATE settings SET ${column} = NOT ${column}`);
+    return `${column.replace(/_/g, ' ')} toggled successfully.`;
   }
+  
 }
 
 module.exports = Setting;

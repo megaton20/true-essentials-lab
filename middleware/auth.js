@@ -6,11 +6,20 @@ module.exports =  {
       if (req.user.is_email_verified) {
         console.log("already verified email...");
         
-       return res.redirect('/user')
+       return res.redirect('/handler')
       }
       return next()
     },
-
+    
+    forwardAlreadyAffiliate: function(req, res, next){
+      
+      if (req.user.is_affiliate) {
+      
+          req.flash('error_msg', `already an affiliate!`)
+       return res.redirect('/affiliate/dashboard')
+      }
+      return next()
+    },
      ensureVerifiedEmail: function(req, res, next){
       
       if (req.user.is_email_verified) {

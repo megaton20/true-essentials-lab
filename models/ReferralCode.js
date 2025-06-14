@@ -45,11 +45,18 @@ class ReferralCode {
   }
 
   static async isCodeValid(code) {
-    const res = await pool.query(`
-      SELECT * FROM referral_codes
-      WHERE code = $1 AND is_active = true AND (expires_at IS NULL OR expires_at > NOW());
-    `, [code]);
-    return res.rows[0];
+        try {
+        const res = await pool.query(`SELECT * FROM referrers WHERE referral_code = $1`, [code]);
+        
+        if (res.rows.length === 0) {
+          return null; // No user found with the code
+        }
+
+        return res.rows[0];
+      } catch (error) {
+        console.error('Error fetching referrer by code:', error.message);
+        return null;
+      }
   }
 
   static async create({ code, location, discount, maxUses, expires, id }) {

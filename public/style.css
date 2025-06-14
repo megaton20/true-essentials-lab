@@ -111,6 +111,23 @@ main{
     border: 1px solid var(--primary-color) !important;
 }
 
+.class-card {
+  height: 150px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.class-card h6 {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.class-card .btn {
+  font-size: 12px;
+  padding: 4px 10px;
+}
 
 
     .bg-grad {

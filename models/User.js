@@ -5,36 +5,47 @@ class User {
 
   static async init() {
     const createQuery = `
-      CREATE TABLE users (
-        id VARCHAR PRIMARY KEY,
-        full_name TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        token_expires TIMESTAMP DEFAULT NOW(),
-        token VARCHAR,
-        phone TEXT NOT NULL,
-        password_hash TEXT NOT NULL,
-        role TEXT DEFAULT 'student',
-        is_email_verified BOOLEAN DEFAULT false,
-        referral_code TEXT,
-        has_paid BOOLEAN DEFAULT false,
-        discount_applied FLOAT DEFAULT 0,
-        payment_reference TEXT,
-        created_at TIMESTAMP DEFAULT NOW(),
-        updated_at TIMESTAMP DEFAULT NOW()
+     CREATE TABLE users (
+    id VARCHAR PRIMARY KEY,
+    full_name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    phone TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
+
+    token_expires TIMESTAMP,
+    token VARCHAR,
+
+    bank_name VARCHAR,
+    account_number VARCHAR,
+    account_name VARCHAR,
+
+    role TEXT DEFAULT 'student',
+    is_email_verified BOOLEAN DEFAULT FALSE,
+    is_affiliate BOOLEAN DEFAULT FALSE,
+
+    referral_code TEXT UNIQUE,
+    balance NUMERIC(12, 2) DEFAULT 0.00,
+
+    has_paid BOOLEAN DEFAULT FALSE,
+    discount_applied NUMERIC(5, 2) DEFAULT 0.00,
+    payment_reference TEXT,
+
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
       );
     `;
     await createTableIfNotExists('users', createQuery);
     
   }
 
-  static async create({ fullName, email, passwordHash, referralCode, id }) {
+  static async create({ fullName, email, passwordHash, id }) {
     const phone = 1234
     try {
           const result = await pool.query(`
-      INSERT INTO users (full_name, email, password_hash, referral_code, id, phone)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO users (full_name, email, password_hash, id, phone)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *;
-    `, [fullName, email, passwordHash, referralCode, id, phone]);
+    `, [fullName, email, passwordHash, id, phone]);
 
     return result.rows[0];
     } catch (error) {
@@ -44,20 +55,18 @@ class User {
     }
   }
 
-  static async findByEmail(email) {
-    try {
-       const result = await pool.query(`SELECT * FROM users WHERE email = $1;`, [email]);
-
-       if (result.rows.length > 0) {
-        return result.rows[0];
-      }
-      return [];
-    } catch (error) {
-      
-      console.log(error);
-      return null
-    }
+static async findByEmail(email) {
+  try {
+    const { rows } = await pool.query(
+      `SELECT * FROM users WHERE email = $1 LIMIT 1`,
+      [email]
+    );
+    return rows[0] || null;
+  } catch (error) {
+    console.error('Error in findByEmail:', error);
+    return null;
   }
+}
 
 
   static async markAsPaid(userId, discount, reference) {

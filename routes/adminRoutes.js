@@ -29,12 +29,18 @@ router.put('/referral/:id', ensureAdmin, adminController.findReferralCode);
 
 
 
-router.post('/affiliate/approve/:userId',  affiliateController.approveAffiliate); // admin only
-router.post('/affiliate/mark-paid/:userId',  affiliateController.markReferredUserAsPaid); // admin only
+router.get('/affiliate/applications',  affiliateController.affiliateApplications); 
+router.get('/affiliate/applications/:id',  affiliateController.viewAnApplication); 
+router.put('/affiliate/applications/:id/:status',  affiliateController.approveAffiliate); 
+router.post('/affiliate/mark-paid/:userId',  affiliateController.markReferredUserAsPaid); 
+router.post('/affiliate/mark-paid/:userId',  affiliateController.markReferredUserAsPaid); 
 
 
+// View settings page
+router.get('/setting', ensureAdmin, adminController.Setting);
+// Toggle setting
+router.put('/setting/toggle/:column',ensureAdmin, adminController.toggleSetting);
 
-router.post('/setting', ensureAdmin, adminController.toggleSetting);
 
 // router.get('/attendance', ensureAdmin, adminController.);
 router.get('/session/:id/attendance',ensureAdmin, adminController.getAttendanceForSession);

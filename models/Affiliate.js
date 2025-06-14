@@ -1,5 +1,9 @@
 
+const nodemailer = require('nodemailer')
 const createTableIfNotExists = require('../utils/createTableIfNotExists');
+const pool = require('../config/db')
+const { v4: uuidv4 } = require('uuid');
+const User = require('./User');
  
  
  class Affiliate {
@@ -14,6 +18,8 @@ const createTableIfNotExists = require('../utils/createTableIfNotExists');
                 id VARCHAR PRIMARY KEY,
                 user_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                 application_text TEXT,
+                ref_source TEXT,
+                experience VARCHAR,
                 status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
                 reviewed_by VARCHAR REFERENCES users(id),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -36,9 +42,8 @@ const createTableIfNotExists = require('../utils/createTableIfNotExists');
             id VARCHAR PRIMARY KEY,
             referrer_id VARCHAR NOT NULL REFERENCES referrers(id) ON DELETE CASCADE,
             referred_user_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-            redeemed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            paid BOOLEAN DEFAULT FALSE,
-            incentive_granted BOOLEAN DEFAULT FALSE
+            redeemed_at TIMESTAMP DEFAULT NULL,
+            has_earned BOOLEAN DEFAULT FALSE
         );
 
         `;
@@ -63,8 +68,8 @@ const createTableIfNotExists = require('../utils/createTableIfNotExists');
   }
 
  // Apply to be an affiliate
-  static async applyAsAffiliate(userId, applicationText) {
-    const existing = await db.query(
+  static async applyAsAffiliate(userId, refSource, experience, whyJoin) {
+    const existing = await pool.query(
       'SELECT * FROM affiliate_applications WHERE user_id = $1 AND status = $2',
       [userId, 'pending']
     );
@@ -73,41 +78,153 @@ const createTableIfNotExists = require('../utils/createTableIfNotExists');
       throw new Error('You already have a pending application.');
     }
 
-    await db.query(
-      `INSERT INTO affiliate_applications (user_id, application_text) VALUES ($1, $2)`,
-      [userId, applicationText]
+   const result =  await pool.query(
+      `INSERT INTO affiliate_applications (user_id, ref_source, experience, application_text, id) VALUES ($1, $2, $3, $4, $5)`,
+      [userId, refSource, experience, whyJoin, uuidv4()]
     );
 
-    return { message: 'Application submitted.' };
+    return result.rowCount
+
   }
+ 
+
+  // all pending applications alone
+  static async getAllApplications() {
+    const result = await pool.query('SELECT * FROM affiliate_applications ');
+    return result.rows
+  }
+
+static async getApplicationById(applicationId) {
+  const res = await pool.query(`
+    SELECT 
+      ap.*, 
+      u.id AS user_id, 
+      u.full_name, 
+      u.email, 
+      u.is_affiliate
+    FROM affiliate_applications ap
+    JOIN users u ON ap.user_id = u.id
+    WHERE ap.id = $1
+  `, [applicationId]);
+
+  return res.rows[0]; 
+}
+
+
+  static async getAffiliateByUserId(userId) {
+    const isAffiliate = await pool.query('SELECT * FROM referrers WHERE user_id = $1',[userId]);
+  
+    return  isAffiliate
+  }
+
+  static async getPendingApplications() {
+    const result = await pool.query(
+      'SELECT * FROM affiliate_applications WHERE status = $1',['pending']
+    );
+
+    return result.rows
+
+  }
+
 
   // Admin approves application
-  static async approveAffiliate(userId, adminId) {
-    // Update user role
-    await db.query(`UPDATE users SET role = 'affiliate' WHERE id = $1`, [userId]);
 
-    // Mark application as approved
-    await db.query(
+static async approveAffiliate(applicationId, status, adminId, userId) {
+  try {
+    const user = await User.getById(userId);
+
+    if (!user) throw new Error("User not found");
+
+    // Update user's affiliate flag
+    await pool.query(
+      `UPDATE users SET is_affiliate = $1 WHERE id = $2`,
+      [status === 'approved', userId]
+    );
+
+    // Update the application status
+    await pool.query(
       `UPDATE affiliate_applications
-       SET status = 'approved', reviewed_by = $1, reviewed_at = NOW()
-       WHERE user_id = $2 AND status = 'pending'`,
-      [adminId, userId]
+       SET status = $1, reviewed_by = $2, reviewed_at = NOW()
+       WHERE id = $3`,
+      [status, adminId, applicationId]
     );
 
-    // Generate referral code
-    const referralCode = uuidv4().split('-')[0]; // short unique code
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      secure: false,
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    });
 
-    await db.query(
-      `INSERT INTO referrers (user_id, referral_code) VALUES ($1, $2)`,
-      [userId, referralCode]
-    );
+    // Only handle referral setup if approved
+    if (status === 'approved') {
+      const isReferrer = await Affiliate.getAffiliateByUserId(userId);
 
-    return { message: 'Affiliate approved', referralCode };
+      let referralCode;
+      if (isReferrer.rows.length === 0) {
+        referralCode = uuidv4().split('-')[0];
+        await pool.query(
+          `INSERT INTO referrers (user_id, referral_code, id) VALUES ($1, $2, $3)`,
+          [userId, referralCode, uuidv4()]
+        );
+      } else {
+        referralCode = isReferrer.rows[0].referral_code;
+      }
+
+      const referralLink = `${process.env.LIVE_DIRR || 'http://localhost:' + process.env.PORT}/auth/register/${referralCode}`;
+
+      // Send approval email
+      await transporter.sendMail({
+        from: { name: "TEA", address: process.env.EMAIL },
+        to: user.email,
+        subject: 'You’ve been approved as an Affiliate!',
+        html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+            <h2>Hi ${user.name || ''},</h2>
+            <p>We’re excited to let you know that your affiliate application has been <strong>approved</strong>! 🎉</p>
+            <p>Here’s your unique referral link:</p>
+            <p><a href="${referralLink}" style="color: #2b6cb0;">${referralLink}</a></p>
+            <p>You can start sharing this link in your promotions to earn commissions.</p>
+            <p>If you have any questions, feel free to reach out.</p>
+            <p>Welcome aboard!<br>The Affiliate Team</p>
+          </div>
+        `
+      });
+    } else {
+      // Send rejection or notice email
+      await transporter.sendMail({
+        from: { name: "TEA", address: process.env.EMAIL },
+        to: user.email,
+        subject: 'Affiliate Application Status Update',
+        html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+            <h2>Hi ${user.name || ''},</h2>
+            <p>Your affiliate application has been updated to: <strong>${status}</strong>.</p>
+            ${status === 'pending' ? 
+              '<p>Your application is still under review. We’ll get back to you soon!</p>' : 
+              '<p>Unfortunately, your application has not been approved at this time. Feel free to reapply in the future or contact us for more details.</p>'
+            }
+            <p>Thank you,<br>The Affiliate Team</p>
+          </div>
+        `
+      });
+    }
+
+    return { success: true, message: `Affiliate status updated to "${status}" and email sent.` };
+
+  } catch (error) {
+    console.error("Error in approveAffiliate:", error.message);
+    return { success: false, message: error.message };
   }
+}
+
 
   // Get user's referral code
   static async getReferralCode(userId) {
-    const res = await db.query(
+    const res = await pool.query(
       `SELECT referral_code FROM referrers WHERE user_id = $1`,
       [userId]
     );

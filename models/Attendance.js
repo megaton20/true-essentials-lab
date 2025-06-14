@@ -12,6 +12,9 @@ class Attendance {
         session_id VARCHAR REFERENCES class_sessions(id) ON DELETE CASCADE,
         user_id VARCHAR REFERENCES users(id) ON DELETE CASCADE,
         joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_joined BOOLEAN DEFAULT FALSE,
+        welcome_sent BOOLEAN DEFAULT FALSE,
+        status BOOLEAN DEFAULT FALSE,
         UNIQUE(session_id, user_id)
       );
     `;
@@ -43,11 +46,11 @@ static async markAttendance(sessionId, userId, id) {
   
   try {
     const insertResult = await pool.query(`
-      INSERT INTO class_attendance (session_id, user_id, id)
-      VALUES ($1, $2, $3)
+      INSERT INTO class_attendance (session_id, user_id, id,is_joined )
+      VALUES ($1, $2, $3, $4)
       ON CONFLICT DO NOTHING
       RETURNING *
-    `, [sessionId, userId, id]);
+    `, [sessionId, userId, id, true]);
 
     if (insertResult.rows.length > 0) {
       return insertResult.rows[0]; // new attendance marked
@@ -68,7 +71,7 @@ static async markAttendance(sessionId, userId, id) {
 
   static async getAttendanceForSession(sessionId) {
     const res = await pool.query(`
-      SELECT u.id, u.full_name,u.email, a.joined_at, a.status
+      SELECT u.id, u.full_name,u.email, a.joined_at
       FROM class_attendance a
       JOIN users u ON a.user_id = u.id
       WHERE a.session_id = $1

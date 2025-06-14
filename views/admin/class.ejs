@@ -30,107 +30,113 @@
 
           <div class="row">
             <div class="col-md-4">
- <!-- Class Info -->
-          <div class="mt-5 p-4 border rounded shadow-sm bg-light">
-            <h3 class="mb-3"><%= singleClass.title %></h3>
+              <div class="mt-5 p-4 border rounded shadow-sm bg-light">
+                <h3 class="mb-3"><%= singleClass.title %></h3>
 
-            <div class="mb-3">
-              <strong>Description:</strong>
-              <p class="text-muted"><%= singleClass.description || 'No description provided.' %></p>
-            </div>
+                <div class="mb-3">
+                  <strong>Description:</strong>
+                  <p class="text-muted"><%= singleClass.description || 'No description provided.' %></p>
+                </div>
 
-            <div class="mb-3">
-              <strong>Scheduled Time:</strong>
-              <p class="text-muted"><%= new Date(singleClass.scheduled_at).toLocaleString() %></p>
-            </div>
+                <div class="mb-3">
+                  <strong>Created By:</strong>
+                  <p class="text-muted"><%= singleClass.crated_by %></p>
+                </div>
 
-            <div class="mb-3">
-              <strong>Meet Link:</strong>
-              <p><a href="<%= singleClass.meet_link %>" target="_blank" class="text-decoration-underline"><%= singleClass.meet_link %></a></p>
-            </div>
-
-        <div class="mb-3">
-            <strong>Show Link:</strong>
-            <p><%= singleClass.show_link %></p>
-
-            <form action="/admin/class/<%= singleClass.id %>/<%= singleClass.show_link ? 'false' : 'true' %>" method="post">
-              <input type="hidden" name="_method" value="PUT">
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="toggleShowLink"
-                  onchange="this.form.submit()"
-                  <%= singleClass.show_link ? 'checked' : '' %>
-                >
-                <label class="form-check-label" for="toggleShowLink">
-                  Toggle Show Link
-                </label>
+                <div class="mb-3">
+                  <strong>Status:</strong>
+                  <span class="badge <%= singleClass.status ? 'bg-success' : 'bg-secondary' %>">
+                    <%= singleClass.status ? 'Active' : 'Inactive' %>
+                  </span>
+                </div>
               </div>
-            </form>
-          </div>
+            </div>
+             <div class="col-md-4">
+              <div class="mt-5 p-4 border rounded shadow-sm bg-light">
 
+                <div class="mb-3">
+                  <strong>Scheduled Time:</strong>
+                  <p class="text-muted"><%= new Date(singleClass.scheduled_at).toLocaleString() %></p>
+                </div>
 
+                <div class="mb-3">
+                  <strong>Meet Link:</strong>
+                  <p><a href="<%= singleClass.meet_link %>" target="_blank" class="text-decoration-underline"><%= singleClass.meet_link %></a></p>
+                </div>
 
             <div class="mb-3">
-              <strong>Join Code:</strong>
-              <p class="text-muted"><%= singleClass.join_code || 'Not available' %></p>
-            </div>
+                <strong>Show Link:</strong>
+                <p><%= singleClass.show_link %></p>
 
-            <div class="mb-3">
-              <strong>Created By:</strong>
-              <p class="text-muted"><%= singleClass.crated_by %></p>
-            </div>
-
-            <div class="mb-3">
-              <strong>Status:</strong>
-              <span class="badge <%= singleClass.status ? 'bg-success' : 'bg-secondary' %>">
-                <%= singleClass.status ? 'Active' : 'Inactive' %>
-              </span>
-            </div>
-          </div>
-            </div>
-
-            <div class="col-md-8">
-  <div class="attendance-section mt-4 mb-5">
-          <h5>Class Attendance</h5>
-
-          <% if (attendance.length === 0) { %>
-            <p class="text-muted">No user has signed into this class yet.</p>
-          <% } else { %>
-            <ul class="list-group">
-              <% attendance.forEach(function(user) { %>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong><%= user.full_name || 'Unnamed' %></strong><br>
-                    <small><%= user.email %></small><br>
-                    <small class="text-muted">
-                      Joined at: 
-                      <%= new Date(user.joined_at).toLocaleString('en-US', {
-                        year: 'numeric', month: 'short', day: 'numeric',
-                        hour: '2-digit', minute: '2-digit'
-                      }) %>
-                    </small>
-                  </div>
-
-                <form action="/admin/class/<%= singleClass.id %>/grant-access/<%= user.id %>" method="post" class="d-flex align-items-center">
-                    <input type="hidden" name="_method" value="PUT">
-                    
-                    <input 
-                      type="checkbox" 
-                      name="granted" 
-                      onchange="this.form.submit()" 
-                      id="accessGranted_<%= user.id %>" 
-                      <%= user.status ? 'checked' : '' %> 
+                <form action="/admin/class/<%= singleClass.id %>/<%= singleClass.show_link ? 'false' : 'true' %>" method="post">
+                  <input type="hidden" name="_method" value="PUT">
+                  <div class="form-check form-switch">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="toggleShowLink"
+                      onchange="this.form.submit()"
+                      <%= singleClass.show_link ? 'checked' : '' %>
                     >
-                    
-                    <label for="accessGranted_<%= user.id %>" class="ms-2 mb-0">Access Granted</label>
-                  </form>
-                </li>
-              <% }); %>
-            </ul>
-          <% } %>
-        </div>
+                    <label class="form-check-label" for="toggleShowLink">
+                      Toggle Show Link
+                    </label>
+                  </div>
+                </form>
+              </div>
+
+
+
+                <div class="mb-3">
+                  <strong>Join Code:</strong>
+                  <p class="text-muted"><%= singleClass.join_code || 'Not available' %></p>
+                </div>
+
+         
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="attendance-section mt-4 mb-5">
+              <h5>Class Attendance</h5>
+
+              <% if (attendance.length === 0) { %>
+                <p class="text-muted">No user has signed into this class yet.</p>
+              <% } else { %>
+                <ul class="list-group">
+                  <% attendance.forEach(function(user) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <strong><%= user.full_name || 'Unnamed' %></strong><br>
+                        <small><%= user.email %></small><br>
+                        <small class="text-muted">
+                          Joined at: 
+                          <%= new Date(user.joined_at).toLocaleString('en-US', {
+                            year: 'numeric', month: 'short', day: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
+                          }) %>
+                        </small>
+                      </div>
+
+                      <p><%= user.status %></p>
+                    <form action="/admin/class/<%= singleClass.id %>/grant-access/<%= user.id %>" method="post" class="d-flex align-items-center">
+                        <input type="hidden" name="_method" value="PUT">
+                        
+                        <input 
+                          type="checkbox" 
+                          name="granted" 
+                          onchange="this.form.submit()" 
+                          id="accessGranted_<%= user.id %>" 
+                          <%= user.status ? 'checked' : '' %> 
+                        >
+                        
+                        <label for="accessGranted_<%= user.id %>" class="ms-2 mb-0">Access Granted</label>
+                      </form>
+                    </li>
+                  <% }); %>
+                </ul>
+              <% } %>
+            </div>
 
             </div>
           </div>

@@ -4,6 +4,7 @@ const Admin = require('../models/Admin');
 const ClassSession = require('../models/ClassSession');
 const { v4: uuidv4 } = require('uuid');
 const Attendance = require('../models/Attendance');
+const pool = require('../config/db')
 
 exports.adminDashboard = async (req, res) => {
 
@@ -213,10 +214,26 @@ exports.updateReferral = async (req, res) => {
 
 
 // settings section
+exports.Setting = async (req, res) => {
+  
+  const settings = await Setting.getAll()
+  // const {rows:settings} = await pool.query('SELECT * FROM settings');
+  res.render('./admin/settings', { settings:settings[0] });
+
+};
+
 exports.toggleSetting = async (req, res) => {
-  const { key, value } = req.body;
-  await Setting.set(key, value);
-  res.json({ message: `Setting ${key} updated to ${value}` });
+  const { column } = req.params;
+
+  try {
+    const message = await Setting.toggleColumn(column);
+    req.flash('success_msg', message);
+  } catch (err) {
+    console.error(err);
+    req.flash('error_msg', err.message || 'Failed to update setting.');
+  }
+
+  res.redirect('/admin/setting');
 };
 
 // attendance section

@@ -12,7 +12,8 @@ router.get('/:code', async (req, res) => {
    const code = req.params.code
   const session = await ClassSession.findByJoinCode(code)
     if (!session) {
-    return res.status(404).send('Session not found');
+        req.flash('warning_msg', "Session not found")
+        return res.redirect('/user')
   }
 
   const sessionId = session.id
@@ -32,7 +33,8 @@ router.get('/:code', async (req, res) => {
 
       res.render('./student/join', {
         link:session.meet_link,
-        session
+        session,
+        user:req.user
       })
 });
 
@@ -52,11 +54,5 @@ router.post('/:id/toggle', admin, async (req, res) => {
   res.json({ message: 'Visibility updated' });
 });
 
-// Student requests class link via join code
-// router.get('/:joinCode/join', async (req, res) => {
-//   const link = await ClassSession.getVisibleLink(req.params.joinCode);
-//   if (!link) return res.status(403).json({ error: 'Class link not available yet' });
-//   res.json({ meetLink: link });
-// });
 
 module.exports = router;

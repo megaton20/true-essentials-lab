@@ -5,7 +5,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser')
 const ejsLayouts = require('express-ejs-layouts');
 const env = process.env
-const database = require("./config/db")
+// const database = require("./config/db")
 const flash = require('connect-flash');
 const passport = require('passport');
 const path = require('path')
@@ -17,6 +17,7 @@ const { ensureAuthenticated } = require("./config/auth");
 
 const initAllModels = require('./initAllModels');
 initAllModels();
+require('./jobs/scheduler');
 
 
 const PORT = env.PORT
@@ -79,7 +80,7 @@ app.use('/auth', authRoutes); // open less secure routes
 app.use('/user',ensureAuthenticated, userRoutes); // open less secure routes
 app.use('/class',ensureAuthenticated, classRoutes); // open less secure routes
 app.use('/admin',ensureAuthenticated, adminRoutes); // open less secure routes
-app.use('/affiliate',ensureAuthenticated, affiliateRoutes); // open less secure routes
+app.use('/affiliate', affiliateRoutes); // open less secure routes
 
 
 app.use((req, res) => {

@@ -1,10 +1,12 @@
 const router = require('express').Router();
 const auth = require('../controllers/authController');
 const { ensureAuthenticated,forwardAuthenticated } = require("../config/auth");
+const { checkRegistrationOpen, checkPaymentOpen } = require('../middleware/settingsMiddleware');
+
 const {forwardVerifyAlert} = require('../middleware/auth')
 
-router.get('/register',forwardAuthenticated, auth.registerPage);
-router.post('/register',forwardAuthenticated, auth.register);
+router.get('/register',checkRegistrationOpen,forwardAuthenticated, auth.registerPage);
+router.post('/register',checkRegistrationOpen,forwardAuthenticated, auth.register);
 
 router.get('/login',forwardAuthenticated, auth.loginPage);
 router.post('/login', forwardAuthenticated,auth.login);

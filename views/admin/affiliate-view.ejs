@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Class Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="container-fluid vh-100">
+        <div class="row h-100">
+            <!-- Sidebar -->
+            <%- include('./partials/sidenav') %>
+
+                <!-- Main Content -->
+                <div class="col-md-10 bg-white">
+                    <div class="container mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="/admin/affiliate/applications" class="btn btn-outline-primary btn-sm">Back</a>
+                            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#editClassModal">
+                                Edit
+                            </button>
+                        </div>
+
+                        <%- include('../partials/messages') %>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <!-- Class Info -->
+                                    <div class="mt-5 p-4 border rounded shadow-sm bg-light">
+                                        <h3 class="mb-3">
+                                            <%= application.title %>
+                                        </h3>
+
+                                        <div class="mb-3">
+                                            <strong>Vetted By:</strong>
+                                            <p class="text-muted"> <%= application.reviewed_by || "not vetted yet" %> </p>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <strong>Status:</strong>
+                                            <span
+                                                class="badge <%= application.status == `pending` ? 'bg-secondary' : 'bg-success' %>">
+                                                <%= application.status == `pending`? 'Inactive' : 'Active' %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                              
+                                <div class="col-md-8">
+                                    <!-- Class Info -->
+                                    <div class="mt-5 p-4 border rounded shadow-sm bg-light">
+
+                                             <div class="mb-3">
+                                                    <strong>Applicant Name:</strong>
+                                                    <p class="text-muted">
+                                                        <%= application.full_name || 'No user name provided.' %>
+                                                    </p>
+                                                </div>
+                                             <div class="mb-3">
+                                                    <strong>Applicant email:</strong>
+                                                    <p class="text-muted">
+                                                        <%= application.email || 'No email provided.' %>
+                                                    </p>
+                                                </div>
+                                             <div class="mb-3">
+                                                    <strong>why they joined:</strong>
+                                                    <p class="text-muted">
+                                                        <%= application.application_text || 'No description provided.' %>
+                                                    </p>
+                                                </div>
+                                             <div class="mb-3">
+                                                    <strong>How they knew:</strong>
+                                                    <p class="text-muted">
+                                                        <%= application.ref_source || 'Not provided.' %>
+                                                    </p>
+                                                </div>
+                                             <div class="mb-3">
+                                                    <strong>Prior Experience:</strong>
+                                                    <p class="text-muted">
+                                                        <%= application.experience || 'Not provided.' %>
+                                                    </p>
+                                                </div>
+
+
+                                                <div class="mb-3">
+                                                    <strong>Submitted Date Time:</strong>
+                                                    <p class="text-muted">
+                                                        <%= (application.created_at).toLocaleString() %>
+                                                    </p>
+                                                </div>
+
+
+                                                <form action="/admin/affiliate/applications/<%= application.id %>/<%= application.status === 'approved' ? 'pending' : 'approved' %>" method="post">
+                                                    <input type="hidden" name="_method" value="PUT">
+                                                    <input type="hidden" name="userId" value="<%= application.user_id %>">
+                                                    <div class="form-check form-switch">
+                                                        <input
+                                                        class="form-check-input"
+                                                        type="checkbox"
+                                                        id="toggleShowLink"
+                                                        name="approval"
+                                                        onchange="this.form.submit()"
+                                                        <%= application.status === 'approved' ? 'checked' : '' %>
+                                                        <%= application.status === 'banned' ? 'disabled' : '' %>
+                                                        >
+                                                        <label class="form-check-label" for="toggleShowLink">
+                                                        <%= application.status.charAt(0).toUpperCase() + application.status.slice(1) %>
+                                                        </label>
+                                                    </div>
+                                                    </form>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+
+
+                    </div>
+                </div>
+        </div>
+
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

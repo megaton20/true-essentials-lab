@@ -5,6 +5,7 @@ const {ensureVerifiedEmail} = require('../middleware/auth')
 
 
 
+
 // /dashboard/:userId
 router.get('/', ensureVerifiedEmail, user.getDashboard);
 router.get('/class-history', ensureVerifiedEmail, user.studentClassRecord);

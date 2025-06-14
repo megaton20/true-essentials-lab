@@ -32,12 +32,12 @@
 
     .join-card {
       background: linear-gradient(135deg, #eafaf1, #d9f2e6);
-      border-left: 6px solid #0eb819;
       border-radius: 15px;
       padding: 2rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       text-align: center;
       transition: 0.3s;
+      margin-bottom: 10px;
     }
 
     .join-card:hover {
@@ -89,19 +89,69 @@
 
       <!-- Main Content -->
       <div class="col-md-10 bg-white p-4">
-        <div class="row justify-content-center mt-5">
-          <div class="col-lg-8 col-md-10 slide-in">
-            <div class="join-card">
-              <i class="fas fa-chalkboard-teacher"></i>
-              <h1>Class Started 20 Minutes Ago</h1>
-              <h2>You're just in time! Click below to join your session.</h2>
-              <br>
-              <a class="join-btn" href="<%= link %>" target="_blank">
-                <i class="fas fa-sign-in-alt me-2"></i> Join Now
-              </a>
-            </div>
+        <div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-lg-12 col-md-10 slide-in">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="join-card text-center p-4 shadow-sm border rounded">
+
+            <!-- Join Prompt -->
+            <i class="fas fa-chalkboard-teacher fa-2x text-success mb-3"></i>
+            <h1>Class Started 20 Minutes Ago</h1>
+            <h2 class="text-muted fs-5">You're just in time! Click below to join your session.</h2>
+
+            <a class="btn btn-success btn-lg mt-3" href="<%= link %>" target="_blank">Join Now</a>
+
           </div>
         </div>
+
+
+
+        <div class="col-md-4">
+          <div class="join-card text-center p-4 shadow-sm border rounded">
+            <!-- Class Details -->
+            <div class="text-start">
+              <h4 class="fw-bold">Class Details</h4>
+              <p><strong>Title:</strong> <%= session.title %></p>
+              <p><strong>Instructor:</strong> <%= session.instructor_name || 'Hidden' %></p>
+              <p><strong>Time:</strong> 
+                <%= new Date(session.scheduled_at).toLocaleString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit'
+                }) %>
+              </p>
+              <p><strong>Duration:</strong> <%= session.duration || '60'%> mins</p>
+            </div>
+           </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="join-card text-center p-4 shadow-sm border rounded">
+              <!-- Instructions -->
+              <div class="text-start mt-4">
+                <h4 class="fw-bold">Joining Instructions</h4>
+                <ul class="small text-muted">
+                  <li>Ensure you’re in a quiet environment with a stable internet connection.</li>
+                  <li>Click the <strong>“Join Now”</strong> button above to open the session in a new tab.</li>
+                  <li>Allow microphone and camera access when prompted.</li>
+                  <li>Wait at the door for Host to allow you in after confirmation.</li>
+                  <li>If you get disconnected, return to this page to rejoin.</li>
+                  <li>Need help? <a href="/support" class="text-decoration-underline">Contact support</a>.</li>
+                </ul>
+              </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+        </div>
+
 
       </div>
     </div>

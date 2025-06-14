@@ -2,61 +2,67 @@ const User = require('../models/User');
 const ReferralCode = require('../models/ReferralCode');
 const ClassSession = require('../models/ClassSession');
 const Attendance = require('../models/Attendance');
+const pool = require('../config/db');
+
 
 
 exports.getDashboard = async (req, res) => {
+    const userId = req.user.id;
+    const sessions = await Attendance.studentClassHistory(userId);
+    const customerToPay = 30000;
 
-   const sessions = await Attendance.studentClassHistory(req.user.id)
-        
-    res.render('./student/dashboard',{
+
+    // Get referrer who referred this user 
+    const referrerQuery = await pool.query(
+        `SELECT referrer_id FROM referral_redemptions WHERE referred_user_id = $1 LIMIT 1`,
+        [req.user.id]
+    );
+
+    const affiliateId = referrerQuery.rows[0]?.referrer_id || null;
+
+    let affiliateAgent = null;
+
+    if (affiliateId) {
+        const afiliateRecord = await pool.query(
+            `SELECT user_id FROM referrers WHERE id = $1 LIMIT 1`,
+            [affiliateId]
+        );
+
+        affiliateAgent = afiliateRecord.rows[0]?.user_id || null;
+    }
+
+    res.render('./student/dashboard', {
         sessions,
-        user:{name: req.user.full_name, email: req.user.email, payment:req.user.has_paid}
-    })
-}
+        user: req.user,
+        customerToPay,
+        affiliateAgent,
+        ebooks:[]
+    });
+
+};
+
 
 exports.studentClassRecord = async (req, res) => {
 
-   let sessions = await Attendance.studentClassHistory(req.user.id)
-
-          sessions = sessions.map(session => {
-  const now = new Date();
-  const scheduled = new Date(session.scheduled_at);
-
-  if (session.is_joined) {
-    session.statusText = 'Attended'; // or whatever you want for joined classes
-    session.statusClass = 'status-attended';
-  } else if (scheduled > now) {
-    session.statusText = 'Coming Up';
-    session.statusClass = 'status-upcoming';
-  } else if (session.status === true) {
-    session.statusText = 'Attended';
-    session.statusClass = 'status-attended';
-  } else {
-    session.statusText = 'Missed';
-    session.statusClass = 'status-missed';
-  }
-  return session;
-});
-
-        
-    res.render('./student/classes',{
+    const sessions = await Attendance.studentClassHistory(req.user.id)
+    res.render('./student/classes', {
         sessions,
-        user:{name: req.user.full_name, email: req.user.email}
+        user: req.user
     })
 }
 
 
 exports.completePayment = async (req, res) => {
-  const user = await User.getById(req.userId);
-  const code = await ReferralCode.findByCode(user.referral_code);
+    const user = await User.getById(req.userId);
+    const code = await ReferralCode.findByCode(user.referral_code);
 
-  const eligible = code.current_uses < code.max_uses;
-  const discount = eligible ? code.discount_percentage : 0;
-  const paymentReference = req.body.reference; // from Paystack
+    const eligible = code.current_uses < code.max_uses;
+    const discount = eligible ? code.discount_percentage : 0;
+    const paymentReference = req.body.reference; // from Paystack
 
-  await User.markAsPaid(user.id, discount, paymentReference);
+    await User.markAsPaid(user.id, discount, paymentReference);
 
-  if (eligible) await ReferralCode.incrementUsage(user.referral_code);
+    if (eligible) await ReferralCode.incrementUsage(user.referral_code);
 
-  res.json({ message: 'Payment complete. Dashboard unlocked.' });
+    res.json({ message: 'Payment complete. Dashboard unlocked.' });
 };

@@ -13,12 +13,13 @@ exports.registerPage = (req, res) => {
 
    const referrerCode = req.query.ref || null;
 
+
   if (referrerCode) {
     req.session.referrerCode = referrerCode
   }
 
  res.render('register',{
-  referrerCode
+  referralCode:referrerCode,
  })
 }
 
@@ -27,46 +28,58 @@ exports.loginPage = (req, res) => {
 }
 
 
-exports.register = async (req, res) => {
+exports.register = async (req, res, next) => {
   const { firstname, lastname, email, password, referralCode } = req.body;
 
-  const existingUser = await User.findByEmail(email)
-  
-  if (existingUser.length > 0) {
-    req.flash('error_msg', "email already taken...")
-    return res.redirect('/auth/register')
-  }
-  // validate code
-  let validCode
-  if (referralCode) {
-    validCode = await ReferralCode.isCodeValid(referralCode);
-  }
-
-  if (!validCode){
-    console.log("invalid or expired referral code");
+  try {
+    const existingUser = await User.findByEmail(email);
     
-  };
-  
-  
-  let fullName = `${firstname} ${lastname}`
+    if (existingUser) {
+      req.flash('error_msg', 'Email is already taken.');
+      return res.redirect('/auth/register');
+    }
 
-  const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({ fullName, email, passwordHash: hashed, referralCode, id: uuidv4()});
+    const fullName = `${firstname} ${lastname}`;
+    const newUserId = uuidv4();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  
-  // send verification email here (simulated)
+    const user = await User.create({
+      id: newUserId,
+      fullName,
+      email,
+      passwordHash: hashedPassword,
+    });
 
-    req.login(user, err => {
-        if (err) {
-          next(err);
-          req.flash('error_msg', `Try again`);
-          return res.redirect('/');
-        }
-        return res.redirect('/handler');
-      });
+    // Handle referral if a valid referral code is given
+    if (referralCode) {
+      const referrer = await ReferralCode.isCodeValid(referralCode);
 
-  // res.status(201).json({ message: 'Check your email to verify your account.' });
+      if (referrer) {
+        await pool.query(
+          `INSERT INTO referral_redemptions (referrer_id, referred_user_id, id) 
+           VALUES ($1, $2, $3)`,
+          [referrer.id, newUserId, uuidv4()]
+        );
+      }
+    }
+
+    // Auto-login user
+    req.login(user, (err) => {
+      if (err) {
+        console.error('Login error:', err);
+        req.flash('error_msg', 'Login failed. Please try again.');
+        return res.redirect('/auth/register');
+      }
+      return res.redirect('/handler');
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
+    req.flash('error_msg', 'Something went wrong. Please try again.');
+    return res.redirect('/auth/register');
+  }
 };
+
 
 exports.verifyEmailRequest = async (req, res) => {
   const email = req.body.email;

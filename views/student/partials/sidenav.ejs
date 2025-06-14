@@ -7,15 +7,32 @@
             <h4>Overview</h4>
           </a>
       
+           <% if (user.has_paid) { %>
           <a href="/user/class-history" class="over">
             <i class="fa-solid fa-copy"></i>
             <h4>Lesson History</h4>
           </a>
+            <% } else { %>
+
+                 <% } %>
 
           <a href="/user/" class="over">
             <i class="fa-solid fa-copy"></i>
             <h4>Videos Tutorial</h4>
           </a>
+
+        <% if (user.is_affiliate) { %>
+          <a href="/affiliate/dashboard" class="over">
+            <i class="fa-solid fa-copy"></i>
+            <h4>Affiliate Dashboard</h4>
+          </a>
+
+          <% } else { %>
+              <a href="/affiliate/signup" class="over">
+            <i class="fa-solid fa-copy"></i>
+            <h4>Reffer to earn</h4>
+          </a>
+          <% } %>
       
           <a href="/logout" class="log">
             <i class="fa-solid fa-right-from-bracket"></i>
