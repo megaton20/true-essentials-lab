@@ -30,7 +30,7 @@ const adminRoutes = require('./routes/adminRoutes')
 const affiliateRoutes = require('./routes/affiliateRoutes')
 
 app.set('view engine', 'ejs');
-// app.use(ejsLayouts);
+app.use(ejsLayouts);
 app.use(express.static(path.join(__dirname, './', 'public')));
 // Middleware
 // Middleware

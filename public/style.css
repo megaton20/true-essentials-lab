@@ -1,3 +1,7 @@
+body{
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: 400;
+}
 *{
     padding: 0;
     margin: 0;
@@ -9,15 +13,12 @@ p{
     margin: 0;
     padding: 0;
     margin-bottom: 0;
+    font-weight: 100;
 }
-.container{
-    width: 80%;
-    margin: auto;
+h1, h2, h3, h4, h5, h6{
+  font-weight: 100;
 }
 
-.ml-10{
-    margin-left: 10px;
-}
 :root{
     --text-light : #ffffffa7;
     --danger-color: #b70b02;
@@ -28,19 +29,48 @@ p{
     --bg-gray : #333;
     --bg-dark : #0d0c0c;
 }
+
 body{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
+  .profile-img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+     .bg-grad{
+      background: linear-gradient(135deg, #0eb819, #076a25); 
+    }
+
+  .dashboard-header {
+      background: #24da33;
+      padding: 2rem 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .referral-link-box {
+      font-size: 12px;
+      background: #e9f7ef;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-weight: bold;
+    }
+
+   .join-card{
+    margin-bottom: 10px;
+   } 
 .primary-text{
     color: var(--primary-color);
 }
 
 
-.center{
+/* .center{
     width: 90%;
     margin: 0px auto;
-}
+} */
 
 .transition-navbar {
   transition: background-color 0.3s ease;
@@ -190,55 +220,11 @@ body{
       }
     }
 
-    .box .he {
-      border: 1px solid green;
-      border-radius: 10px;
-      height: 120px;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      padding: 50px 10px;
-    }
-
-    .he .icon {
-      width: 20%;
-      overflow: hidden;
-    }
-
-    .he .icon img {
-      max-width: 80%;
-    }
-
-    .he .text {
-      width: 70%;
-      margin-left: 15px;
-    }
-
-    .he .text h3 {
-      font-size: 20px;
-    }
 
     .report {
       width: 20%;
     }
 
-    .progress {
-      border: 5px solid #076a25;
-      border-radius: 50%;
-      height: 70px;
-      width: 70px;
-      padding: 0 1px;
-      align-items: center;
-      text-align: center;
-      position: relative;
-    }
-
-    .progress p {
-
-      position: absolute;
-      top: 20px;
-      right: 20px;
-    }
 
 
     .week-item {
@@ -256,7 +242,7 @@ body{
 
     .status-badge {
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 300;
       padding: 0.25rem 0.5rem;
       border-radius: 20px;
       text-transform: uppercase;

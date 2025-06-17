@@ -14,7 +14,6 @@ router.get('/', ensureAdmin, adminController.adminDashboard);
 router.get('/users', ensureAdmin, adminController.getAllUsers);
 router.get('/users/:id', ensureAdmin, adminController.findOneUsers);
 
-router.get('/classes', ensureAdmin, adminController.getAllClass);
 router.post('/class', ensureAdmin, adminController.createClass);
 router.get('/class/:id', ensureAdmin, adminController.getClassSession);
 router.put('/class/:id/edit', ensureAdmin, adminController.updateById);

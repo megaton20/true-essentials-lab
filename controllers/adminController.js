@@ -75,19 +75,6 @@ exports.findOneUsers = async (req, res) => {
 
 
 
-
-// class section
-exports.getAllClass = async (req, res) => {
-  try {
-    const classes = await ClassSession.listAll(); 
-    res.render('./admin/classes', {
-      classes
-    })
-  } catch (error){
-    
-  }
-};
-
 exports.createClass = async (req, res) => {
   const {title, description, scheduled_at, meet_link, courseId} = req.body
  console.log(courseId);

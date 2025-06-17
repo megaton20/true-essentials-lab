@@ -1,14 +1,16 @@
-
-
-<div id="sidebar" class="fixed z-40 w-64 h-full bg-white shadow-lg transform transition-transform duration-200 ease-in-out md:translate-x-0 -translate-x-full md:relative md:flex flex-col">
-    <div class="p-4 text-xl font-bold border-b">Admin Panel</div>
-    <nav class="flex-1 p-4 space-y-4">
-      <a href="/admin" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded">Dashboard</a>
-      <a href="/admin/classes" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded">Classes</a>
-      <a href="/admin/seasons" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded">Seasons</a>
-      <a href="/admin/affiliate/applications" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded">Affiliate Applications</a>
-      <a href="/admin/referral" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded">Scout locations</a>
-      <a href="/admin/setting" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded">Settings</a>
-      <a href="/logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 rounded">Logout</a>
-    </nav>
+  <div class="offcanvas offcanvas-start bg-white" tabindex="-1" id="offcanvasSidebar">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title fw-bold">Admin Menu</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <nav class="nav flex-column">
+        <a href="/admin" class="nav-link text-dark">Dashboard</a>
+        <a href="/admin/seasons" class="nav-link text-dark">Seasons</a>
+        <a href="/admin/affiliate/applications" class="nav-link text-dark">Affiliate Applications</a>
+        <a href="/admin/referral" class="nav-link text-dark">Scout Locations</a>
+        <a href="/admin/setting" class="nav-link text-dark">Settings</a>
+        <a href="/logout" class="nav-link text-dark">Logout</a>
+      </nav>
+    </div>
   </div>

@@ -1,3 +1,4 @@
+const Affiliate = require("../models/Affiliate");
 
 
 module.exports =  {
@@ -20,6 +21,17 @@ module.exports =  {
       }
       return next()
     },
+
+     affiliateApplicationStatus: async function(req, res, next){
+      const result =  await Affiliate.getSingleApplicationsStatus(req.user.id)
+      if (result) {
+      
+          req.flash('error_msg', `already an applicant, wait!`)
+       return res.redirect('/affiliate/pending/applicants')
+      }
+      return next()
+    },
+
      ensureVerifiedEmail: function(req, res, next){
       
       if (req.user.is_email_verified) {

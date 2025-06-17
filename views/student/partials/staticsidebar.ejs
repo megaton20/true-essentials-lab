@@ -1,0 +1,14 @@
+ <div class="bg-white shadow-sm p-3 rounded">
+          <h5 class="fw-bold mb-4">Admin Menu</h5>
+          <nav class="nav flex-column">
+            <a href="/user" class="nav-link text-dark">Dashboard</a>
+            <div class="mb-4">
+              <% if (!user.is_affiliate) { %>
+                <a href="/affiliate/signup" class="nav-link text-dark">Refer To Earn</a>
+                
+                  <% } %>
+
+      
+            <a href="/logout" class="nav-link text-dark">Logout</a>
+          </nav>
+        </div>

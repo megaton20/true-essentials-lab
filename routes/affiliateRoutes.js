@@ -1,16 +1,17 @@
 const router = require('express').Router();
 const affiliateController = require('../controllers/affiliateController');
 const { ensureAuthenticated, } = require("../config/auth");
-const {ensureVerifiedEmail,forwardAlreadyAffiliate} = require('../middleware/auth')
+const {ensureVerifiedEmail,forwardAlreadyAffiliate, affiliateApplicationStatus} = require('../middleware/auth')
 const { v4: uuidv4 } = require('uuid');
 
 
 
 // Affiliate actions
 router.get('/', affiliateController.affliteInfo);
+router.get('/pending/applicants', affiliateController.affliteWaitingAppproval);
 router.get('/dashboard',ensureAuthenticated,ensureVerifiedEmail, affiliateController.affliteDash);
 
-router.get('/signup',ensureAuthenticated,ensureVerifiedEmail,forwardAlreadyAffiliate, affiliateController.signup);
+router.get('/signup',ensureAuthenticated,ensureVerifiedEmail,forwardAlreadyAffiliate,affiliateApplicationStatus, affiliateController.signup);
 router.post('/apply',ensureAuthenticated,ensureVerifiedEmail, affiliateController.applyAsAffiliate);
 
 

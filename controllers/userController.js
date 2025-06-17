@@ -34,7 +34,10 @@ exports.getDashboard = async (req, res) => {
 
 
 exports.getCourseSchedule = async (req, res) => {
+const customerToPay = 30000;
+ const thisSeasonUser = await SeasonUser.getSeasonsForUser(req.user.id)
 
+ 
   let sessions = await ClassSession.listByCourse(req.params.id)
  
   const sessionIds = sessions.map(s => s.id);
@@ -43,12 +46,24 @@ exports.getCourseSchedule = async (req, res) => {
 
     const updatedSessions = sessions.map(session => ({
     ...session,
-    is_joined: attendance[session.id] || false
+    is_joined: attendance[session.id] || false,
   }));
+
+  
+  const currentSeason = await Season.getCurrent();
+  const userSeason = await SeasonUser.get(req.user.id, currentSeason.id);
+
+
+  req.user = {
+    ...req.user,
+    has_paid:thisSeasonUser[0].has_paid,
+    seasonInfo:userSeason
+  }
 
   res.render('./student/classes', {
     sessions:updatedSessions,
     user: req.user,
+    customerToPay
   });
 };
 

@@ -8,6 +8,11 @@ const AffiliateController = {
   affliteInfo(req, res) {
     res.render('affiliate')
   },
+
+  affliteWaitingAppproval(req, res) {
+    res.render('affiliate-already')
+  },
+  
   async affliteDash(req, res) {
     try {
       // Get referrer info for current user
@@ -20,7 +25,7 @@ const AffiliateController = {
 
       if (rows.length === 0) {
         req.flash('error_msg', `you are not part of the program...`)
-        return res.render('/handler');
+        return res.redirect('/handler');
       }
 
       const referrer = rows[0];
