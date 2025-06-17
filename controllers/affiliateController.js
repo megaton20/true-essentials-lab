@@ -12,19 +12,15 @@ const AffiliateController = {
     try {
       // Get referrer info for current user
       const referrerQuery = `
-      SELECT id, referral_code 
+      SELECT id, referral_code, balance, bank_name, account_number, account_name 
       FROM referrers 
       WHERE user_id = $1
     `;
       const { rows } = await pool.query(referrerQuery, [req.user.id]);
 
       if (rows.length === 0) {
-        return res.render('affiliate-dash', {
-          user: req.user,
-          referralLink: null,
-          referees: [],
-          message: 'You are not part of the affiliate program yet.'
-        });
+        req.flash('error_msg', `you are not part of the program...`)
+        return res.render('/handler');
       }
 
       const referrer = rows[0];
@@ -35,8 +31,7 @@ const AffiliateController = {
       const usersQuery = `
       SELECT 
         u.id, 
-        u.full_name, 
-        u.balance, 
+        u.full_name,  
         rd.has_earned,
         rd.redeemed_at
       FROM referral_redemptions rd
@@ -45,11 +40,13 @@ const AffiliateController = {
     `;
       const { rows: referees } = await pool.query(usersQuery, [referrer.id]);
 
+      
    
       res.render('affiliate-dash', {
         user: req.user,
         referralLink,
-        referees
+        referees,
+        referrer
       });
 
     } catch (err) {

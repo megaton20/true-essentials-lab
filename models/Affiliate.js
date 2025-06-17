@@ -28,9 +28,13 @@ const User = require('./User');
 
     `;
     const referrersTable = `
-                CREATE TABLE referrers (
+            CREATE TABLE referrers (
             id VARCHAR PRIMARY KEY,
             user_id VARCHAR NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+            balance NUMERIC(12, 2) DEFAULT 0.00,
+            bank_name VARCHAR,
+            account_number VARCHAR,
+            account_name VARCHAR,
             referral_code VARCHAR(20) UNIQUE NOT NULL,
             max_redemptions INTEGER DEFAULT NULL, -- NULL means unlimited
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

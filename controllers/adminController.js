@@ -4,21 +4,36 @@ const Admin = require('../models/Admin');
 const ClassSession = require('../models/ClassSession');
 const { v4: uuidv4 } = require('uuid');
 const Attendance = require('../models/Attendance');
-const pool = require('../config/db')
+const pool = require('../config/db');
+const Season = require('../models/Season');
+const User = require('../models/User');
+const Course = require('../models/Course');
 
 exports.adminDashboard = async (req, res) => {
 
     try {
     const stats = await Admin.getDashboardStats(); 
-    const sessions = await ClassSession.listAll(); 
+    const currentSeason =   await Season.getCurrent()
+    const courseBySeason = await Course.listAllBySeason(currentSeason.id); 
     
     const classStatus = await Admin.getClassStatus();
+      const active = await Season.getCurrent();
+      const upcoming = await Season.getUpcoming();
+
+      const teachers = await User.findTeacher()
+
+      
+  const pastResult = await pool.query(`SELECT * FROM seasons WHERE reg_close < NOW() ORDER BY reg_close DESC`);
 
     res.render('./admin/dashboard',
        { 
         stats,
-        sessions, 
-        classStatus
+        courseBySeason, 
+        classStatus,
+        active,
+        upcoming,
+        pastResult,
+        teachers
 
        });
   } catch (err) {
@@ -41,6 +56,7 @@ exports.getAllUsers = async (req, res) => {
   }
     //  res.render('./admin/dashboard')
 };
+
 exports.findOneUsers = async (req, res) => {
 
  const userId =  req.params.id
@@ -73,19 +89,49 @@ exports.getAllClass = async (req, res) => {
 };
 
 exports.createClass = async (req, res) => {
-  const {title, description, scheduled_at, meet_link} = req.body
-  
+  const {title, description, scheduled_at, meet_link, courseId} = req.body
+ console.log(courseId);
+ 
   try {
-    const stats = await ClassSession.create({title, description, scheduledAt: scheduled_at,meetLink: meet_link,id:uuidv4()});
+    const stats = await ClassSession.create({title, description, scheduledAt: scheduled_at,meetLink: meet_link,id:uuidv4(), courseId});
     res.redirect('/admin/success') 
   } catch (error) {
     res.redirect('/admin/error') 
-    console.log("error on create class line 82: "+ error);
+    console.log("error on create class: "+ error);
     
     
   }
 };
 
+
+exports.createCourse = async (req, res) => {
+  const {title, description} = req.body
+  const teacherId = req.user.id
+ 
+  
+  try {
+    const stats = await Course.create({id:uuidv4(), title,description, teacherId });
+    res.redirect('/admin/success') 
+  } catch (error) {
+    res.redirect('/admin/error') 
+    console.log("error on create class: "+ error);
+    
+    
+  }
+};
+
+
+
+exports.getCourseSchedule = async (req, res) => {
+
+  const sessions = await ClassSession.listByCourse(req.params.id)
+
+  res.render('./admin/classes', {
+    sessions,
+    user: req.user,
+    courseId:req.params.id
+  });
+};
 
 
 exports.getClassSession = async (req, res) => {
@@ -243,4 +289,53 @@ exports.getAttendanceForSession =  async (req, res) => {
   
 }
 
+
+
+
+exports.seasonsManager = async (req, res) => {
+
+    try {
+      const active = await Season.getCurrent();
+      const upcoming = await Season.getUpcoming();
+
+      // console.log(upcoming);
+      
+  const pastResult = await pool.query(`SELECT * FROM seasons WHERE reg_close < NOW() ORDER BY reg_close DESC`);
+
+    res.render('./admin/seasons',
+       { 
+        active,
+        upcoming,
+        pastResult
+
+       });
+  } catch (err) {
+    res.status(500).send("Error loading admin dashboard.");
+  }
+    //  res.render('./admin/dashboard')
+};
+exports.createSeason = async (req, res) => {
+  const { name, reg_open, reg_close } = req.body;
+  try {
+    await Season.create({ name, reg_open, reg_close, id:uuidv4() });
+    res.redirect('/admin/seasons');
+  } catch (err) {
+    res.status(500).send('Error creating season: ' + err.message);
+  }
+};
+
+exports.getUsersBySeason = async (req, res) => {
+  const { season_id } = req.params;
+  const result = await db.query(
+    `SELECT users.*, seasons.name AS season_name
+     FROM users
+     JOIN seasons ON users.season_id = seasons.id
+     WHERE seasons.id = $1`,
+    [season_id]
+  );
+  res.render('admin/users-by-season', {
+    seasonName: result.rows[0]?.season_name || 'Unknown',
+    users: result.rows
+  });
+};
 

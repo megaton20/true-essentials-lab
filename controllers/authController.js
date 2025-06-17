@@ -7,17 +7,15 @@ const passport = require('../config/passport');
 const pool = require('../config/db');
 const jwt = require('jsonwebtoken');
 const { generateResetToken, verifyResetToken } = require('../config/jsonWebToken');
-
+const sendEmail = require('../utils/mailer');
+const Season = require('../models/Season');
+const SeasonUser = require('../models/SeasonUsers');
 
 exports.registerPage = (req, res) => {
-
    const referrerCode = req.query.ref || null;
-
-
   if (referrerCode) {
     req.session.referrerCode = referrerCode
   }
-
  res.render('register',{
   referralCode:referrerCode,
  })
@@ -39,6 +37,13 @@ exports.register = async (req, res, next) => {
       return res.redirect('/auth/register');
     }
 
+    const currentSeason = await Season.getCurrent();
+      if (!currentSeason) {
+         req.flash('error_msg', 'Registration is currently closed.');
+      return res.redirect('/auth/registration-closed');
+      }
+      
+
     const fullName = `${firstname} ${lastname}`;
     const newUserId = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -48,8 +53,13 @@ exports.register = async (req, res, next) => {
       fullName,
       email,
       passwordHash: hashedPassword,
+      season:currentSeason.id
     });
 
+ 
+  
+   const newSeasonUser = await SeasonUser.register(user.id, currentSeason.id, uuidv4())
+   
     // Handle referral if a valid referral code is given
     if (referralCode) {
       const referrer = await ReferralCode.isCodeValid(referralCode);
@@ -77,6 +87,17 @@ exports.register = async (req, res, next) => {
     console.error('Registration error:', error);
     req.flash('error_msg', 'Something went wrong. Please try again.');
     return res.redirect('/auth/register');
+  }
+};
+
+exports.registerClosed = async (req, res, next) => {
+
+  try {
+    res.render('register-closed')
+
+  } catch (error) {
+    console.error('Registration closed error:', error);
+  
   }
 };
 
@@ -209,12 +230,6 @@ exports.verifyEmailCallBack = (req, res) => {
 };
 
 
-exports.verifyEmail = async (req, res) => {
-  const { userId } = req.query;
-  await User.verifyEmail(userId);
-  res.send('Email verified. You can now view resources.');
-};
-
 exports.login = async (req, res, next) => {
 
    passport.authenticate('local', async (err, user, info) => {
@@ -222,10 +237,8 @@ exports.login = async (req, res, next) => {
       return next(err);
     }
     if (!user) {
-      return res.render('login', {
-        error_msg: info.message,
-        pageTitle: `Login To continue  `,
-      });
+      req.flash('error_msg', `error loging in, no user found!`)
+      return res.redirect('/auth/login');
     }
 
     try {
@@ -242,14 +255,8 @@ exports.login = async (req, res, next) => {
     } catch (error) {
       // Log the error for debugging purposes
       console.error('Error during update:', error);
-
-      return res.render('login', {
-        error_msg: 'Error loging in, Please try again.',
-        // pageTitle: `Login To continue Using ${appName} `,
-        // appName: appName,
-      });
+      req.flash('error_msg', `error loging in, no user found!`)
+      return res.redirect('/auth/login');
     }
   })(req, res, next);
-
-
 };

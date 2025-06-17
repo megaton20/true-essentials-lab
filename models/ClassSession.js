@@ -11,6 +11,7 @@ class ClassSession {
             CREATE TABLE class_sessions (
           id VARCHAR PRIMARY KEY,
           title VARCHAR(255) NOT NULL,
+          course_id VARCHAR NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
           description TEXT,
           scheduled_at TIMESTAMP NOT NULL,
           meet_link TEXT NOT NULL,
@@ -26,15 +27,29 @@ class ClassSession {
      await createTableIfNotExists('class_sessions', createTableQuery);
   }
 
+    constructor(data) {
+    this.id = data.id;
+    this.title = data.title;
+    this.season_id = data.season_id;
+    this.description = data.description;
+    this.scheduled_at = data.scheduled_at;
+    this.class_link = data.class_link;
+    this.meet_link = data.meet_link;
+    this.join_code = data.join_code;
+    this.show_link = data.show_link;
+    this.created_by = data.created_by;
+    this.created_at = data.created_at;
+    this.duration = data.duration;
+  }
 
-  static async create({ title, description, scheduledAt, meetLink, id }) {
+  static async create({ title, description, scheduledAt, meetLink, id, courseId }) {
     const joinCode = uuidv4().split('-')[0]; // Generate a short unique join code
     try {
          const result = await pool.query(`
-      INSERT INTO class_sessions (title, description, scheduled_at, meet_link, join_code, id)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO class_sessions (title, description, scheduled_at, meet_link, join_code, id, course_id )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *;
-    `, [title, description, scheduledAt, meetLink, joinCode, id]);
+    `, [title, description, scheduledAt, meetLink, joinCode, id, courseId]);
 
     return result.rows[0];
     } catch (error) {
@@ -69,6 +84,22 @@ class ClassSession {
     
    }
   }
+
+  static async listByCourse(courseId) {
+  try {
+    const {rows:result} = await pool.query(`
+      SELECT * FROM class_sessions
+      WHERE course_id = $1
+      ORDER BY scheduled_at DESC
+    `, [courseId]);
+
+    return result;
+  } catch (error) {
+    console.error(`Error fetching sessions for course ${courseId}:`, error);
+    return [];
+  }
+}
+
 
   static async findById(id) {
     try {

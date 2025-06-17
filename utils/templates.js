@@ -41,9 +41,16 @@ const dayBeforeTemplate = (user, sessions) => `
   <p>– TEA Team</p>
 `;
 
+const resetPasswordTemplate = (resetLink) => `
+            <p>Reset your password by clicking the button below:</p>
+            <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #41afa5; text-decoration: none; border-radius: 5px;">Reset Password</a>
+            <p>If you did not request this, please ignore this email.</p>
+  `;
+
 
 module.exports = {
   paymentReminderTemplate,
   welcomeToClassTemplate,
   dayBeforeTemplate,
+  resetPasswordTemplate,
 };

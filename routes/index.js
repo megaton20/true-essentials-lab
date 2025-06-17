@@ -5,6 +5,7 @@ const { ensureVerifiedEmail } = require('../middleware/auth')
 const { checkRegistrationOpen, checkPaymentOpen } = require('../middleware/settingsMiddleware');
 
 const { ensureAuthenticated } = require("../config/auth");
+const Season = require('../models/Season');
 
 
 
@@ -17,10 +18,6 @@ router.get('/read-more', async (req, res) => {
 });
 
 
-
-router.get('/email-sent', async (req, res) => {
-  res.render('email-sent')
-});
 
 
 router.get('/handler', (req, res) => {
@@ -133,14 +130,14 @@ router.get('/verify',checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail,
             // Mark referral as earned
             await pool.query(
               `UPDATE referral_redemptions 
-         SET has_earned = $1 
-         WHERE referrer_id = $2 AND referred_user_id = $3`,
+                SET has_earned = $1 
+                WHERE referrer_id = $2 AND referred_user_id = $3`,
               [true, referrerId, req.user.id]
             );
 
             // Fetch the referrer's current balance
             const { rows: userResults } = await pool.query(
-              `SELECT balance FROM users WHERE id = $1`,
+              `SELECT balance FROM referrers WHERE user_id = $1`,
               [affiliateAgent]
             );
 
@@ -149,7 +146,7 @@ router.get('/verify',checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail,
 
             // Update referrer's balance
             await pool.query(
-              `UPDATE users SET balance = $1 WHERE id = $2`,
+              `UPDATE referrers SET balance = $1 WHERE user_id = $2`,
               [newCashback, affiliateAgent]
             );
           }
@@ -161,11 +158,16 @@ router.get('/verify',checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail,
       }
 
       // Mark the current user as having paid
+       const currentSeason = await Season.getCurrent();
+       
       try {
-        await pool.query(
-          `UPDATE users SET has_paid = $1 WHERE id = $2`,
-          [true, req.user.id]
-        );
+      await pool.query(
+                `UPDATE season_users 
+                SET has_paid = $1, payment_reference = $4, paid_at = NOW() 
+                WHERE user_id = $2 AND season_id = $3`,
+                [true, req.user.id, currentSeason.id, reference]  // This is OK since order matches
+              );
+
         req.flash('success_msg', 'Payment has been sent!');
       } catch (error) {
         console.error('Error updating payment status:', error);

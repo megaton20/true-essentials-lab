@@ -46,7 +46,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
     const user = await User.findByEmail(email);
 
     // Check if any user was found
-    if (user.length <= 0) {
+    if (!user) {
       return done(null, false, { message: 'User does not exist' });
     }
 

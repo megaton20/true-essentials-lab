@@ -15,7 +15,7 @@ router.get('/users', ensureAdmin, adminController.getAllUsers);
 router.get('/users/:id', ensureAdmin, adminController.findOneUsers);
 
 router.get('/classes', ensureAdmin, adminController.getAllClass);
-router.post('/class/', ensureAdmin, adminController.createClass);
+router.post('/class', ensureAdmin, adminController.createClass);
 router.get('/class/:id', ensureAdmin, adminController.getClassSession);
 router.put('/class/:id/edit', ensureAdmin, adminController.updateById);
 router.put('/class/:id/:status', ensureAdmin, adminController.toggleClasssVisibility);
@@ -27,6 +27,8 @@ router.get('/referral', ensureAdmin, adminController.getReferrals);
 router.put('/referral/:id', ensureAdmin, adminController.findReferralCode);
 
 
+router.post('/courses/create', ensureAdmin, adminController.createCourse);
+router.get('/course/:id', ensureAdmin, adminController.getCourseSchedule);
 
 
 router.get('/affiliate/applications',  affiliateController.affiliateApplications); 
@@ -44,6 +46,12 @@ router.put('/setting/toggle/:column',ensureAdmin, adminController.toggleSetting)
 
 // router.get('/attendance', ensureAdmin, adminController.);
 router.get('/session/:id/attendance',ensureAdmin, adminController.getAttendanceForSession);
+
+
+
+router.get('/seasons', ensureAdmin, adminController.seasonsManager);
+router.post('/seasons', ensureAdmin, adminController.createSeason);
+router.get('/seasons/:season_id/users', ensureAdmin, adminController.getUsersBySeason);
 
 
 module.exports = router;

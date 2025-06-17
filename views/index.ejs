@@ -17,7 +17,7 @@
     <%-include('./partials/nav')  %>
 
     <!-- Hero Section -->
-            <section class="bg-success text-white py-5">
+            <section class="bg-success text-white py-5" id="home">
             <div class="container">
                 <div class="row align-items-center">
                 <div class="col-md-7 text-center text-md-start">
@@ -82,37 +82,37 @@
             </div>
             </section>
 
-          <section class="py-5 bg-white">
-  <div class="container">
-    <div class="row align-items-center">
-      <!-- Image Side -->
-      <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
-        <img src="/images/laptop.jpg" alt="8-Week Online Class" class="img-fluid rounded shadow-sm w-100" style="max-height: 400px; object-fit: cover;">
-      </div>
-
-      <!-- Text Side -->
-      <div class="col-lg-6" data-aos="fade-left">
-        <h2 class="fw-bold mb-3">Your 8-Week Web Development Journey Starts Here</h2>
-        <p class="text-muted mb-4">
-          Join our immersive 8-week online training program that runs once every year. Designed for beginners, this program walks you through HTML, CSS, JavaScript, and real-world project building — all with expert guidance and a supportive learning environment.
-        </p>
-        <ul class="list-unstyled">
-          <li class="mb-2"><i class="bi bi-clock-fill text-primary me-2"></i> Fixed 8-week schedule, once a year</li>
-          <li class="mb-2"><i class="bi bi-person-video3 text-success me-2"></i> Live class links available only to paid members</li>
-          <li class="mb-2"><i class="bi bi-people-fill text-warning me-2"></i> Learn in a friendly, beginner-safe space</li>
-          <li class="mb-2"><i class="bi bi-award-fill text-danger me-2"></i> Earn a certificate by completing the program</li>
-        </ul>
-        <a href="/program" class="btn btn-success mt-3">Explore the Program</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-            <section class="py-5 bg-white border-top">
+          <section class="py-5 bg-white" id="about">
             <div class="container">
-                <div class="text-center mb-5">
+                 <div class="text-center mb-5">
+                <h2 class="fw-bold">About Us?</h2>
+                <p class="text-muted">We’re more than just another online course platform. Here’s what makes us different.</p>
+                </div>
+
+                <div class="row align-items-center">
+                <!-- Image Side -->
+                <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                    <img src="/images/laptop.jpg" alt="8-Week Online Class" class="img-fluid rounded shadow-sm w-100" style="max-height: 400px; object-fit: cover;">
+                </div>
+
+                <!-- Text Side -->
+                <div class="col-lg-6" data-aos="fade-left">
+                    <h2 class="fw-bold mb-3">Your 8-Week Web Development Journey Starts Here</h2>
+                    <p class="text-muted mb-4">
+                    Join our immersive 8-week online training program that runs once every year. Designed for beginners, this program walks you through HTML, CSS, JavaScript, and real-world project building — all with expert guidance and a supportive learning environment.
+                    </p>
+                    <ul class="list-unstyled">
+                    <li class="mb-2"><i class="bi bi-clock-fill text-primary me-2"></i> Fixed 8-week schedule, once a year</li>
+                    <li class="mb-2"><i class="bi bi-person-video3 text-success me-2"></i> Live class links available only to paid members</li>
+                    <li class="mb-2"><i class="bi bi-people-fill text-warning me-2"></i> Learn in a friendly, beginner-safe space</li>
+                    <li class="mb-2"><i class="bi bi-award-fill text-danger me-2"></i> Earn a certificate by completing the program</li>
+                    </ul>
+                    <a href="/auth/register" class="btn btn-success mt-3">Join Our Program</a>
+                </div>
+                </div>
+
+             
+                <div class="text-center mb-5 mt-5">
                 <h2 class="fw-bold">Why Learn With Us?</h2>
                 <p class="text-muted">We’re more than just another online course platform. Here’s what makes us different.</p>
                 </div>
@@ -155,10 +155,10 @@
                 </div>
                 </div>
             </div>
-            </section>
+        </section>
 
-
-            <section class="py-5 bg-white border-top">
+        <!-- pricing -->
+            <section class="py-5 bg-white border-top" id="pricing">
             <div class="container">
                 <div class="text-center mb-5">
                 <h2 class="fw-bold">Flexible Pricing for Everyone</h2>
@@ -237,6 +237,49 @@
             </section>
 
 
+        <!-- Contact Section -->
+                <section class="py-5 bg-light" id="contact">
+                <div class="container">
+                    <div class="text-center mb-5">
+                    <h2>Contact Us</h2>
+                    <p class="text-muted">We’d love to hear from you! Fill out the form below to get in touch.</p>
+                    </div>
+                    <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                     <div class="mb-3">
+                                        <label for="name" class="form-label">Your Name</label>
+                                        <input type="text" class="form-control" id="name" placeholder="John Doe" required>
+                                    </div>
+                                </div>
+
+                                   <div class="col-md-6">
+                                         <div class="mb-3">
+                                            <label for="email" class="form-label">Your Email</label>
+                                            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                                        </div>
+                                    </div>
+                                    
+                            </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" placeholder="How can we help you?" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Your Message</label>
+                            <textarea class="form-control" id="message" rows="5" placeholder="Write your message here..." required></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-4">Send Message</button>
+                        </div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+                </section>
+
 
             <!-- Footer -->
             <footer class="bg-success text-white pt-5 pb-4">
@@ -287,11 +330,8 @@
 
 <!-- AOS JS -->
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-  AOS.init({
-    duration: 800,
-    once: true
-  });
+<script src="/main.js">
+
 </script>
 
 

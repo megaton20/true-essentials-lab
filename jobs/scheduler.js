@@ -78,8 +78,3 @@ cron.schedule('0 10 */5 * *', async () => {
 });
 
 
-// cron.schedule('*/10 * * * * *', async () => {
-//     console.log('Runs every 10 seconds');
-
-
-// });

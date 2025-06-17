@@ -3,15 +3,70 @@ const ReferralCode = require('../models/ReferralCode');
 const ClassSession = require('../models/ClassSession');
 const Attendance = require('../models/Attendance');
 const pool = require('../config/db');
-
+const SeasonUser = require('../models/SeasonUsers');
+const Season = require('../models/Season');
+const Course = require('../models/Course');
 
 
 exports.getDashboard = async (req, res) => {
+  const userId = req.user.id;
+  const customerToPay = 30000;
+
+
+  const currentSeason = await Season.getCurrent();
+  const userSeason = await SeasonUser.get(userId, currentSeason.id);
+
+  // check if user don pay
+  req.user = {
+    ...req.user,
+    seasonInfo: userSeason
+  };
+
+  // Fetch all courses under the current season
+  const courses = await Course.listAllBySeason(currentSeason.id);
+  res.render('./student/dashboard', {
+    courses,
+    user: req.user,
+    customerToPay,
+    ebooks: [],
+  });
+};
+
+
+exports.getCourseSchedule = async (req, res) => {
+
+  let sessions = await ClassSession.listByCourse(req.params.id)
+ 
+  const sessionIds = sessions.map(s => s.id);
+  
+    const attendance = await Attendance.getBySessionIds(req.user.id, sessionIds);
+
+    const updatedSessions = sessions.map(session => ({
+    ...session,
+    is_joined: attendance[session.id] || false
+  }));
+
+  res.render('./student/classes', {
+    sessions:updatedSessions,
+    user: req.user,
+  });
+};
+
+
+exports.getCourseForSeason= async (req, res) => {
     const userId = req.user.id;
-    const sessions = await Attendance.studentClassHistory(userId);
     const customerToPay = 30000;
+    
+    const currentSeason = await Season.getCurrent()
+    const sessions = await Attendance.studentClassHistory(userId, currentSeason.id);
+    const userSeason = await SeasonUser.get(userId, currentSeason.id);
 
-
+            req.user = {
+        ...req.user,       // keep existing user info
+        seasonInfo: userSeason  // add extra season-related info under a new key
+        };
+   
+    
     // Get referrer who referred this user 
     const referrerQuery = await pool.query(
         `SELECT referrer_id FROM referral_redemptions WHERE referred_user_id = $1 LIMIT 1`,
@@ -41,10 +96,19 @@ exports.getDashboard = async (req, res) => {
 
 };
 
-
 exports.studentClassRecord = async (req, res) => {
+    const userId = req.user.id;
+ const currentSeason = await Season.getCurrent()
+ 
+ const courseID = await Course.findById(req.params.id)
 
-    const sessions = await Attendance.studentClassHistory(req.user.id)
+    const sessions = await Attendance.studentClassHistory(req.user.id, courseID.id)
+      const userSeason = await SeasonUser.get(userId, currentSeason.id);
+
+            req.user = {
+        ...req.user,       // keep existing user info
+        seasonInfo: userSeason  // add extra season-related info under a new key
+        };
     res.render('./student/classes', {
         sessions,
         user: req.user

@@ -77,9 +77,9 @@ app.post('/dismiss-modal', (req, res) => {
 
 app.use('/', openRoutes); // open less secure routes
 app.use('/auth', authRoutes); // open less secure routes
-app.use('/user',ensureAuthenticated, userRoutes); // open less secure routes
-app.use('/class',ensureAuthenticated, classRoutes); // open less secure routes
-app.use('/admin',ensureAuthenticated, adminRoutes); // open less secure routes
+app.use('/user',ensureAuthenticated, userRoutes); //  secure routes
+app.use('/class',ensureAuthenticated, classRoutes); //  secure routes
+app.use('/admin',ensureAuthenticated, adminRoutes); // secure routes
 app.use('/affiliate', affiliateRoutes); // open less secure routes
 
 

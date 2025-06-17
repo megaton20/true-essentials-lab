@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 const sendEmail = async (to, subject, html) => {
   const mailOptions = {
-    from: `"YourApp" <${process.env.EMAIL}>`,
+    from: `"True Essentials Academy" <${process.env.EMAIL}>`,
     to,
     subject,
     html,
@@ -20,8 +20,10 @@ const sendEmail = async (to, subject, html) => {
   try {
     await transporter.sendMail(mailOptions);
     console.log(`Email sent to ${to}`);
+    return true
   } catch (err) {
     console.error(`Failed to send email to ${to}:`, err);
+    return false
   }
 };
 
