@@ -2,6 +2,7 @@ const router = require('express').Router();
 const adminController = require('../controllers/adminController');
 const affiliateController = require('../controllers/affiliateController');
 const {ensureAdmin} = require('../middleware/auth');
+const TeacherController = require('../controllers/TeacherController');
 
 router.get('/success',ensureAdmin, (req,res)=>{
     return res.render('./admin/success') 
@@ -26,8 +27,10 @@ router.get('/referral', ensureAdmin, adminController.getReferrals);
 router.put('/referral/:id', ensureAdmin, adminController.findReferralCode);
 
 
+router.get('/courses', ensureAdmin, adminController.getAllCourse);
+router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse);
 router.post('/courses/create', ensureAdmin, adminController.createCourse);
-router.get('/course/:id', ensureAdmin, adminController.getCourseSchedule);
+router.get('/course/class/:id', ensureAdmin, adminController.getCourseSchedule);
 
 
 router.get('/affiliate/applications',  affiliateController.affiliateApplications); 
@@ -51,6 +54,13 @@ router.get('/session/:id/attendance',ensureAdmin, adminController.getAttendanceF
 router.get('/seasons', ensureAdmin, adminController.seasonsManager);
 router.post('/seasons', ensureAdmin, adminController.createSeason);
 router.get('/seasons/:season_id/users', ensureAdmin, adminController.getUsersBySeason);
+
+
+router.post('/teacher/assign', ensureAdmin, TeacherController.assign);
+router.get('/teacher', TeacherController.index);
+router.post('/teacher', TeacherController.store);
+router.put('/teacher/:id', TeacherController.update);
+router.delete('/teacher/:id/delete', TeacherController.destroy);
 
 
 module.exports = router;

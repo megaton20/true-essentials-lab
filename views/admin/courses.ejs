@@ -1,0 +1,81 @@
+  <!-- Navbar -->
+  <%-include('./partials/topnav') %>
+
+
+  <!-- Sidebar -->
+  <%-include('./partials/sidenav') %>
+
+  <!-- Main Content -->
+  <div class="container-fluid mt-4">
+    <div class="row">
+      <!-- Static Sidebar for desktop -->
+      <div class="col-lg-3 d-none d-lg-block">
+      <%-include('./partials/staticsidebar') %>
+      </div>
+
+      <!-- Class Details Section -->
+      <div class="col-lg-9">
+        <main class="p-1">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="/admin" class="btn btn-outline-primary btn-sm">Back</a>
+            
+            <%- include('../partials/messages') %>
+          </div>
+
+          <section class="border p-2 rounded">
+            <p>All Course(s) For this season</p
+          </section>
+
+          
+
+
+                  <div class="row">
+                    <%courses.forEach(function(data,index) {%>
+                     <div class="col-md-3 mb-3">
+                      <div class="class-card border  d-flex flex-column justify-content-between p-2"  data-aos="fade" data-aos-delay="<%= (index + 1) * 100 %>">
+                        
+                        <!-- Top Section: Status Badge -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <span class="status-badge">Active: <%= data.status %></span>
+                        </div>
+
+                        <!-- Middle Section: Title and Date -->
+                        <div class="mb-2">
+                          <p class="text-muted mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></p>
+                          <p class="text-muted mb-0" style="font-size: 11px;">
+                            <%= data.created_at.toLocaleString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit'
+                            }) %>
+                          </p>
+                        </div>
+
+                        <!-- Bottom Section: Action -->
+                        <div>
+                          <a href="/admin/courses/details/<%= data.id %>" class="btn btn-sm btn-outline-secondary">View Details</a>
+                          <a href="/admin/course/class/<%= data.id %>" class="btn btn-sm btn-outline-secondary">Scheduled</a>
+                        </div>
+
+                      </div>
+                    </div>
+                      <%}) %>
+                  </div>
+
+
+        </main>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+ 
+
+

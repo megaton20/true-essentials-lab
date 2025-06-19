@@ -6,8 +6,9 @@ class Course {
   // Auto-create table on class load
   static async init() {
     const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS courses (
+      CREATE TABLE courses (
         id VARCHAR PRIMARY KEY,
+        course_id VARCHAR REFERENCES courses(id) ON DELETE CASCADE,
         season_id VARCHAR NOT NULL REFERENCES seasons(id) ON DELETE CASCADE,
         title VARCHAR(100) NOT NULL,
         description TEXT,
@@ -30,7 +31,6 @@ class Course {
 
   static async create({ id, title, description, teacherId }) {
      const season = await Season.getCurrent()
-     console.log(season.id);
     
     try {
       const result = await pool.query(

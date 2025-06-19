@@ -27,12 +27,12 @@ const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
 const classRoutes = require('./routes/classRoutes')
 const adminRoutes = require('./routes/adminRoutes')
+const teacherRoutes = require('./routes/teacherRoutes')
 const affiliateRoutes = require('./routes/affiliateRoutes')
 
 app.set('view engine', 'ejs');
 app.use(ejsLayouts);
 app.use(express.static(path.join(__dirname, './', 'public')));
-// Middleware
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -54,7 +54,6 @@ app.use((req, res, next) => {
   res.locals.warning_msg = req.flash('warning_msg');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
-  // res.locals.msg = req.flash('msg');
   next();
 });
 
@@ -80,6 +79,7 @@ app.use('/auth', authRoutes); // open less secure routes
 app.use('/user',ensureAuthenticated, userRoutes); //  secure routes
 app.use('/class',ensureAuthenticated, classRoutes); //  secure routes
 app.use('/admin',ensureAuthenticated, adminRoutes); // secure routes
+app.use('/teacher',ensureAuthenticated, teacherRoutes); // secure routes
 app.use('/affiliate', affiliateRoutes); // open less secure routes
 
 

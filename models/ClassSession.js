@@ -42,14 +42,14 @@ class ClassSession {
     this.duration = data.duration;
   }
 
-  static async create({ title, description, scheduledAt, meetLink, id, courseId }) {
+  static async create({ title, description, scheduledAt, meetLink, id, courseId, createdBy }) {
     const joinCode = uuidv4().split('-')[0]; // Generate a short unique join code
     try {
          const result = await pool.query(`
-      INSERT INTO class_sessions (title, description, scheduled_at, meet_link, join_code, id, course_id )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO class_sessions (title, description, scheduled_at, meet_link, join_code, id, course_id,created_by )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *;
-    `, [title, description, scheduledAt, meetLink, joinCode, id, courseId]);
+    `, [title, description, scheduledAt, meetLink, joinCode, id, courseId, createdBy]);
 
     return result.rows[0];
     } catch (error) {

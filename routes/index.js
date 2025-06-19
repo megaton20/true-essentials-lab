@@ -27,13 +27,15 @@ router.get('/handler', (req, res) => {
     const user = req.user.full_name
 
 
-    if ((role == "admin")) {
+    if (role == "admin") {
       req.flash("success_msg", `welcome back ${user}`);
       return res.redirect("/admin");
 
     } else if (role == "student") {
       return res.redirect("/user")
-    } else {
+    }else if (role == "teacher") {
+      return res.redirect("/teacher")
+    }else {
       req.flash("error_msg", `please log in to use our valuable resources`);
       res.redirect('/auth/login')
     }

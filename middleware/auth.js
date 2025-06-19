@@ -24,6 +24,7 @@ module.exports =  {
 
      affiliateApplicationStatus: async function(req, res, next){
       const result =  await Affiliate.getSingleApplicationsStatus(req.user.id)
+      
       if (result) {
       
           req.flash('error_msg', `already an applicant, wait!`)
@@ -44,6 +45,15 @@ module.exports =  {
     ensureAdmin: function(req, res, next){
 
       if (req.user.role == 'admin') {
+        return  next()
+      }
+      req.flash('error_msg', "invalid request...")
+       return res.redirect('/user')
+    },
+    
+    ensureTeacher: function(req, res, next){
+
+      if (req.user.role == 'teacher') {
         return  next()
       }
       req.flash('error_msg', "invalid request...")

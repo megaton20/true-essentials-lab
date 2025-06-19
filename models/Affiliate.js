@@ -93,7 +93,7 @@ const User = require('./User');
  //user see status
    // all pending applications alone
   static async getSingleApplicationsStatus(id) {
-    const result = await pool.query('SELECT * FROM affiliate_applications WHERE id = $1 ', [id]);
+    const result = await pool.query('SELECT * FROM affiliate_applications WHERE user_id = $1 ', [id]);
     return result.rows[0] || []
   }
 

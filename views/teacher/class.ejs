@@ -17,7 +17,7 @@
       <div class="col-lg-9">
         <main class="p-1">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="/admin/courses" class="btn btn-outline-primary btn-sm">Back</a>
+            <a href="/teacher" class="btn btn-outline-primary btn-sm">Back</a>
             <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editClassModal">Edit</button>
           </div>
 
@@ -47,7 +47,7 @@
                 </p>
 
                 <p><strong>Show Link:</strong> <%= singleClass.show_link %></p>
-                <form action="/admin/class/<%= singleClass.id %>/<%= singleClass.show_link ? 'false' : 'true' %>" method="post">
+                <form action="/teacher/class/<%= singleClass.id %>/<%= singleClass.show_link ? 'false' : 'true' %>" method="post">
                   <input type="hidden" name="_method" value="PUT">
                   <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="toggleShowLink" onchange="this.form.submit()" <%= singleClass.show_link ? 'checked' : '' %>>
@@ -74,7 +74,7 @@
                           <small><%= user.email %></small><br>
                           <small class="text-muted">Joined at: <%= new Date(user.joined_at).toLocaleString() %></small>
                         </div>
-                        <form action="/admin/class/<%= singleClass.id %>/grant-access/<%= user.id %>" method="post">
+                        <form action="/teacher/class/<%= singleClass.id %>/grant-access/<%= user.id %>" method="post">
                           <input type="hidden" name="_method" value="PUT">
                           <input type="checkbox" name="granted" onchange="this.form.submit()" <%= user.status ? 'checked' : '' %> >
                           <label class="form-check-label ms-1">Access</label>
@@ -94,7 +94,7 @@
   <!-- Edit Modal -->
   <div class="modal fade" id="editClassModal" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <form class="modal-content" method="post" action="/admin/class/<%= singleClass.id %>/edit">
+      <form class="modal-content" method="post" action="/teacher/class/<%= singleClass.id %>/edit">
         <input type="hidden" name="_method" value="PUT">
         <div class="modal-header">
           <h5 class="modal-title">Edit Class Details</h5>

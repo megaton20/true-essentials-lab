@@ -61,8 +61,7 @@ exports.findOneUsers = async (req, res) => {
 
  const userId =  req.params.id
     try {
-    const user = await Admin.getById(userId); 
-
+    const user = await Admin.getById(userId);
     res.render('./admin/user',
        { 
         user
@@ -74,14 +73,70 @@ exports.findOneUsers = async (req, res) => {
 };
 
 
+// courses
 
 exports.createClass = async (req, res) => {
   const {title, description, scheduled_at, meet_link, courseId} = req.body
- console.log(courseId);
- 
+  const createdBy = req.user.id
   try {
-    const stats = await ClassSession.create({title, description, scheduledAt: scheduled_at,meetLink: meet_link,id:uuidv4(), courseId});
+    const stats = await ClassSession.create({title, description, scheduledAt: scheduled_at,meetLink: meet_link,id:uuidv4(), courseId, createdBy});
     res.redirect('/admin/success') 
+  } catch (error) {
+    res.redirect('/admin/error') 
+    console.log("error on create class: "+ error);
+    
+    
+  }
+};
+
+
+exports.getAllCourse = async (req, res) => {
+
+  try {
+    const courses = await Course.listAll();
+
+    res.render('./admin/courses', {
+      courses
+    }) 
+  } catch (error) {
+    res.redirect('/admin/error') 
+    console.log("error on create class: "+ error);
+    
+    
+  }
+};
+
+exports.getOneCourse = async (req, res) => {
+
+  try {
+      const course = await Course.findById(req.params.id);
+   
+       const { rows: allAeachers } = await pool.query(`
+          SELECT t.*, u.full_name, u.email
+          FROM teachers t
+          JOIN users u ON u.id = t.user_id;
+          `);
+      
+
+      // 1. Attach related teachers directly to `course`
+      const teachersQuery = `
+        SELECT t.*, u.full_name, u.email
+        FROM teacher_courses tc
+        JOIN teachers t ON t.id = tc.teacher_id
+        JOIN users u ON u.id = t.user_id
+        WHERE tc.course_id = $1
+      `;
+      const { rows: teachers } = await pool.query(teachersQuery, [course.id]);
+      course.teachers = teachers; // attach to course object
+
+      // 2. Attach total class session count
+      const classCountQuery = `SELECT COUNT(*) FROM class_sessions WHERE course_id = $1`;
+      const { rows: classResult } = await pool.query(classCountQuery, [course.id]);
+      course.totalClasses = parseInt(classResult[0].count); // attach as well
+
+      // 3. Pass the single enriched object to the view
+      res.render('./admin/course', { course, allAeachers });
+
   } catch (error) {
     res.redirect('/admin/error') 
     console.log("error on create class: "+ error);

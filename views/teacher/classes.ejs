@@ -17,7 +17,7 @@
       <div class="col-lg-9">
         <main class="p-1">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="/admin/courses" class="btn btn-outline-primary btn-sm">Back</a>
+            <a href="/teacher" class="btn btn-outline-primary btn-sm">Back</a>
             
             <%- include('../partials/messages') %>
             <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#createClassModal">
@@ -52,7 +52,7 @@
 
                         <!-- Bottom Section: Action -->
                         <div>
-                          <a href="/admin/class/<%= data.id %>" class="btn btn-sm btn-outline-secondary">View Details</a>
+                          <a href="/teacher/class/<%= data.id %>" class="btn btn-sm btn-outline-secondary">View Details</a>
                         </div>
 
                       </div>
@@ -71,7 +71,7 @@
   <!-- Create Class Modal -->
   <div class="modal fade" id="createClassModal" tabindex="-1">
     <div class="modal-dialog">
-      <form class="modal-content" method="post" action="/admin/class">
+      <form class="modal-content" method="post" action="/teacher/class">
         <div class="modal-header">
           <h5 class="modal-title">Create New Class</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

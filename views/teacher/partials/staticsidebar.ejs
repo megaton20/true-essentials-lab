@@ -8,10 +8,12 @@
               <% } else { %>
                 <a href="/affiliate/dashboard" class="nav-link text-dark">Earnings</a>
               <% } %>
-             <% if (user.role == "teacher") { %>
+
+              <% if (user.role == "teacher") { %>
                 <a href="/teacher" class="nav-link text-dark">Teacher</a>
               <% } else { %>
               <% } %>
+
 
       
             <a href="/logout" class="nav-link text-danger">Logout</a>
