@@ -7,6 +7,17 @@
 
   <!-- Main Content -->
   <div class="container-fluid mt-4">
+
+        <div class="bg-success text-white rounded p-4 mb-4 shadow-sm d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="mb-1"> Dashboard</h2>
+            <p class="mb-0">Welcome back! View your courses and track your classes.</p>
+          </div>
+          <div>
+            <!-- <img src="/images/teacher-icon.png" alt="Teacher Icon" style="height: 50px;"> -->
+          </div>
+        </div>
+
     <div class="row">
       <!-- Static Sidebar for desktop -->
       <div class="col-lg-3 d-none d-lg-block">
@@ -24,37 +35,43 @@
 
               <div class="bg-white shadow-sm p-2 rounded mb-4">
                 <h5>Avialable Courses For This Edition</h5>
-                 <div class="row">                          
-              <% courses.forEach(function(data, index) { %>
-                <div class="col-md-3 mb-3">
-                  <div class="p-3 border rounded shadow-sm class-card d-flex flex-column justify-content-between" data-aos="fade" data-aos-delay="<%= (index + 1) * 100 %>">
+                <div class="row">                          
+                  <% courses.forEach(function(data, index) { %>
+                    <div class="col-md-6 mb-3">
+                      <div class="p-3 border rounded shadow-sm class-card" data-aos="fade" data-aos-delay="<%= (index + 1) * 100 %>">
+                        <div class="d-flex gap-3">
+                          
+                          <!-- Left: Image -->
+                          <div style="flex: 0 0 100px;">
+                            <img 
+                              src="<%= data.image_url ? data.image_url : '/images/default.PNG' %>" 
+                              alt="Course image" 
+                              class="img-fluid rounded" 
+                              style="height: 100px; width: 100px; object-fit: cover;">
+                          </div>
 
-                    <!-- Middle: Title and Date -->
-                    <div class="mb-2">
-                      <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
-                      <p class="mb-1 text-truncate" style="font-size: 13px;" title="<%= data.title %>"><%= data.description %></p>
-                      <p class="mb-1 text-truncate" style="font-size: 11px;" title="<%= data.title %>">Total Classes: <%= data.total || 'not provided' %></p>
-                      <p class="text-muted small mb-0" style="font-size: 11px;">
-                        <%= new Date(data.created_at).toLocaleString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: 'numeric',
-                          minute: '2-digit'
-                        }) %>
-                      </p>
+                          <!-- Right: Text Info -->
+                          <div class="flex-grow-1 pr-5">
+                            <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
+                            <p class="mb-1 text-truncate" style="font-size: 13px;"><%= data.description %></p>
+                            <p class="mb-1 text-truncate" style="font-size: 11px;">Total Classes: <%= data.total || 'not provided' %></p>
+                            <p class="text-muted small mb-1" style="font-size: 11px;">
+                              <%= new Date(data.created_at).toLocaleString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit'
+                              }) %>
+                            </p>
+                            <a href="/user/course/<%= data.id %>" class="btn btn-sm btn-outline-dark mt-1">View Classes</a>
+                          </div>
+
+                        </div>
+                      </div>
                     </div>
-
-                    <!-- Bottom: Actions -->
-                    <div class="d-flex justify-content-between">
-                      <a href="/user/course/<%= data.id %>" class="btn btn-sm btn-outline-dark">View Classes</a>
-                    </div>
-
-                  </div>
+                  <% }) %>
                 </div>
-              <% }) %>
-              </div>
-
               </div>
         
         </main>

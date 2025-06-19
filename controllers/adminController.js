@@ -162,7 +162,21 @@ exports.createCourse = async (req, res) => {
   }
 };
 
-
+exports.editCourse = async (req, res) => {
+  const {title, description} = req.body
+  const teacherId = req.user.id
+ 
+  
+  try {
+    const stats = await Course.update(req.params.id, {title,description, teacherId });
+    res.redirect('/admin/success') 
+  } catch (error) {
+    res.redirect('/admin/error') 
+    console.log("error on create class: "+ error);
+    
+    
+  }
+};
 
 exports.getCourseSchedule = async (req, res) => {
 

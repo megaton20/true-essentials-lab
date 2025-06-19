@@ -88,7 +88,7 @@
   <!-- Edit Modal -->
   <div class="modal fade" id="editClassModal" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <form class="modal-content" method="post" action="/admin/class/<%= course.id %>/edit">
+      <form class="modal-content" method="post" action="/admin/courses/<%= course.id %>">
         <input type="hidden" name="_method" value="PUT">
         <div class="modal-header">
           <h5 class="modal-title">Edit Class Details</h5>

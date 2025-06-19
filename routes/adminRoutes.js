@@ -30,6 +30,7 @@ router.put('/referral/:id', ensureAdmin, adminController.findReferralCode);
 router.get('/courses', ensureAdmin, adminController.getAllCourse);
 router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse);
 router.post('/courses/create', ensureAdmin, adminController.createCourse);
+router.put('/courses/:id', ensureAdmin, adminController.editCourse);
 router.get('/course/class/:id', ensureAdmin, adminController.getCourseSchedule);
 
 
