@@ -41,7 +41,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({
   secret: 'your-secret-key',
   resave: false,
-  saveUninitialized: false
+    saveUninitialized: true,
+    cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
 app.use(flash());
@@ -99,8 +100,12 @@ app.use((err, req, res, next) => {
 });
 
 
-
-app.listen(PORT, ()=>{
+console.log(PORT);
+if (PORT) {
+  app.listen(PORT, ()=>{
     console.log(`listing...${PORT}`);
-    
 })
+}else{
+  app.listen()
+}
+

@@ -2,7 +2,7 @@ const router = require('express').Router();
 const bcrypt = require("bcryptjs")
 const auth = require('../controllers/authController');
 const { ensureAuthenticated,forwardAuthenticated } = require("../config/auth");
-const { checkRegistrationOpen, checkPaymentOpen } = require('../middleware/settingsMiddleware');
+const { checkRegistrationOpen,checkingActiveSeason, checkPaymentOpen } = require('../middleware/settingsMiddleware');
 const { generateResetToken, verifyResetToken } = require('../config/jsonWebToken');
 const sendEmail = require('../utils/mailer');
 const pool = require('../config/db');
@@ -17,9 +17,10 @@ const {
 
 
 
-router.get('/register',checkRegistrationOpen,forwardAuthenticated, auth.registerPage);
+router.get('/register',forwardAuthenticated,checkingActiveSeason, checkRegistrationOpen, auth.registerPage);
 router.post('/register',checkRegistrationOpen,forwardAuthenticated, auth.register);
-router.get('/registration-closed',forwardAuthenticated, auth.registerClosed);
+router.get('/registration-closed',forwardAuthenticated,checkingActiveSeason, auth.registerClosed);
+router.get('/season-closed',forwardAuthenticated,checkRegistrationOpen, auth.seasonClosed);
 
 router.get('/login',forwardAuthenticated, auth.loginPage);
 router.post('/login', forwardAuthenticated,auth.login);
@@ -75,16 +76,15 @@ router.post('/change-password/request',forwardAuthenticated, async (req,res)=>{
         const token = generateResetToken(email);
     const resetLink = `${process.env.LIVE_DIRR || `http://localhost:${process.env.PORT || 2000}`}/auth/reset-password/${token}`;
 
-
    const sentEmail =  await sendEmail(email, 'Password Reset Link', resetPasswordTemplate(resetLink));
 
-   if (sentEmail) {
-      return res.redirect('/auth/request-password/success')
-}else{
-            req.flash('error_msg',`email did not go through`)
-         return res.redirect('/auth/forget-password')
+            if (sentEmail) {
+                  return res.redirect('/auth/request-password/success')
+            }else{
+                        req.flash('error_msg',`email did not go through`)
+                  return res.redirect('/auth/forget-password')
 
-   }
+            }
 })
 
 

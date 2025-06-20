@@ -8,39 +8,47 @@ const pool = require('../config/db');
 const Season = require('../models/Season');
 const User = require('../models/User');
 const Course = require('../models/Course');
+const SeasonUser = require('../models/SeasonUsers');
 
 exports.adminDashboard = async (req, res) => {
-
-    try {
+  try {
     const stats = await Admin.getDashboardStats(); 
-    const currentSeason =   await Season.getCurrent()
-    const courseBySeason = await Course.listAllBySeason(currentSeason.id); 
-    
+    const currentSeason = await Season.getCurrent();
+
+    let courseBySeason = [];
+
+    if (currentSeason) {
+      courseBySeason = await Course.listAllBySeason(currentSeason.id); 
+    }
+
     const classStatus = await Admin.getClassStatus();
-      const active = await Season.getCurrent();
-      const upcoming = await Season.getUpcoming();
+    const active = currentSeason;
+    const upcoming = await Season.getUpcoming();
 
-      const teachers = await User.findTeacher()
+    const teachers = await User.findTeacher();
+    const currentUser = await SeasonUser.getUsers(currentSeason.id);
 
-      
-  const pastResult = await pool.query(`SELECT * FROM seasons WHERE reg_close < NOW() ORDER BY reg_close DESC`);
+    const pastResultQuery = await pool.query(`
+      SELECT * FROM seasons WHERE reg_close < NOW() ORDER BY reg_close DESC
+    `);
+    const pastResult = pastResultQuery.rows || [];
 
-    res.render('./admin/dashboard',
-       { 
-        stats,
-        courseBySeason, 
-        classStatus,
-        active,
-        upcoming,
-        pastResult,
-        teachers
-
-       });
+    res.render('./admin/dashboard', {
+      stats,
+      courseBySeason,
+      classStatus: classStatus || [],
+      active: active || null,
+      upcoming: upcoming || null,
+      pastResult,
+      teachers: teachers || [],
+      currentUser: currentUser || []
+    });
   } catch (err) {
+    console.error("Error loading admin dashboard:", err);
     res.status(500).send("Error loading admin dashboard.");
   }
-    //  res.render('./admin/dashboard')
 };
+
 
 exports.getAllUsers = async (req, res) => {
 
@@ -91,18 +99,31 @@ exports.createClass = async (req, res) => {
 
 
 exports.getAllCourse = async (req, res) => {
-
   try {
-    const courses = await Course.listAll();
+    const currentSeason = await Season.getCurrent();
+    const seasonId = currentSeason ? currentSeason.id : null;
+
+    // Get current season's courses
+    const presentCourses = seasonId
+      ? await Course.listAllBySeason(seasonId)
+      : [];
+
+    // All courses (for both current and past)
+    const allCourses = await Course.listAll();
+
+    // Filter out present season courses from allCourses to get pastCourses
+    const presentCourseIds = presentCourses.map(c => c.id);
+    const pastCourses = allCourses.filter(c => !presentCourseIds.includes(c.id));
 
     res.render('./admin/courses', {
-      courses
-    }) 
+      season: currentSeason,
+      presentCourses,
+      pastCourses
+    });
+
   } catch (error) {
-    res.redirect('/admin/error') 
-    console.log("error on create class: "+ error);
-    
-    
+    console.error("Error in loading courses:", error);
+    res.redirect('/admin/error');
   }
 };
 
@@ -152,8 +173,15 @@ exports.createCourse = async (req, res) => {
  
   
   try {
-    const stats = await Course.create({id:uuidv4(), title,description, teacherId });
-    res.redirect('/admin/success') 
+    const result = await Course.create({id:uuidv4(), title,description, teacherId });
+
+    if (result.success) {
+      req.flash('success', result.message);
+    } else {
+      req.flash('error', result.message);
+    }
+    res.redirect('/admin/courses');
+
   } catch (error) {
     res.redirect('/admin/error') 
     console.log("error on create class: "+ error);
@@ -347,29 +375,46 @@ exports.getAttendanceForSession =  async (req, res) => {
 
 
 
-
 exports.seasonsManager = async (req, res) => {
+  try {
+    const active = await Season.getCurrent();
+    const upcoming = await Season.getUpcoming();
 
-    try {
-      const active = await Season.getCurrent();
-      const upcoming = await Season.getUpcoming();
+    const allSeasons = await pool.query(`SELECT * FROM seasons ORDER BY reg_open DESC`);
 
-      // console.log(upcoming);
-      
-  const pastResult = await pool.query(`SELECT * FROM seasons WHERE reg_close < NOW() ORDER BY reg_close DESC`);
-
-    res.render('./admin/seasons',
-       { 
-        active,
-        upcoming,
-        pastResult
-
-       });
+    res.render('./admin/seasons', {
+      active,
+      upcoming,
+      seasons: allSeasons.rows // 👈 this is critical
+    });
   } catch (err) {
-    res.status(500).send("Error loading admin dashboard.");
+    console.error(err);
+    res.status(500).send("Error loading season manager.");
   }
-    //  res.render('./admin/dashboard')
 };
+
+exports.getOneSeason = async (req, res) => {
+
+  try {
+      const season = await Season.findById(req.params.id);
+
+    const currentUser = await SeasonUser.getUsers(season.id);
+
+      res.render('./admin/season',
+         { 
+        season: season || [], 
+        currentUser:currentUser ||[] 
+      });
+
+  } catch (error) {
+    res.redirect('/admin/error') 
+    console.log("error on gettind season details: "+ error);
+    
+    
+  }
+};
+
+
 exports.createSeason = async (req, res) => {
   const { name, reg_open, reg_close } = req.body;
   try {
@@ -380,6 +425,21 @@ exports.createSeason = async (req, res) => {
   }
 };
 
+exports.editSeason = async (req, res) => {
+  
+  const { name, reg_open, reg_close, id } = req.body;
+  try {
+    const updated = await Season.edit(id, name, reg_open, reg_close );
+    if (updated) {
+      req.flash('success_msg', "update Completed!")
+    }else{
+      req.flash('error_msg', "Failed to update")
+    }
+    res.redirect('/admin/seasons');
+  } catch (err) {
+    res.status(500).send('Error creating season: ' + err.message);
+  }
+};
 exports.getUsersBySeason = async (req, res) => {
   const { season_id } = req.params;
   const result = await db.query(

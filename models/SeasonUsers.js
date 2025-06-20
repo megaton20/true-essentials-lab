@@ -89,6 +89,18 @@ static async register(userId, seasonId, id) {
     );
     return result.rows.map(row => new SeasonUser(row));
   }
+
+    static async getUsers(seasonId) {
+      const query = `
+        SELECT u.id, u.full_name, u.email, su.has_paid
+        FROM season_users su
+        JOIN users u ON u.id = su.user_id
+        WHERE su.season_id = $1
+      `;
+      const { rows } = await pool.query(query, [seasonId]);
+      return rows;
+    }
+
 }
 
 module.exports = SeasonUser;

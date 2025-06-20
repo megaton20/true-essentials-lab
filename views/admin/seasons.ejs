@@ -1,159 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Class Details</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Bootstrap & Font Awesome -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
-
-  <style>
-    .profile-img {
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-  </style>
-</head>
-<body class="bg-light">
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top px-3">
-    <div class="container-fluid">
-      <button class="btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar">
-        <i class="fas fa-bars"></i>
-      </button>
-      <span class="navbar-brand fw-bold">Admin Panel</span>
-      <div class="ms-auto d-flex align-items-center gap-3">
-        <div class="position-relative">
-          <i class="fas fa-bell fs-5 text-secondary"></i>
-          <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-        </div>
-        <img src="https://i.pravatar.cc/40" alt="Profile" class="profile-img" />
-      </div>
-    </div>
-  </nav>
-
-  <!-- Sidebar -->
-  <div class="offcanvas offcanvas-start bg-white" tabindex="-1" id="offcanvasSidebar">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title fw-bold">Admin Menu</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-      <nav class="nav flex-column">
-        <a href="/admin" class="nav-link text-dark">Dashboard</a>
-        <a href="/admin/classes" class="nav-link text-dark">Classes</a>
-        <a href="/admin/seasons" class="nav-link text-dark">Seasons</a>
-        <a href="/admin/affiliate/applications" class="nav-link text-dark">Affiliate Applications</a>
-        <a href="/admin/referral" class="nav-link text-dark">Scout Locations</a>
-        <a href="/admin/setting" class="nav-link text-dark">Settings</a>
-        <a href="/logout" class="nav-link text-dark">Logout</a>
-      </nav>
-    </div>
-  </div>
+  <!-- Navbar & Sidebar -->
+  <%- include('./partials/topnav') %>
+  <%- include('./partials/sidenav') %>
 
   <!-- Main Content -->
   <div class="container-fluid mt-4">
     <div class="row">
-      <!-- Static Sidebar -->
       <div class="col-lg-3 d-none d-lg-block">
-        <div class="bg-white shadow-sm p-3 rounded">
-          <h5 class="fw-bold mb-4">Admin Menu</h5>
-          <nav class="nav flex-column">
-            <a href="/admin" class="nav-link text-dark">Dashboard</a>
-            <a href="/admin/classes" class="nav-link text-dark">Classes</a>
-            <a href="/admin/seasons" class="nav-link text-dark">Seasons</a>
-            <a href="/admin/affiliate/applications" class="nav-link text-dark">Affiliate Applications</a>
-            <a href="/admin/referral" class="nav-link text-dark">Scout Locations</a>
-            <a href="/admin/setting" class="nav-link text-dark">Settings</a>
-            <a href="/logout" class="nav-link text-dark">Logout</a>
-          </nav>
-        </div>
+        <%- include('./partials/staticsidebar') %>
       </div>
 
-      <!-- Class Details Section -->
       <div class="col-lg-9">
         <main class="p-3">
-          <%- include('../partials/messages') %>
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="/admin" class="btn btn-outline-primary btn-sm">Back</a>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+           
+                <a href="/admin" class="btn btn-outline-primary btn-sm mb-3">← Back</a>
+                  <!-- Create Button -->
+                <button class="btn btn-success mb-4" data-bs-toggle="modal" data-bs-target="#createModal">
+                  <i class="fas fa-plus-circle"></i> Create Season
+                </button>
           </div>
-               
-                    <h2 class="mb-4">🎓 Season Management</h2>
 
-                    <!-- Create Season Form -->
-                    <div class="card mb-4 shadow-sm">
-                      <div class="card-body">
-                        <h5 class="card-title">➕ Create New Season</h5>
-                        <form method="POST" action="/admin/seasons">
-                          <div class="row g-2">
-                            <div class="col-md-3">
-                              <input name="name" class="form-control" placeholder="Season name" required>
-                            </div>
-                            <div class="col-md-3">
-                              <input name="course" class="form-control" placeholder="Course name">
-                            </div>
-                            <div class="col-md-3">
-                              <input name="reg_open" type="datetime-local" class="form-control" required>
-                            </div>
-                            <div class="col-md-3">
-                              <input name="reg_close" type="datetime-local" class="form-control" required>
-                            </div>
-                          </div>
-                          <button class="btn btn-primary mt-3">
-                            <i class="fas fa-plus-circle"></i> Create Season
-                          </button>
-                        </form>
+          <%- include('../partials/messages') %>
+         
+       
+
+          <!-- Active and Upcoming Seasons in a Row -->
+          <div class="row mb-4">
+            <!-- Active Season -->
+            <div class="col-md-6 mb-3">
+              <div class="bg-success rounded text-light h-100 shadow-sm">
+                <div class="p-3">
+                  <h5>🟢 Active Season</h5>
+                  <% if (active) { %>
+                    <p><strong><%= active.name %></strong></p>
+                    <small class="text-light">Registration closes: <%= new Date(active.reg_close).toLocaleString() %></small>
+                  <% } else { %>
+                    <p>No active season.</p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Upcoming Season -->
+            <div class="col-md-6 mb-3">
+              <div class="bg-success rounded text-light h-100 shadow-sm">
+                <div class="p-3">
+                  <h5>⏳ Upcoming Season</h5>
+                  <% if (upcoming) { %>
+                    <p><strong><%= upcoming.name %></strong></p>
+                    <small class="text-light">Starts: <%= new Date(upcoming.reg_open).toLocaleString() %></small>
+                  <% } else { %>
+                    <p>No upcoming season.</p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- All Seasons Grid -->
+          <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">📋 All Seasons</h5>
+              <% if (seasons && seasons.length) { %>
+                <div class="row">
+                  <% seasons.forEach(season => { %>
+                    <div class="col-md-6 col-lg-3 mb-4">
+                      <div class="border rounded p-3 h-100 shadow-sm position-relative">
+                        <h6 class="mb-3">Theme: <%= season.name %></h6>
+                        <p class="mb-1" style="font-size: 12px;"><small>Opens:</small> <%= new Date(season.reg_open).toLocaleString() %></p>
+                        <p class="mb-1" style="font-size: 12px;"><small>Closes:</small> <%= new Date(season.reg_close).toLocaleString() %></p>
+                        <div class="mt-2 d-flex justify-content-end gap-2">
+                          <a href="/admin/seasons/<%= season.id %>" title="View" class="text-primary">
+                            <i class="fas fa-eye"></i>
+                          </a>
+                          <a href="#" class="text-warning edit-btn"
+                             data-bs-toggle="modal" data-bs-target="#editModal"
+                             data-id="<%= season.id %>"
+                             data-name="<%= season.name %>"
+                             data-course="<%= season.course %>"
+                             data-reg_open="<%= new Date(season.reg_open).toISOString().slice(0,16) %>"
+                             data-reg_close="<%= new Date(season.reg_close).toISOString().slice(0,16) %>">
+                            <i class="fas fa-edit"></i>
+                          </a>
+                        </div>
                       </div>
                     </div>
-
-                    <!-- Active Season -->
-                    <div class="card mb-4 shadow-sm">
-                      <div class="card-body">
-                        <h5 class="card-title text-success">🟢 Active Season</h5>
-                        <% if (active) { %>
-                          <p class="mb-1">
-                            <strong><%= active.name %></strong> - <em><%= active.course || 'No course listed' %></em>
-                          </p>
-                          <small class="text-muted">Registration closes: <%= active.reg_close.toLocaleString() %></small>
-                        <% } else { %>
-                          <p>No active season at the moment.</p>
-                        <% } %>
-                      </div>
-                    </div>
-
-                    <!-- Upcoming Season -->
-                    <div class="card shadow-sm">
-                      <div class="card-body">
-                        <h5 class="card-title text-primary">⏳ Upcoming Season</h5>
-                        <% if (upcoming) { %>
-                          <p class="mb-1">
-                            <strong><%= upcoming.name %></strong> - <em><%= upcoming.course || 'No course listed' %></em>
-                          </p>
-                          <small class="text-muted">Starts: <%= upcoming.reg_open.toLocaleString() %></small>
-                        <% } else { %>
-                          <p>No upcoming season scheduled.</p>
-                        <% } %>
-                      </div>
-                    </div>
+                  <% }) %>
+                </div>
+              <% } else { %>
+                <p>No seasons available.</p>
+              <% } %>
+            </div>
+          </div>
         </main>
       </div>
     </div>
   </div>
 
+  <!-- Create Season Modal -->
+  <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form method="POST" action="/admin/seasons" class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createModalLabel">➕ Create New Season</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3"><label>Name</label><input name="name" class="form-control" required></div>
+          <div class="mb-3"><label>Registration Opens</label><input name="reg_open" type="datetime-local" class="form-control" required></div>
+          <div class="mb-3"><label>Registration Closes</label><input name="reg_close" type="datetime-local" class="form-control" required></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Season</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  <!-- Edit Season Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form method="POST" action="/admin/seasons/edit" class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">✏️ Edit Season</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id" id="edit-id">
+          <div class="mb-3"><label>Name</label><input type="text" class="form-control" name="name" id="edit-name" required></div>
+          <div class="mb-3"><label>Opens</label><input type="datetime-local" class="form-control" name="reg_open" id="edit-reg-open" required></div>
+          <div class="mb-3"><label>Closes</label><input type="datetime-local" class="form-control" name="reg_close" id="edit-reg-close" required></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-warning">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-
-
-
- 
-
+  <script>
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('edit-id').value = btn.dataset.id;
+        document.getElementById('edit-name').value = btn.dataset.name;
+        document.getElementById('edit-reg-open').value = btn.dataset.reg_open;
+        document.getElementById('edit-reg-close').value = btn.dataset.reg_close;
+      });
+    });
+  </script>
 

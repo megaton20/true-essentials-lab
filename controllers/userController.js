@@ -12,24 +12,44 @@ exports.getDashboard = async (req, res) => {
   const userId = req.user.id;
   const customerToPay = 30000;
 
+  try {
+    const currentSeason = await Season.getCurrent();
 
-  const currentSeason = await Season.getCurrent();
-  const userSeason = await SeasonUser.get(userId, currentSeason.id);
+    if (!currentSeason) {
+      // No active season
+      req.flash('error', 'No active season available at the moment.');
+      return res.render('./student/dashboard', {
+        courses: [],
+        season: null,
+        user: req.user,
+        customerToPay,
+        ebooks: [],
+      });
+    }
 
-  // check if user don pay
-  req.user = {
-    ...req.user,
-    seasonInfo: userSeason
-  };
+    const userSeason = await SeasonUser.get(userId, currentSeason.id);
 
-  // Fetch all courses under the current season
-  const courses = await Course.listAllBySeason(currentSeason.id);
-  res.render('./student/dashboard', {
-    courses,
-    user: req.user,
-    customerToPay,
-    ebooks: [],
-  });
+    // Merge season info into user
+    req.user = {
+      ...req.user,
+      seasonInfo: userSeason,
+    };
+
+    // Fetch courses under this season
+    const courses = await Course.listAllBySeason(currentSeason.id);
+
+    res.render('./student/dashboard', {
+      courses,
+      season: currentSeason,
+      user: req.user,
+      customerToPay,
+      ebooks: [],
+    });
+
+  } catch (err) {
+    console.error('Error loading dashboard:', err);
+    res.status(500).send('Something went wrong. Please try again later.');
+  }
 };
 
 

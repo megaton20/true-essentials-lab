@@ -7,19 +7,21 @@
         <div class="w-100 px-4" style="max-width: 450px;">
           <div class="text-center mb-4">
             <a href="/"><img src="/images/logo.png" alt="Logo" class="img-fluid mb-3" style="max-height: 60px;" /></a>
-            <h2>Get Started</h2>
-            <p class="text-muted">Create a new account</p>
+            <p>Theme: <%= season.name%></p>
+            <p>Registration Closes: <span id="countdown">Loading countdown...</span></p>
           </div>
           <%- include('./partials/messages') %>
           
           <form action="/auth/register" method="post">
-            <div class="mb-3">
+            <div class="row">
+                <div class="col-6 col-sm-12">
               <label for="firstname" class="form-label">First Name</label>
               <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name" required />
             </div>
-            <div class="mb-3">
+            <div class="col-6 col-sm-12">
               <label for="lastname" class="form-label">Last Name</label>
               <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name" required />
+            </div>
             </div>
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
@@ -60,3 +62,28 @@
     </div>
   </div>
 
+  <script>
+  const regCloseDate = new Date("<%= season.reg_close.toISOString() %>");
+
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = regCloseDate - now;
+
+    if (distance <= 0) {
+      document.getElementById("countdown").innerText = "Registration Closed";
+      clearInterval(timer);
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("countdown").innerText =
+      `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  const timer = setInterval(updateCountdown, 1000);
+  updateCountdown(); // run immediately
+</script>

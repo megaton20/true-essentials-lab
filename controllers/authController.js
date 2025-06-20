@@ -11,13 +11,16 @@ const sendEmail = require('../utils/mailer');
 const Season = require('../models/Season');
 const SeasonUser = require('../models/SeasonUsers');
 
-exports.registerPage = (req, res) => {
+exports.registerPage = async (req, res) => {
    const referrerCode = req.query.ref || null;
   if (referrerCode) {
     req.session.referrerCode = referrerCode
   }
+    const currentSeason = await Season.getCurrent();
+     
  res.render('register',{
   referralCode:referrerCode,
+  season:currentSeason
  })
 }
 
@@ -93,7 +96,19 @@ exports.register = async (req, res, next) => {
 exports.registerClosed = async (req, res, next) => {
 
   try {
-    res.render('register-closed')
+    const nextSeason = await Season.getUpcoming();
+    res.render('register-closed', { nextSeason })
+
+  } catch (error) {
+    console.error('Registration closed error:', error);
+  
+  }
+};
+
+exports.seasonClosed = async (req, res, next) => {
+
+  try {
+    res.render('season-closed')
 
   } catch (error) {
     console.error('Registration closed error:', error);
@@ -242,6 +257,19 @@ exports.login = async (req, res, next) => {
     }
 
     try {
+      const currentSeason = await Season.getCurrent()
+      
+      if (currentSeason) {
+        // get status
+
+        
+        const isMigrated = await SeasonUser.get(user.id, currentSeason.id)
+        if (!isMigrated) {
+            const migreate= await SeasonUser.register(user.id, currentSeason.id, uuidv4())
+           console.log("revisitor added successfully");
+       }
+        
+      }
 
       req.login(user, err => {
         if (err) {

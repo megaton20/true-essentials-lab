@@ -1,86 +1,113 @@
-  <!-- Navbar -->
-  <%-include('./partials/topnav') %>
-  
-  <!-- Sidebar -->
-  <%-include('./partials/sidenav') %>
-  
+<!-- Navbar -->
+<%-include('./partials/topnav') %>
 
-  <!-- Main Content -->
-  <div class="container-fluid mt-4">
+<!-- Sidebar -->
+<%-include('./partials/sidenav') %>
 
-        <div class="bg-success text-white rounded p-4 mb-4 shadow-sm d-flex justify-content-between align-items-center">
-          <div>
-            <h2 class="mb-1"> Dashboard</h2>
-            <p class="mb-0">Welcome back! View your courses and track your classes.</p>
-          </div>
-          <div>
-            <!-- <img src="/images/teacher-icon.png" alt="Teacher Icon" style="height: 50px;"> -->
-          </div>
-        </div>
-
-    <div class="row">
-      <!-- Static Sidebar for desktop -->
-      <div class="col-lg-3 d-none d-lg-block">
-        <%-include('./partials/staticsidebar') %>
-         <!-- Sidebar -->
-        </div>
-
-      <!-- Main Dashboard Section -->
-      <div class="col-lg-9">
-
-        <main class="p-0">
-        
-          <%- include('../partials/messages') %>
-          <!-- Stats -->         
-
-              <div class="bg-white shadow-sm p-2 rounded mb-4">
-                <h5>Avialable Courses For This Edition</h5>
-                <div class="row">                          
-                  <% courses.forEach(function(data, index) { %>
-                    <div class="col-md-6 mb-3">
-                      <div class="p-3 border rounded shadow-sm class-card" data-aos="fade" data-aos-delay="<%= (index + 1) * 100 %>">
-                        <div class="d-flex gap-3">
-                          
-                          <!-- Left: Image -->
-                          <div style="flex: 0 0 100px;">
-                            <img 
-                              src="<%= data.image_url ? data.image_url : '/images/default.PNG' %>" 
-                              alt="Course image" 
-                              class="img-fluid rounded" 
-                              style="height: 100px; width: 100px; object-fit: cover;">
-                          </div>
-
-                          <!-- Right: Text Info -->
-                          <div class="flex-grow-1 pr-5">
-                            <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
-                            <p class="mb-1 text-truncate" style="font-size: 13px;"><%= data.description %></p>
-                            <p class="mb-1 text-truncate" style="font-size: 11px;">Total Classes: <%= data.total || 'not provided' %></p>
-                            <p class="text-muted small mb-1" style="font-size: 11px;">
-                              <%= new Date(data.created_at).toLocaleString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: 'numeric',
-                                minute: '2-digit'
-                              }) %>
-                            </p>
-                            <a href="/user/course/<%= data.id %>" class="btn btn-sm btn-outline-dark mt-1">View Classes</a>
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-                  <% }) %>
-                </div>
-              </div>
-        
-        </main>
-
-      </div>
-
+<!-- Main Content -->
+<div class="container-fluid mt-4">
+  <!-- Welcome Banner -->
+  <div class="bg-success text-white rounded p-4 mb-4 shadow-sm">
+    <div class="text-center">
+      <h2 class="mb-1">Dashboard</h2>
+      <p class="mb-0">Welcome back, <%= user.full_name %>! View your courses and track your classes.</p>
     </div>
   </div>
 
+  <div class="row">
+    <!-- Static Sidebar for desktop -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <%-include('./partials/staticsidebar') %>
+    </div>
 
+    <!-- Main Dashboard Section -->
+    <div class="col-lg-9">
+      <main class="p-0">
+        <%- include('../partials/messages') %>
 
+        <div class="bg-white shadow-sm p-2 rounded mb-4">
+          <div class="row">
+            <!-- Season Info -->
+            <div class="col-md-4 mb-3">
+              <div class="p-3 shadow-sm class-card text-center" data-aos="fade" data-aos-delay="100">
+                <% if (season) { %>
+                  <p class="mb-1">Welcome to</p>
+                  <h4><%= season.name %></h4>
+                  <p class="fw-bold">Season Ends: <span id="countdown">Loading... </span></p>
+                  <div class="mt-2 text-muted small">
+                  </div>
+                <% } else { %>
+                  <p class="mb-1">No active season at the moment.</p>
+                <% } %>
+              </div>
+            </div>
 
+            <!-- Course List -->
+            <% courses.forEach(function (data, index) { %>
+              <div class="col-md-4 mb-3">
+                <div class="p-3 border rounded shadow-sm class-card" data-aos="fade" data-aos-delay="<%= (index + 1) * 200 %>">
+                  <div class="d-flex gap-3">
+                    <!-- Left: Image -->
+                    <div style="flex: 0 0 100px;">
+                      <img 
+                        src="<%= data.image_url ? data.image_url : '/images/default.PNG' %>" 
+                        alt="Course image" 
+                        class="img-fluid rounded"
+                        style="height: 100px; width: 100px; object-fit: cover;">
+                    </div>
+
+                    <!-- Right: Text Info -->
+                    <div class="flex-grow-1 pr-5">
+                      <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
+                      <p class="mb-1 text-truncate" style="font-size: 13px;"><%= data.description %></p>
+                      <p class="mb-1 text-truncate" style="font-size: 11px;">Total Classes: <%= data.total || 'not provided' %></p>
+                      <p class="text-muted small mb-1" style="font-size: 11px;">
+                        <%= new Date(data.created_at).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit'
+                        }) %>
+                      </p>
+                      <a href="/user/course/<%= data.id %>" class="btn btn-sm btn-outline-dark mt-1">View Classes</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- Countdown Script -->
+<% if (season) { %>
+<script>
+  const regCloseDate = new Date("<%= new Date(season.reg_close).toISOString() %>");
+
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = regCloseDate - now;
+
+    if (distance <= 0) {
+      document.getElementById("countdown").innerText = "Registration Closed";
+      clearInterval(timer);
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("countdown").innerText =
+      `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  const timer = setInterval(updateCountdown, 1000);
+  updateCountdown(); // initial call
+</script>
+<% } %>

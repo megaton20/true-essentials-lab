@@ -8,15 +8,17 @@ async function initAllModels() {
   const Season = require('./models/Season.js');
   const User = require('./models/User.js');
   const ClassSession = require('./models/ClassSession.js');
+  const Course = require('./models/Course.js');
   
 
   if (typeof Season.init === 'function') await Season.init();
   if (typeof User.init === 'function') await User.init();
+  if (typeof Course.init === 'function') await Course.init();
   if (typeof ClassSession.init === 'function') await ClassSession.init();
 
   // Step 2: Load all other models excluding Season.js and User.js
   const modelFiles = fs.readdirSync(modelDir).filter(file =>
-    !['Season.js', 'User.js', 'ClassSession.js'].includes(file)
+    !['Season.js', 'User.js','Course.js', 'ClassSession.js'].includes(file)
   );
 
   for (const file of modelFiles) {

@@ -60,9 +60,51 @@ class Season {
         return new Season(result.rows[0]);
     }
 
+    static async edit( id, name, reg_open, reg_close ) {
+    const result = await pool.query(
+        `UPDATE seasons
+         SET name = $1,
+             reg_open = $2,
+             reg_close = $3
+         WHERE id = $4
+         RETURNING *;`,
+        [name, reg_open, reg_close, id]
+    );
+
+    return result.rowCount > 0; // true if updated, false if not found
+}
+
+
     static async deactivateExpired() {
         await pool.query(`UPDATE seasons SET is_active = FALSE WHERE reg_close < NOW();`);
     }
+
+    static async activateCurrent() {
+  const result = await pool.query(`
+    UPDATE seasons
+    SET is_active = TRUE
+    WHERE reg_open <= NOW()
+      AND reg_close > NOW()
+      AND is_active = FALSE
+  `);
+
+  return result.rowCount > 0; // returns true if any row was updated
+}
+
+
+  static async findById(id) {
+    try {
+      const result = await pool.query(
+        `SELECT * FROM seasons WHERE id = $1;`,
+        [id]
+      );
+      if (result.rows.length === 0) return null;
+      return new Season(result.rows[0]);
+    } catch (error) {
+      console.error('Error finding course by ID:', error);
+      return null;
+    }
+  }
 
 }
 

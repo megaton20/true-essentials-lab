@@ -53,6 +53,8 @@ router.get('/session/:id/attendance',ensureAdmin, adminController.getAttendanceF
 
 
 router.get('/seasons', ensureAdmin, adminController.seasonsManager);
+router.get('/seasons/:id', ensureAdmin, adminController.getOneSeason);
+router.post('/seasons/edit', ensureAdmin, adminController.editSeason);
 router.post('/seasons', ensureAdmin, adminController.createSeason);
 router.get('/seasons/:season_id/users', ensureAdmin, adminController.getUsersBySeason);
 

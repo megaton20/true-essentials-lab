@@ -13,11 +13,10 @@
                 
             <% } %>
            
-            <% if (user.seasonInfo.has_paid) { %>
-                  <a href="/affiliate/dashboard" class="nav-link text-dark">Earnings</a>
-                <% } else { %>
+         <% if (user.seasonInfo && user.seasonInfo.has_paid) { %>
+            <a href="/affiliate/dashboard" class="nav-link text-dark">Earnings</a>
+          <% } %>
 
-                 <% } %>
         <a href="/logout" class="nav-link text-danger">Logout</a>
       </nav>
     </div>

@@ -28,26 +28,35 @@ class Course {
     this.teacher_id = data.teacher_id;
     this.created_at = data.created_at;
   }
+static async create({ id, title, description, teacherId }) {
+  const season = await Season.getCurrent();
 
-  static async create({ id, title, description, teacherId }) {
-     const season = await Season.getCurrent()
-    
-    try {
-      const result = await pool.query(
-        `
-        INSERT INTO courses (id, title, description, teacher_id, season_id)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING *;
-        `,
-        [id, title, description, teacherId, season.id]
-      );
-
-      return new Course(result.rows[0]);
-    } catch (error) {
-      console.error('Error creating course:', error);
-      return null;
-    }
+  if (!season) {
+    return { success: false, message: 'No active season found.' };
   }
+
+  try {
+    const result = await pool.query(
+      `
+      INSERT INTO courses (id, title, description, teacher_id, season_id)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *;
+      `,
+      [id, title, description, teacherId, season.id]
+    );
+
+    if (result.rows.length > 0) {
+      return { success: true, message: 'Course created successfully.' };
+    } else {
+      return { success: false, message: 'Failed to create course.' };
+    }
+
+  } catch (error) {
+    console.error('Error creating course:', error);
+    return { success: false, message: 'An error occurred while creating the course.' };
+  }
+}
+
 
   static async update(id, { title, description, teacherId }) {
     try {

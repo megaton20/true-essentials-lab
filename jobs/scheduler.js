@@ -7,6 +7,7 @@ const {
     welcomeToClassTemplate,
     paymentReminderTemplate
 } = require('../utils/templates');
+const Season = require('../models/Season');
 
 // 1️⃣ Daily @ 9AM – Class reminder for sessions scheduled tomorrow
 cron.schedule('0 9 * * *', async () => {
@@ -77,4 +78,15 @@ cron.schedule('0 10 */5 * *', async () => {
     }
 });
 
+// every minute
+cron.schedule('* * * * *', async () => {
+  try {
+    console.log("checked season registration...");
+    
+    await Season.deactivateExpired();
+    await Season.activateCurrent();
+  } catch (err) {
+    console.error('[Season Job Error]', err);
+  }
+});
 

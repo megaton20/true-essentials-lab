@@ -51,7 +51,6 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
     }
 
 
-
     // Check if the user has a password set (indicating they did not sign up via Google)
     if (!user.password_hash) {
       return done(null, false, { message: 'Use Google to sign into that account' });
