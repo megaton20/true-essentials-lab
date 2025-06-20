@@ -16,9 +16,11 @@ exports.adminDashboard = async (req, res) => {
     const currentSeason = await Season.getCurrent();
 
     let courseBySeason = [];
+    let currentUser = []
 
     if (currentSeason) {
       courseBySeason = await Course.listAllBySeason(currentSeason.id); 
+      currentUser = await SeasonUser.getUsers(currentSeason.id);
     }
 
     const classStatus = await Admin.getClassStatus();
@@ -26,7 +28,6 @@ exports.adminDashboard = async (req, res) => {
     const upcoming = await Season.getUpcoming();
 
     const teachers = await User.findTeacher();
-    const currentUser = await SeasonUser.getUsers(currentSeason.id);
 
     const pastResultQuery = await pool.query(`
       SELECT * FROM seasons WHERE reg_close < NOW() ORDER BY reg_close DESC
