@@ -12,12 +12,17 @@
                 <a href="/affiliate/signup" class="nav-link text-dark">Refer To Earn</a>
                 
             <% } %>
-           
-            <% if (user.seasonInfo.has_paid) { %>
-                  <a href="/affiliate/dashboard" class="nav-link text-dark">Earnings</a>
-                <% } else { %>
+           <% if (user.seasonInfo && user.seasonInfo.has_paid) { %>
+            <a href="/affiliate/dashboard" class="nav-link text-dark">Earnings</a>
+          <% } else { %>
+            <!-- Optional: show nothing or another link -->
+          <% } %>
 
-                 <% } %>
+             <% if (user.role == "teacher") { %>
+                <a href="/teacher" class="nav-link text-dark">Teacher</a>
+              <% } else { %>
+              <% } %>
+
         <a href="/logout" class="nav-link text-danger">Logout</a>
       </nav>
     </div>

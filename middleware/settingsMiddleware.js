@@ -20,7 +20,25 @@ async function checkRegistrationOpen(req, res, next) {
     return res.redirect('/auth/login');
   }
 }
+// don't load closed page if not needed
+async function forwardRegClosed(req, res, next) {
+  try {
+    const { rows } = await pool.query('SELECT is_registration_open FROM settings LIMIT 1');
+    const isOpen = rows.length > 0 ? rows[0].is_registration_open : false;
+    
+    
+    if (isOpen) {
+      req.flash('warning_msg', 'Registration is currently open again.');
+      return res.redirect('/auth/register');
+    }
 
+    next();
+  } catch (err) {
+    console.error('Error checking registration setting:', err);
+    req.flash('error_msg', 'Unable to process request.');
+    return res.redirect('/auth/login');
+  }
+}
 async function checkingActiveSeason(req, res, next) {
   try {
 
@@ -63,4 +81,5 @@ module.exports = {
   checkRegistrationOpen,
   checkPaymentOpen,
   checkingActiveSeason,
+  forwardRegClosed,
 };

@@ -2,7 +2,7 @@ const router = require('express').Router();
 const bcrypt = require("bcryptjs")
 const auth = require('../controllers/authController');
 const { ensureAuthenticated,forwardAuthenticated } = require("../config/auth");
-const { checkRegistrationOpen,checkingActiveSeason, checkPaymentOpen } = require('../middleware/settingsMiddleware');
+const { checkRegistrationOpen,checkingActiveSeason, checkPaymentOpen, forwardRegClosed } = require('../middleware/settingsMiddleware');
 const { generateResetToken, verifyResetToken } = require('../config/jsonWebToken');
 const sendEmail = require('../utils/mailer');
 const pool = require('../config/db');
@@ -20,7 +20,7 @@ const {
 router.get('/register',forwardAuthenticated,checkingActiveSeason, checkRegistrationOpen, auth.registerPage);
 router.post('/register',checkRegistrationOpen,forwardAuthenticated, auth.register);
 router.get('/registration-closed',forwardAuthenticated,checkingActiveSeason, auth.registerClosed);
-router.get('/season-closed',forwardAuthenticated,checkRegistrationOpen, auth.seasonClosed);
+router.get('/season-closed',forwardAuthenticated,checkRegistrationOpen,forwardRegClosed, auth.seasonClosed);
 
 router.get('/login',forwardAuthenticated, auth.loginPage);
 router.post('/login', forwardAuthenticated,auth.login);

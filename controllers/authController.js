@@ -10,6 +10,7 @@ const { generateResetToken, verifyResetToken } = require('../config/jsonWebToken
 const sendEmail = require('../utils/mailer');
 const Season = require('../models/Season');
 const SeasonUser = require('../models/SeasonUsers');
+const { verificationEmailSentTemplate } = require('../utils/templates');
 
 exports.registerPage = async (req, res) => {
    const referrerCode = req.query.ref || null;
@@ -149,41 +150,17 @@ exports.verifyEmailRequest = async (req, res) => {
       return res.redirect('/handler');
     }
 
+    const resetLink = `${process.env.LIVE_DIRR || 'http://localhost:2000'}/auth/verify-email?token=${token}`
+    const emailDone = await sendEmail(email, "Verify your Email", verificationEmailSentTemplate(resetLink))
     // Send verification email
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      host: 'smtp.gmail.com',
-      secure: false,
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
 
-
-    const mailOptions = {
-      from: {
-        name: "TEA",
-        address: process.env.EMAIL,
-      },
-      to: email,
-      subject: 'Confirm Your Email Address',
-      html: `
-    <a href="${process.env.LIVE_DIRR || 'http://localhost:2000'}/auth/verify-email?token=${token}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #41afa5; text-decoration: none; border-radius: 5px;">Verify Email</a>
-    <p>If you did not create an account with us, please disregard this email.</p>
-  `
-    };
-
-    transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log(`error sending mail: ${err}`);
-        req.flash('error_msg', `Error from our server... try to verify your email again after 30 minutes:`);
-        return res.redirect('/auth/verify-alert');
-      }
-
+    if (emailDone) {
       req.flash('success_msg', `Check your mail inbox or spam to activate your account`);
-      return res.redirect('/auth/verify-email-sent');
-    });
+    } else {
+      req.flash('error_msg', `sending email failed`);
+      
+    }
+    return res.redirect('/auth/verify-email-sent');    
 
   } catch (error) {
     console.error(error);

@@ -19,6 +19,7 @@ router.post('/class', ensureAdmin, adminController.createClass);
 router.get('/class/:id', ensureAdmin, adminController.getClassSession);
 router.put('/class/:id/edit', ensureAdmin, adminController.updateById);
 router.put('/class/:id/:status', ensureAdmin, adminController.toggleClasssVisibility);
+router.delete('/class/:id', ensureAdmin, adminController.deleteClass);
 
 router.put('/class/:classId/grant-access/:userId', ensureAdmin, adminController.grantAccess);
 
@@ -32,6 +33,8 @@ router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse);
 router.post('/courses/create', ensureAdmin, adminController.createCourse);
 router.put('/courses/:id', ensureAdmin, adminController.editCourse);
 router.get('/course/class/:id', ensureAdmin, adminController.getCourseSchedule);
+router.delete('/course/:id', ensureAdmin, adminController.deleteCourse);
+
 
 
 router.get('/affiliate/applications',  affiliateController.affiliateApplications); 
@@ -57,6 +60,8 @@ router.get('/seasons/:id', ensureAdmin, adminController.getOneSeason);
 router.post('/seasons/edit', ensureAdmin, adminController.editSeason);
 router.post('/seasons', ensureAdmin, adminController.createSeason);
 router.get('/seasons/:season_id/users', ensureAdmin, adminController.getUsersBySeason);
+router.delete('/seasons/:id', ensureAdmin, adminController.deleteSeason);
+
 
 
 router.post('/teacher/assign', ensureAdmin, TeacherController.assign);

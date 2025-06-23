@@ -37,12 +37,18 @@
                 <a href="/admin/users"><%= stats.totalStudents %></a>
               </div>
             </div>
-            <div class="col-md-3">
+            
+           <div class="col-md-3">
               <div class="bg-white p-3 rounded shadow-sm">
-                <h6><%=active.name%> users</h6>
-                <p><%= currentUser.length %></p>
+                <% if (active) { %>
+                  <h6><%= active.name %> users</h6>
+                <% } else { %>
+                  <h6>No active season</h6>
+                <% } %>
+                <p><%= currentUser?.length || 0 %></p>
               </div>
             </div>
+
 
             <div class="col-md-3">
               <div class="bg-white p-3 rounded shadow-sm">

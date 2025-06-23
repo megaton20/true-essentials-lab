@@ -25,6 +25,7 @@
             </button>
           </div>
 
+           <% if (sessions && sessions.length > 0) { %>
 
                   <div class="row">
                        <%sessions.forEach(function(data,index) {%>
@@ -51,15 +52,22 @@
                         </div>
 
                         <!-- Bottom Section: Action -->
-                        <div>
+                        <div class="d-flex gap-1">
                           <a href="/admin/class/<%= data.id %>" class="btn btn-sm btn-outline-secondary">View Details</a>
+                             <form action="/admin/class/<%= data.id %>" method="post">
+                          <input type="hidden" name="_method" value="DELETE">
+                           <input type="hidden" name="courseId" value="<%=courseId%>">
+                          <button type="submit" class="btn btn-outline-danger"><i class="fas fa-edit"></i> Delete</button>
+                        </form>
                         </div>
 
                       </div>
                     </div>
                       <%}) %>
                   </div>
-
+             <% } else { %>
+                  <p class="mb-1 mt-4 text-center">No Class Session created for this course</p>
+                <% } %>
 
         </main>
       </div>

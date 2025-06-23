@@ -24,14 +24,14 @@ module.exports =  {
 
      affiliateApplicationStatus: async function(req, res, next){
       const result =  await Affiliate.getSingleApplicationsStatus(req.user.id)
-      
-      if (result) {
-      
-          req.flash('error_msg', `already an applicant, wait!`)
+            
+      if (result.length > 0) {
+        req.flash('error_msg', `already an applicant, wait!`)
        return res.redirect('/affiliate/pending/applicants')
       }
       return next()
     },
+    
 
      ensureVerifiedEmail: function(req, res, next){
       

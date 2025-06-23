@@ -106,6 +106,14 @@ class Season {
     }
   }
 
+    static async deleteCourse(id){
+    const result = await pool.query(`
+        DELETE FROM seasons
+        WHERE id = $1
+      `, [id]);
+
+      return result.rowCount > 0
+  }
 }
 
 module.exports = Season;

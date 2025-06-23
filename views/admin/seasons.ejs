@@ -72,10 +72,10 @@
                         <p class="mb-1" style="font-size: 12px;"><small>Opens:</small> <%= new Date(season.reg_open).toLocaleString() %></p>
                         <p class="mb-1" style="font-size: 12px;"><small>Closes:</small> <%= new Date(season.reg_close).toLocaleString() %></p>
                         <div class="mt-2 d-flex justify-content-end gap-2">
-                          <a href="/admin/seasons/<%= season.id %>" title="View" class="text-primary">
+                          <a href="/admin/seasons/<%= season.id %>" title="View" class="text-primary btn btn btn-outline-secondary">
                             <i class="fas fa-eye"></i>
                           </a>
-                          <a href="#" class="text-warning edit-btn"
+                          <a href="#" class="text-warning edit-btn btn btn-outline-primary"
                              data-bs-toggle="modal" data-bs-target="#editModal"
                              data-id="<%= season.id %>"
                              data-name="<%= season.name %>"
@@ -84,6 +84,13 @@
                              data-reg_close="<%= new Date(season.reg_close).toISOString().slice(0,16) %>">
                             <i class="fas fa-edit"></i>
                           </a>
+
+                          <!-- delete season -->
+                        <form action="/admin/seasons/<%= season.id %>" method="post">
+                          <input type="hidden" name="_method" value="DELETE">
+                          <button type="submit" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
+                        </form>
+
                         </div>
                       </div>
                     </div>

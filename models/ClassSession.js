@@ -138,6 +138,15 @@ class ClassSession {
     `, [joinCode]);
     return result.rows[0]?.meet_link || null;
   }
+
+  static async deleteClass(id){
+    const result = await pool.query(`
+        DELETE FROM class_sessions
+        WHERE id = $1
+      `, [id]);
+
+      return result.rowCount > 0
+  }
 }
 
 module.exports = ClassSession;

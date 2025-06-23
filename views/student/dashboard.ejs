@@ -7,7 +7,7 @@
 <!-- Main Content -->
 <div class="container-fluid mt-4">
   <!-- Welcome Banner -->
-  <div class="bg-success text-white rounded p-4 mb-4 shadow-sm">
+  <div class="bg-success text-center text-white rounded p-4 mb-4 shadow-sm">
     <div class="text-center">
       <h2 class="mb-1">Dashboard</h2>
       <p class="mb-0">Welcome back, <%= user.full_name %>! View your courses and track your classes.</p>
@@ -25,11 +25,11 @@
       <main class="p-0">
         <%- include('../partials/messages') %>
 
-        <div class="bg-white shadow-sm p-2 rounded mb-4">
+        <div class="mb-4">
           <div class="row">
             <!-- Season Info -->
             <div class="col-md-4 mb-3">
-              <div class="p-3 shadow-sm class-card text-center" data-aos="fade" data-aos-delay="100">
+              <div class="p-2 border text-center" data-aos="fade" data-aos-delay="100">
                 <% if (season) { %>
                   <p class="mb-1">Welcome to</p>
                   <h4><%= season.name %></h4>
@@ -42,11 +42,14 @@
               </div>
             </div>
 
+
             <!-- Course List -->
+                 <% if (courses) { %>
+
             <% courses.forEach(function (data, index) { %>
               <div class="col-md-4 mb-3">
                 <div class="p-3 border rounded shadow-sm class-card" data-aos="fade" data-aos-delay="<%= (index + 1) * 200 %>">
-                  <div class="d-flex gap-3">
+                  <div class="d-flex gap-1">
                     <!-- Left: Image -->
                     <div style="flex: 0 0 100px;">
                       <img 
@@ -57,25 +60,21 @@
                     </div>
 
                     <!-- Right: Text Info -->
-                    <div class="flex-grow-1 pr-5">
+                    <div class="flex-grow-1 pr-3">
                       <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
                       <p class="mb-1 text-truncate" style="font-size: 13px;"><%= data.description %></p>
                       <p class="mb-1 text-truncate" style="font-size: 11px;">Total Classes: <%= data.total || 'not provided' %></p>
-                      <p class="text-muted small mb-1" style="font-size: 11px;">
-                        <%= new Date(data.created_at).toLocaleString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: 'numeric',
-                          minute: '2-digit'
-                        }) %>
-                      </p>
                       <a href="/user/course/<%= data.id %>" class="btn btn-sm btn-outline-dark mt-1">View Classes</a>
                     </div>
                   </div>
                 </div>
               </div>
             <% }) %>
+            
+            <!-- if no course listed -->
+               <% } else { %>
+                  <p class="mb-1">No Course Listed for this SeasonS at the moment.</p>
+                <% } %>
           </div>
         </div>
       </main>

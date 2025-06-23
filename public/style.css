@@ -45,6 +45,10 @@ body{
       background: linear-gradient(135deg, #0eb819, #076a25); 
     }
 
+    .class{
+      height: 200px !important;
+    }
+
   .dashboard-header {
       background: #24da33;
       padding: 2rem 1rem;
@@ -67,10 +71,6 @@ body{
 }
 
 
-/* .center{
-    width: 90%;
-    margin: 0px auto;
-} */
 
 .transition-navbar {
   transition: background-color 0.3s ease;
@@ -197,28 +197,6 @@ body{
       margin-top: 5px;
     }
 
-    .box {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    @media (max-width:1015px) {
-      .box {
-        grid-template-columns: repeat(2, 3fr);
-      }
-
-      .icon img {
-        max-width: 90%;
-      }
-    }
-
-    @media (max-width:500px) {
-      .box {
-        grid-template-columns: repeat(1, 3fr);
-      }
-    }
 
 
     .report {

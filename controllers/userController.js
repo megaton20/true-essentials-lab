@@ -10,7 +10,7 @@ const Course = require('../models/Course');
 
 exports.getDashboard = async (req, res) => {
   const userId = req.user.id;
-  const customerToPay = 30000;
+  const customerToPay = 70000;
 
   try {
     const currentSeason = await Season.getCurrent();
@@ -54,38 +54,49 @@ exports.getDashboard = async (req, res) => {
 
 
 exports.getCourseSchedule = async (req, res) => {
-const customerToPay = 30000;
- const thisSeasonUser = await SeasonUser.getSeasonsForUser(req.user.id)
+  const customerToPay = 70000;
 
- 
-  let sessions = await ClassSession.listByCourse(req.params.id)
- 
+  const currentSeason = await Season.getCurrent();
+  let sessions = await ClassSession.listByCourse(req.params.id);
+
   const sessionIds = sessions.map(s => s.id);
-  
-    const attendance = await Attendance.getBySessionIds(req.user.id, sessionIds);
+  const attendance = await Attendance.getBySessionIds(req.user.id, sessionIds);
 
-    const updatedSessions = sessions.map(session => ({
+  const creatorIds = [...new Set(sessions.map(s => s.created_by))];
+  const creatorMap = await User.getManyByIds(creatorIds); // returns { id: user }
+
+  const updatedSessions = sessions.map(session => ({
     ...session,
     is_joined: attendance[session.id] || false,
+    teacher: creatorMap[session.created_by]?.full_name || 'Unknown Teacher'
   }));
 
-  
-  const currentSeason = await Season.getCurrent();
-  const userSeason = await SeasonUser.get(req.user.id, currentSeason.id);
+  let thisSeasonUser = [];
+  let userSeason = null;
+  let hasPaid = false;
 
+  if (currentSeason) {
+    thisSeasonUser = await SeasonUser.getSeasonsForUser(req.user.id);
+    userSeason = await SeasonUser.get(req.user.id, currentSeason.id);
+
+    if (thisSeasonUser.length > 0) {
+      hasPaid = thisSeasonUser[0].has_paid;
+    }
+  }
 
   req.user = {
     ...req.user,
-    has_paid:thisSeasonUser[0].has_paid,
-    seasonInfo:userSeason
-  }
+    has_paid: hasPaid,
+    seasonInfo: userSeason
+  };
 
   res.render('./student/classes', {
-    sessions:updatedSessions,
+    sessions: updatedSessions,
     user: req.user,
     customerToPay
   });
 };
+
 
 
 exports.getCourseForSeason= async (req, res) => {

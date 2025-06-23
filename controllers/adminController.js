@@ -210,7 +210,6 @@ exports.editCourse = async (req, res) => {
 exports.getCourseSchedule = async (req, res) => {
 
   const sessions = await ClassSession.listByCourse(req.params.id)
-
   res.render('./admin/classes', {
     sessions,
     user: req.user,
@@ -218,6 +217,24 @@ exports.getCourseSchedule = async (req, res) => {
   });
 };
 
+exports.deleteCourse = async (req, res) => {
+  const courseID = req.params.id
+
+  
+  try {
+    const isDelete = await Course.deleteCourse(courseID);    
+    if (isDelete) {
+     req.flash("success_msg", "course deleted!")  
+    }else{
+      req.flash("error_msg", "course delete failed!")  
+
+    }
+    return res.redirect(`/admin/courses`)
+  } catch (error) {
+    console.log(`error deleting class: ${error}`);
+    res.redirect('/')
+  }
+};
 
 exports.getClassSession = async (req, res) => {
   const id = req.params.id
@@ -312,6 +329,26 @@ exports.getVisibleLink = async (req, res) => {
   }
 };
 
+
+exports.deleteClass = async (req, res) => {
+  const classID = req.params.id
+  const courseId = req.body.courseId
+  
+  try {
+    const isDelete = await ClassSession.deleteClass(classID);
+    
+    if (isDelete) {
+     req.flash("success_msg", "class schedule deleted!")  
+    }else{
+      req.flash("error_msg", "class schedule delete failed!")  
+
+    }
+    return res.redirect(`/admin/course/class/${courseId}`)
+  } catch (error) {
+    console.log(`error deleting class: ${error}`);
+    res.redirect('/')
+  }
+};
 
 // referral codes section
 exports.getReferrals = async (req, res) => {
@@ -454,5 +491,24 @@ exports.getUsersBySeason = async (req, res) => {
     seasonName: result.rows[0]?.season_name || 'Unknown',
     users: result.rows
   });
+};
+
+exports.deleteSeason = async (req, res) => {
+  const courseID = req.params.id
+
+  
+  try {
+    const isDelete = await Season.deleteCourse(courseID);    
+    if (isDelete) {
+     req.flash("success_msg", "season deleted!")  
+    }else{
+      req.flash("error_msg", "season delete failed!")  
+
+    }
+    return res.redirect(`/admin/seasons`)
+  } catch (error) {
+    console.log(`error deleting class: ${error}`);
+    res.redirect('/')
+  }
 };
 

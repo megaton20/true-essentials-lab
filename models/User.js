@@ -90,6 +90,21 @@ class User {
 
     }
   }
+
+  // User.js
+static async getManyByIds(ids) {
+  const result = await pool.query(
+    `SELECT * FROM users WHERE id = ANY($1::VARCHAR[])`,
+    [ids]
+  );
+  // Return as a map for easy lookup
+  const userMap = {};
+  result.rows.forEach(user => {
+    userMap[user.id] = user;
+  });
+  return userMap;
+}
+
 }
 
 module.exports = User;

@@ -116,6 +116,15 @@ static async create({ id, title, description, teacherId }) {
   }
 }
 
+  static async deleteCourse(id){
+    const result = await pool.query(`
+        DELETE FROM courses
+        WHERE id = $1
+      `, [id]);
+
+      return result.rowCount > 0
+  }
+
 }
 
 module.exports = Course;

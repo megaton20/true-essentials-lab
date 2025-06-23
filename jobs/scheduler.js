@@ -81,7 +81,6 @@ cron.schedule('0 10 */5 * *', async () => {
 // every minute
 cron.schedule('* * * * *', async () => {
   try {
-    console.log("checked season registration...");
     
     await Season.deactivateExpired();
     await Season.activateCurrent();

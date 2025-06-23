@@ -19,7 +19,11 @@
           <div class="d-flex justify-content-between align-items-center mb-3">
             <a href="/admin/courses" class="btn btn-outline-primary btn-sm">Back</a>
             <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editClassModal">Edit</button>
-          </div>
+           <form action="/admin/class/<%= singleClass.id %>" method="post">
+                          <input type="hidden" name="_method" value="DELETE">
+                          <button type="submit" class="btn btn-outline-danger"><i class="fas fa-edit"></i> Delete</button>
+            </form>
+         </div>
 
           <%- include('../partials/messages') %>
 

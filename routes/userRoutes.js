@@ -8,7 +8,7 @@ const {ensureVerifiedEmail} = require('../middleware/auth')
 
 // /dashboard/:userId
 router.get('/', ensureVerifiedEmail, user.getDashboard);
-router.get('/course/:id', ensureVerifiedEmail, user.getCourseSchedule);
+router.get('/course/:id', ensureVerifiedEmail, user.getCourseSchedule); // see class schedules
 router.get('/class-history/:id', ensureVerifiedEmail, user.studentClassRecord);
 
 

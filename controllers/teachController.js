@@ -11,17 +11,20 @@ const SeasonUser = require('../models/SeasonUsers');
 exports.getDash = async (req, res) => {
   try {
     const userId = req.user.id;
-    // Step 1: Get the teacher record for this user
 
-      const currentSeason = await Season.getCurrent();
-  const userSeason = await SeasonUser.get(userId, currentSeason.id);
+    // Step 1: Check current season
+    const currentSeason = await Season.getCurrent();
+    let userSeason = null;
 
-  // check if user don pay
-  req.user = {
-    ...req.user,
-    seasonInfo: userSeason
-  };
+    if (currentSeason) {
+      userSeason = await SeasonUser.get(userId, currentSeason.id);
+      req.user = {
+        ...req.user,
+        seasonInfo: userSeason
+      };
+    }
 
+    // Step 2: Check if user is a teacher
     const teacherQuery = `SELECT id FROM teachers WHERE user_id = $1`;
     const { rows: teacherRows } = await pool.query(teacherQuery, [userId]);
 
@@ -32,7 +35,7 @@ exports.getDash = async (req, res) => {
 
     const teacherId = teacherRows[0].id;
 
-    // Step 2: Get all course IDs assigned to this teacher
+    // Step 3: Get all assigned courses
     const courseIdsQuery = `
       SELECT c.*
       FROM teacher_courses tc
@@ -41,16 +44,18 @@ exports.getDash = async (req, res) => {
     `;
     const { rows: myAssignedCourses } = await pool.query(courseIdsQuery, [teacherId]);
 
-    // Step 3: Render the teacher's course list
+    // Step 4: Render dashboard
     res.render('./teacher/dashboard', {
       courses: myAssignedCourses,
-      user:req.user
+      user: req.user
     });
+
   } catch (error) {
-    console.error("Error fetching teacher courses:", error);
+    console.error("Error fetching teacher dashboard:", error);
     res.redirect('/teacher/error');
   }
 };
+
 exports.getCourseSchedule = async (req, res) => {
   const id = req.params.id
   const userId = req.user.id
