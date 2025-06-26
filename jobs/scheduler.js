@@ -82,7 +82,8 @@ cron.schedule('0 10 */5 * *', async () => {
 cron.schedule('* * * * *', async () => {
   try {
     
-    await Season.deactivateExpired();
+    const a = await Season.deactivateExpired();
+    
     await Season.activateCurrent();
   } catch (err) {
     console.error('[Season Job Error]', err);

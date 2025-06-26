@@ -29,10 +29,10 @@ router.put('/referral/:id', ensureAdmin, adminController.findReferralCode);
 
 
 router.get('/courses', ensureAdmin, adminController.getAllCourse);
-router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse);
+router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse); // to get the course deatials
 router.post('/courses/create', ensureAdmin, adminController.createCourse);
 router.put('/courses/:id', ensureAdmin, adminController.editCourse);
-router.get('/course/class/:id', ensureAdmin, adminController.getCourseSchedule);
+router.get('/course/class/:id', ensureAdmin, adminController.getCourseSchedule);  // to get the class schedule
 router.delete('/course/:id', ensureAdmin, adminController.deleteCourse);
 
 

@@ -76,7 +76,8 @@ class Season {
 
 
     static async deactivateExpired() {
-        await pool.query(`UPDATE seasons SET is_active = FALSE WHERE reg_close < NOW();`);
+        const result = await pool.query(`UPDATE seasons SET is_active = FALSE WHERE reg_close < NOW();`);
+        return result.rowCount > 0
     }
 
     static async activateCurrent() {

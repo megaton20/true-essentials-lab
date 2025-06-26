@@ -90,7 +90,7 @@ class ClassSession {
     const {rows:result} = await pool.query(`
       SELECT * FROM class_sessions
       WHERE course_id = $1
-      ORDER BY scheduled_at DESC
+      ORDER BY scheduled_at ASC
     `, [courseId]);
 
     return result;

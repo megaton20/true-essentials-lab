@@ -72,8 +72,7 @@ router.get('/info/affiliate/terms', (req, res) => {
 
 // paystack
 router.post('/pay', checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail, async (req, res) => {
-  const { email, amount, referrerId } = req.body;
-
+  const { email, amount, referrerId } = req.body;  
 
   req.session.referrerId = referrerId
   try {
@@ -118,11 +117,13 @@ router.get('/verify',checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail,
     if (response.data.status && response.data.data.status === 'success') {
       const affiliateAgent = req.session.referrerId;
 
+      // return console.log(affiliateAgent);
+      
       if (affiliateAgent) {
         try {
           // Get the referrer's ID
           const { rows: agent } = await pool.query(
-            `SELECT id FROM referrers WHERE user_id = $1`,
+            `SELECT * FROM referrers WHERE id = $1`,
             [affiliateAgent]
           );
 
@@ -134,12 +135,12 @@ router.get('/verify',checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail,
               `UPDATE referral_redemptions 
                 SET has_earned = $1 
                 WHERE referrer_id = $2 AND referred_user_id = $3`,
-              [true, referrerId, req.user.id]
+              [true, affiliateAgent, req.user.id]
             );
 
             // Fetch the referrer's current balance
             const { rows: userResults } = await pool.query(
-              `SELECT balance FROM referrers WHERE user_id = $1`,
+              `SELECT balance FROM referrers WHERE id = $1`,
               [affiliateAgent]
             );
 
@@ -148,7 +149,7 @@ router.get('/verify',checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail,
 
             // Update referrer's balance
             await pool.query(
-              `UPDATE referrers SET balance = $1 WHERE user_id = $2`,
+              `UPDATE referrers SET balance = $1 WHERE id = $2`,
               [newCashback, affiliateAgent]
             );
           }

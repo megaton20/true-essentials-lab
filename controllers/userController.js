@@ -84,11 +84,27 @@ exports.getCourseSchedule = async (req, res) => {
     }
   }
 
+const { rows: referralCheck } = await pool.query(
+  `SELECT * FROM referral_redemptions WHERE referred_user_id = $1 AND has_earned = $2`,
+  [req.user.id, false]
+);
+
+if (referralCheck.length > 0) {
+  req.user = {
+    ...req.user,
+    has_paid: hasPaid,
+    seasonInfo: userSeason,
+    referrer_id: referralCheck[0].referrer_id
+  };
+} else {
   req.user = {
     ...req.user,
     has_paid: hasPaid,
     seasonInfo: userSeason
   };
+}
+
+// console.log(req.user.referrer_id);
 
   res.render('./student/classes', {
     sessions: updatedSessions,
