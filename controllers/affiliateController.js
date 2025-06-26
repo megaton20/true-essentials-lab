@@ -1,6 +1,9 @@
 const Affiliate = require('../models/Affiliate');
 const pool = require('../config/db')
 const { v4: uuidv4 } = require('uuid');
+const { update } = require('./TeacherController');
+const axios = require('axios');
+
 
 const AffiliateController = {
 
@@ -15,6 +18,30 @@ const AffiliateController = {
   
   async affliteDash(req, res) {
     try {
+
+        const banksRes = await axios.get('https://api.paystack.co/bank', {
+          headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
+          }
+        });
+        const banks = banksRes.data.data; // Array of bank objects (code + name)
+      
+
+  //  Fetch affiliate info (if the user is an affiliate)
+          const affiliateResult = await Affiliate.getAffiliateByUserId(req.user.id);
+          let isAffiliate = [];
+          if (affiliateResult.length > 0) {
+            isAffiliate = affiliateResult;
+
+            //  If affiliate has bank_code saved, find and attach corresponding bank name from Paystack list
+            const affiliate = isAffiliate[0];
+            const matchedBank = banks.find(b => b.code === affiliate.bank_name);
+            
+            if (matchedBank) {
+              affiliate.bank_name = matchedBank.name; // Replace bank_code with human-readable name
+            }
+          }
+
       // Get referrer info for current user
       const referrerQuery = `
       SELECT id, referral_code, balance, bank_name, account_number, account_name 
@@ -51,7 +78,7 @@ const AffiliateController = {
         user: req.user,
         referralLink,
         referees,
-        referrer
+        referrer:isAffiliate[0]
       });
 
     } catch (err) {
@@ -88,6 +115,28 @@ const AffiliateController = {
       }
 
       return res.redirect('/handler')
+
+    } catch (err) {
+      req.flash('error_msg', `Application failed: ${err}`)
+      return res.redirect('/user')
+    }
+  },
+
+   async updateBankDetails(req, res) {
+    try {
+      const { bank_code, account_number, account_name } = req.body;      
+
+      const result = await Affiliate.updateBank(bank_code,account_name, account_number, req.user.id);
+
+      if (result) {
+        req.flash('success_msg', "Application submitted")
+
+      } else {
+        req.flash('error_msg', "Application failed")
+
+      }
+
+      return res.redirect('/user/profile')
 
     } catch (err) {
       req.flash('error_msg', `Application failed: ${err}`)

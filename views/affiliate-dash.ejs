@@ -49,9 +49,20 @@
                           </h2>
 
                       </div>
-                      <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#bankDetailsModal">
-                        <i class="bi bi-bank"></i> Withdraw
-                      </button>
+                   
+                      <% if (referrer.bank_name && referrer.account_number && referrer.account_name) { %>
+                          <!-- Show Withdraw Confirmation Modal -->
+                          <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmWithdrawModal">
+                            <i class="bi bi-bank"></i> Withdraw
+                          </button>
+                        <% } else { %>
+                          <!-- Show Edit Bank Info Modal -->
+                          <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#bankDetailsModal">
+                            <i class="bi bi-pencil-square"></i> Add Bank Info
+                          </button>
+                        <% } %>
+
+
                     </div>
 
 
@@ -162,31 +173,55 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                            <% if (user.bank_name && user.account_number && user.account_name) { %>
-                              <p><strong>Bank:</strong> <%= user.bank_name %></p>
-                              <p><strong>Account Name:</strong> <%= user.account_name %></p>
-                              <p><strong>Account Number:</strong> <%= user.account_number %></p>
-                            <% } else { %>
+                        
                               <div class="alert alert-warning" role="alert">
                                 Your bank details are incomplete. Please update them to proceed with withdrawal.
                               </div>
-                            <% } %>
                           </div>
                           <div class="modal-footer">
-                            <a href="/settings/bank-details" class="btn btn-outline-primary">
-                              <i class="bi bi-pencil-square"></i> Edit Bank Info
+                            <a href="/user/profile" class="btn btn-outline-primary">
+                              <i class="bi bi-pencil-square"></i> Update Bank Info
                             </a>
-                            <% if (user.bank_name && user.account_number && user.account_name) { %>
-                              <form action="/affiliate/withdraw" method="POST" class="d-inline">
-                                <button type="submit" class="btn btn-success">
-                                  <i class="bi bi-wallet"></i> Confirm Withdraw
-                                </button>
-                              </form>
-                            <% } %>
+                    
                           </div>
                         </div>
                       </div>
                     </div>
+
+
+                    <div class="modal fade" id="confirmWithdrawModal" tabindex="-1" aria-labelledby="confirmWithdrawModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="confirmWithdrawModalLabel">
+                              <i class="bi bi-wallet me-2"></i> Confirm Withdrawal
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p>
+                              You're about to withdraw <strong>NGN <%= Number(referrer.balance).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %></strong> to:
+                            </p>
+                            <ul class="list-unstyled">
+                              <li><strong>Bank:</strong> <%= referrer.bank_name %></li>
+                              <li><strong>Account Name:</strong> <%= referrer.account_name %></li>
+                              <li><strong>Account Number:</strong> <%= referrer.account_number %></li>
+                            </ul>
+                            <p class="text-muted small">Are you sure you want to proceed?</p>
+                          </div>
+                          <div class="modal-footer">
+                            <form action="/affiliate/withdraw" method="POST" class="d-inline">
+                              <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check2-circle"></i> Yes, Withdraw
+                              </button>
+                            </form>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
 
               </div>
         

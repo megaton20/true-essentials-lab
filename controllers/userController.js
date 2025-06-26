@@ -6,6 +6,9 @@ const pool = require('../config/db');
 const SeasonUser = require('../models/SeasonUsers');
 const Season = require('../models/Season');
 const Course = require('../models/Course');
+const axios = require('axios');
+const Affiliate = require('../models/Affiliate');
+
 
 
 exports.getDashboard = async (req, res) => {
@@ -48,6 +51,88 @@ exports.getDashboard = async (req, res) => {
 
   } catch (err) {
     console.error('Error loading dashboard:', err);
+    res.status(500).send('Something went wrong. Please try again later.');
+  }
+};
+exports.getProfile = async (req, res) => {
+  const userId = req.user.id;
+
+try {
+  const banksRes = await axios.get('https://api.paystack.co/bank', {
+    headers: {
+      Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
+    }
+  });
+  const banks = banksRes.data.data; // Array of bank objects (code + name)
+
+  //  Fetch affiliate info (if the user is an affiliate)
+  const affiliateResult = await Affiliate.getAffiliateByUserId(userId);
+
+  let isAffiliate = [];
+  if (affiliateResult.length > 0) {
+    isAffiliate = affiliateResult;
+
+    //  If affiliate has bank_code saved, find and attach corresponding bank name from Paystack list
+    const affiliate = isAffiliate[0];
+    const matchedBank = banks.find(b => b.code === affiliate.bank_name);
+    
+    if (matchedBank) {
+      affiliate.bank_name = matchedBank.name; // Replace bank_code with human-readable name
+    }
+  }
+
+  //  Check if a season is currently active
+  const currentSeason = await Season.getCurrent();
+  if (!currentSeason) {
+    req.flash('error', 'No active season available at the moment.');
+    return res.render('./student/profile', {
+      season: null,
+      user: req.user,
+      banks: banks || [],
+      isAffiliate: isAffiliate[0] || []
+    });
+  }
+
+  // Get user’s registration info for current season
+  const userSeason = await SeasonUser.get(userId, currentSeason.id);
+
+  //  Merge season info into user object
+  req.user = {
+    ...req.user,
+    seasonInfo: userSeason
+  };
+
+  // Render profile page with user + season + affiliate + bank data
+  res.render('./student/profile', {
+    season: currentSeason,
+    user: req.user,
+    banks,
+    isAffiliate: isAffiliate[0] || []
+  });
+
+} catch (err) {
+  console.error('Error loading profile:', err);
+  res.status(500).send('Something went wrong. Please try again later.');
+}
+
+};
+
+exports.editProfile = async (req, res) => {
+  const {fullName, bio, phone} = req.body
+  const userId = req.user.id;
+  
+  try {
+    const isEdited = await User.update(fullName, bio, phone,userId);
+    if (isEdited) {
+      req.flash('success_msg', `${fullName} update done`)
+    }else{
+      req.flash('error_msg', `${fullName} update failed`)
+
+    }
+    
+    return res.redirect('/user/profile')
+  } catch (err) {
+    console.error('Error loading profile:', err);
     res.status(500).send('Something went wrong. Please try again later.');
   }
 };

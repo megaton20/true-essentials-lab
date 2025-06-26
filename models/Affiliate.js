@@ -71,6 +71,21 @@ const User = require('./User');
     
   }
 
+
+    static async updateBank(bank_code, account_name, account_number, userId) {
+      const result = await pool.query(
+        `UPDATE referrers
+        SET bank_name = $1,
+            account_name = $2,
+            account_number = $3
+        WHERE user_id = $4`,
+        [bank_code, account_name, account_number, userId]
+      );
+
+      return result.rowCount === 1; // return true if updated
+    }
+
+
  // Apply to be an affiliate
   static async applyAsAffiliate(userId, refSource, experience, whyJoin) {
     const existing = await pool.query(
@@ -121,7 +136,7 @@ static async getApplicationById(applicationId) {
 
 
   static async getAffiliateByUserId(userId) {
-    const isAffiliate = await pool.query('SELECT * FROM referrers WHERE user_id = $1',[userId]);
+    const {rows:isAffiliate} = await pool.query('SELECT * FROM referrers WHERE user_id = $1',[userId]);
   
     return  isAffiliate
   }
@@ -135,6 +150,7 @@ static async getApplicationById(applicationId) {
 
   }
 
+  
 
   // Admin approves application
 
@@ -183,7 +199,7 @@ static async approveAffiliate(applicationId, status, adminId, userId) {
         referralCode = isReferrer.rows[0].referral_code;
       }
 
-      const referralLink = `${process.env.LIVE_DIRR || 'http://localhost:' + process.env.PORT}/auth/register/${referralCode}`;
+      const referralLink = `${process.env.LIVE_DIRR || 'http://localhost:' + process.env.PORT}/auth/register/?ref=${referralCode}`;
 
       // Send approval email
       await transporter.sendMail({

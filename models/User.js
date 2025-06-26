@@ -10,6 +10,7 @@ class User {
     full_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     phone TEXT NOT NULL,
+    bio TEXT DEFAULT 'Hey there I love to learn',
     password_hash TEXT NOT NULL,
 
     token_expires TIMESTAMP,
@@ -44,6 +45,25 @@ class User {
 
     }
   }
+
+    static async update(fullName, bio, phone, id) {
+      try {
+        const result = await pool.query(`
+          UPDATE users
+          SET full_name = $1,
+              bio = $2,
+              phone = $3
+          WHERE id = $4
+          RETURNING *;
+        `, [fullName, bio, phone, id]);
+
+        return result.rowCount > 0; // true if update happened
+      } catch (error) {
+        console.log(`error editing user: ${error.message}`);
+        return null;
+      }
+    }
+
 
   static async findByEmail(email) {
     try {

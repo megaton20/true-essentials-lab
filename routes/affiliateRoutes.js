@@ -14,6 +14,7 @@ router.get('/dashboard',ensureAuthenticated,ensureVerifiedEmail, affiliateContro
 router.get('/signup',ensureAuthenticated,ensureVerifiedEmail,forwardAlreadyAffiliate,affiliateApplicationStatus, affiliateController.signup);
 router.post('/apply',ensureAuthenticated,ensureVerifiedEmail, affiliateController.applyAsAffiliate);
 
+router.post('/update-bank',ensureAuthenticated,ensureVerifiedEmail, affiliateController.updateBankDetails);
 
 
 

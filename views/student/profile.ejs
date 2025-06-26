@@ -1,0 +1,229 @@
+<!-- Navbar -->
+<%- include('./partials/topnav') %>
+<!-- Sidebar -->
+<%- include('./partials/sidenav') %>
+
+<!-- Main Content -->
+<div class="container-fluid mt-4">
+  <div class="row">
+    <!-- Static Sidebar for desktop -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <%- include('./partials/staticsidebar') %>
+    </div>
+
+    <!-- Main Dashboard Section -->
+    <div class="col-lg-9">
+      <main>
+        <%- include('../partials/messages') %>
+
+        <!-- Profile Section -->
+        <div class="bg-white shadow-sm p-3 rounded mb-4">
+          <div class="row">
+            <!-- Profile Card -->
+            <div class="col-md-6">
+              <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                  <img src="/images/zap.png" alt="User Avatar" class="rounded-circle mb-3" width="100" height="100">
+                  <h5 class="card-title mb-1"><%= user.full_name %></h5>
+                  <p class="text-muted small mb-2"><%= user.role || 'N/A' %></p>
+                  <p class="text-muted small">📧 <%= user.email %></p>
+                  <p class="text-muted small">Location:📍 <%= user.location || 'N/A' %></p>
+                  <button class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit Profile</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- About & Bank Info -->
+            <div class="col-md-6">
+              <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body">
+                  <h6 class="fw-bold">About</h6>
+                  <p class="small text-muted">
+                    <%= user.bio || 'No bio available yet.' %>
+                  </p>
+
+                  <h6 class="fw-bold mt-4">Account Status</h6>
+                  <span class="badge bg-success">Active</span>
+
+                  <h6 class="fw-bold mt-4">Joined</h6>
+                  <p class="small text-muted"><%= new Date(user.created_at).toDateString() %></p>
+                </div>
+              </div>
+
+              <% if (user.is_affiliate) { %>
+                <div class="card shadow-sm border-0">
+                  <div class="card-body">
+                    <h6 class="fw-bold">Bank Details</h6>
+                    <p class="small text-muted mb-1">Bank: <%= isAffiliate.bank_name || 'Not Set' %></p>
+                    <p class="small text-muted mb-1">Account name: <%= isAffiliate.account_name || 'Not Set' %></p>
+                    <p class="small text-muted mb-1">
+                      Account Number:
+                      <%= isAffiliate.account_number ? '****' + isAffiliate.account_number.slice(-4) : 'Not Set' %>
+                    </p>
+                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editBankModal">
+                      Edit Bank Details
+                    </button>
+                  </div>
+                </div>
+              <% } %>
+
+
+
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- Edit User Info Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="/user/profile/update" method="POST">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserModalLabel">Edit Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="userName" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="userName" name="fullName" value="<%= user.full_name %>">
+          </div>
+          <div class="mb-3">
+            <label for="userPhone" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="userPhone" name="phone" value="<%= user.phone %>">
+          </div>
+          <div class="mb-3">
+            <label for="userBio" class="form-label">Bio</label>
+            <textarea type="text" class="form-control" id="userBio" name="bio"><%= user.bio || "i love to learn" %> </textarea>
+          </div>
+        <!--    have text area foe bio instead  -->
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Bank Detail Modal -->
+<div class="modal fade" id="editBankModal" tabindex="-1" aria-labelledby="editBankModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="/affiliate/update-bank" method="POST">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editBankModalLabel">Edit Bank Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Bank Dropdown -->
+          <div class="mb-3">
+            <label for="bank-select" class="form-label">Bank</label>
+            <select class="form-select" id="bank-select" name="bank_code">
+              <option value="">-- Choose a Bank --</option>
+              <% banks.forEach(bank => { %>
+                <option value="<%= bank.code %>" <%= user.bank_code === bank.code ? 'selected' : '' %>><%= bank.name %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <!-- Account Number Input -->
+          <div class="mb-3">
+            <label for="accountNumber" class="form-label">Account Number</label>
+            <input type="text" class="form-control" id="accountNumber" name="account_number" value="<%= user.account_number || '' %>" maxlength="10" pattern="\d{10}" required>
+          </div>
+
+       <!-- Account Name Display -->
+            <div class="mb-3">
+              <label class="form-label">Account Name</label>
+              <div id="accountNameDisplay" class="form-control bg-light" style="height:auto;">....</div>
+              <input type="hidden" id="accountName" name="account_name" value="<%= user.account_name || '' %>">
+              <div id="accountSpinner" class="text-muted small mt-1" style="display:none;">
+                <i class="fas fa-spinner fa-spin"></i> Resolving account...
+              </div>
+              <button id="retryResolveBtn" class="btn btn-sm btn-outline-danger mt-2" style="display:none;">Retry</button>
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-secondary">Save Bank Info</button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const accountInput = document.getElementById('accountNumber');
+  const bankSelect = document.getElementById('bank-select');
+  const nameDisplay = document.getElementById('accountNameDisplay');
+  const spinner = document.getElementById('accountSpinner');
+  const retryBtn = document.getElementById('retryResolveBtn');
+
+  // Store the last tried values for retry
+  let lastBankCode = null;
+  let lastAccountNumber = null;
+
+  async function resolveAccount(bankCodeOverride = null) {
+    const accountNumber = accountInput.value.trim();
+    const bankCode = bankCodeOverride || bankSelect.value;
+
+    if (accountNumber.length === 10 && bankCode) {
+      // Save last tried values
+      lastAccountNumber = accountNumber;
+      lastBankCode = bankCode;
+
+      retryBtn.style.display = 'none';
+      spinner.style.display = 'block';
+      nameDisplay.textContent = '...';
+
+      try {
+        const res = await fetch(`/api/resolve-account?account_number=${accountNumber}&bank_code=${bankCode}`);
+        const data = await res.json();
+
+        if (data.success) {
+          nameDisplay.textContent = data.data.account_name;
+          document.getElementById('accountName').value = data.data.account_name;
+
+          retryBtn.style.display = 'none';
+        } else {
+          nameDisplay.textContent = 'Could not verify';
+          retryBtn.style.display = 'inline-block';
+          alert(data.message || 'Verification failed');
+        }
+      } catch (err) {
+        nameDisplay.textContent = 'Error';
+        retryBtn.style.display = 'inline-block';
+        alert('Network or server error');
+      } finally {
+        spinner.style.display = 'none';
+      }
+    } else {
+      nameDisplay.textContent = '';
+      retryBtn.style.display = 'none';
+    }
+  }
+
+  // Retry handler
+  retryBtn.addEventListener('click', async () => {
+    if (lastAccountNumber && lastBankCode) {
+      await resolveAccount(lastBankCode); // retry with same values
+    }
+  });
+
+  // Event listeners
+  accountInput.addEventListener('input', () => {
+    if (bankSelect.value) {
+      resolveAccount();
+    }
+  });
+
+  bankSelect.addEventListener('change', resolveAccount);
+</script>

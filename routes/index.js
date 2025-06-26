@@ -261,4 +261,25 @@ router.post('/webhook', async (req, res) => {
 });
 
 
+router.get('/api/resolve-account', async (req, res) => {
+  const { account_number, bank_code } = req.query;
+
+  try {
+    const response = await axios.get(`https://api.paystack.co/bank/resolve`, {
+      params: { account_number, bank_code },
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
+      }
+    });
+
+    res.json({ success: true, data: response.data.data });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.response?.data?.message || 'Verification failed'
+    });
+  }
+});
+
+
 module.exports = router
