@@ -38,8 +38,6 @@
 
                     <div class="container my-4">
 
-                      <%- include('./partials/messages') %>
-
                       <!-- Balance Jumbotron -->
                     <div class="p-4 mb-4 bg-light rounded-3 shadow-sm d-flex justify-content-between align-items-center">
                       <div>
@@ -98,14 +96,21 @@
                         <div class="col-md-3 mb-3">
                           <div class="card card-stat text-center p-3">
                             <i class="bi bi-cash-coin fs-2 text-warning"></i>
-                            <h4 class="fw-bold">NGN 0.00</h4>
+                            <h4 class="fw-bold">
+                           NGN <%= Number(pending).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
+
+                            </h4>
                             <p class="text-muted">Pending Payout</p>
                           </div>
                         </div>
                         <div class="col-md-3 mb-3">
                           <div class="card card-stat text-center p-3">
                             <i class="bi bi-wallet2 fs-2 text-danger"></i>
-                            <h4 class="fw-bold">NGN 0.00</h4>
+                            <h4 class="fw-bold">
+                            
+                                                       NGN <%= Number(paidout).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
+
+                                                      </h4>
                             <p class="text-muted">Paid Out</p>
                           </div>
                         </div>
@@ -210,7 +215,8 @@
                             <p class="text-muted small">Are you sure you want to proceed?</p>
                           </div>
                           <div class="modal-footer">
-                            <form action="/affiliate/withdraw" method="POST" class="d-inline">
+                            <form action="/affiliate/redeem" method="POST" class="d-inline">
+                              <input type="hidden" name="amount" id="" value="<%=referrer.balance%>">
                               <button type="submit" class="btn btn-success">
                                 <i class="bi bi-check2-circle"></i> Yes, Withdraw
                               </button>

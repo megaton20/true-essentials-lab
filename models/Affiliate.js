@@ -105,6 +105,24 @@ const User = require('./User');
     return result.rowCount
 
   }
+
+
+    static async deductBalance(userId, amount) {
+    try {
+      const result = await pool.query(`
+        UPDATE referrers 
+        SET balance = balance - $1
+        WHERE user_id = $2 AND balance >= $1
+        RETURNING *;
+      `, [amount, userId]);
+
+      // Ensure deduction was successful
+      return result.rowCount === 1 ? result.rows[0] : null;
+    } catch (error) {
+      console.error('Error deducting balance:', error.message);
+      return null;
+    }
+  }
  //user see status
    // all pending applications alone
   static async getSingleApplicationsStatus(id) {

@@ -18,7 +18,7 @@ router.post('/update-bank',ensureAuthenticated,ensureVerifiedEmail, affiliateCon
 
 
 
-router.post('/redeem', ensureAuthenticated,ensureVerifiedEmail,affiliateController.redeemReferral);
+router.post('/redeem', ensureAuthenticated,ensureVerifiedEmail,affiliateController.requestWithdrawal);
 
 router.get('/stats',ensureAuthenticated,ensureVerifiedEmail, affiliateController.getAffiliateStats);
 router.post('/request-payout',ensureAuthenticated,ensureVerifiedEmail, affiliateController.requestAffiliatePayout);

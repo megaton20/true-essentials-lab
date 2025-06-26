@@ -3,6 +3,7 @@ const pool = require('../config/db')
 const { v4: uuidv4 } = require('uuid');
 const { update } = require('./TeacherController');
 const axios = require('axios');
+const Withdrawal = require('../models/Withdrawal');
 
 
 const AffiliateController = {
@@ -27,6 +28,7 @@ const AffiliateController = {
         const banks = banksRes.data.data; // Array of bank objects (code + name)
       
 
+        
   //  Fetch affiliate info (if the user is an affiliate)
           const affiliateResult = await Affiliate.getAffiliateByUserId(req.user.id);
           let isAffiliate = [];
@@ -73,12 +75,34 @@ const AffiliateController = {
       const { rows: referees } = await pool.query(usersQuery, [referrer.id]);
 
       
+      // pending payout
+    const { rows: pending } = await pool.query(`
+      
+      SELECT * FROM withdrawals 
+      WHERE referral_id = $1 AND status = $2
+    
+      `, [affiliateResult[0].id, "pending"]);
    
+    const totalPendingAmount = pending.reduce((sum, w) => sum + parseFloat(w.amount), 0);
+
+    // console.log(pending);
+
+        const { rows: paidout } = await pool.query(`
+      
+      SELECT * FROM withdrawals 
+      WHERE referral_id = $1 AND status = $2
+    
+      `, [affiliateResult[0].id, "paid"]);
+
+        const totalPayoutAmount = paidout.reduce((sum, w) => sum + parseFloat(w.amount), 0);
+
       res.render('affiliate-dash', {
         user: req.user,
         referralLink,
         referees,
-        referrer:isAffiliate[0]
+        referrer:isAffiliate[0],
+        pending: totalPendingAmount || 0,
+        paidout: totalPayoutAmount || 0,
       });
 
     } catch (err) {
@@ -203,13 +227,45 @@ const AffiliateController = {
 
 
 
-  async redeemReferral(req, res) {
+  async requestWithdrawal (req, res) {
+    const { amount } = req.body;
+   const referralId = req.user.id
+    
+   const money =  parseFloat(amount);
+   
     try {
-      const { referralCode } = req.body;
-      const result = await Affiliate.redeemReferral(req.user.id, referralCode);
-      res.json(result);
+      
+      const referrer = await Affiliate.getAffiliateByUserId(referralId);
+            
+ 
+        if (!referrer) {
+          req.flash('error_msg', 'Unauthorized access.');
+          return res.redirect('/affiliate/dashboard');
+        }
+
+        const balance = parseFloat(referrer[0].balance);
+        if (balance < money) {
+          req.flash('error_msg', 'Insufficient funds for this withdrawal.');
+          return res.redirect('/affiliate/dashboard');
+        }
+
+
+    // Step 2: Create withdrawal record
+    const withdrawal = await Withdrawal.create( referrer[0].id, money);
+    
+    
+    const sub = await Affiliate.deductBalance(referralId, money);
+    
+    // return console.log(sub)
+
+     req.flash('success_msg', 'Withdrawal requested and is now pending approval.');
+    res.redirect('/affiliate/dashboard');
+
+
     } catch (err) {
-      res.status(400).json({ error: err.message });
+       console.error(err);
+      req.flash('error_msg', 'Something went wrong during withdrawal.');
+      res.redirect('/affiliate/dashboard');
     }
   },
 
