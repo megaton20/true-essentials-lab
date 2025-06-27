@@ -1,0 +1,97 @@
+
+
+  
+  <!-- Navbar -->
+   <%-include('./partials/topnav') %>
+
+  <!-- Sidebar -->
+   <!-- Sidebar -->
+  <%-include('./partials/sidenav') %>
+  
+
+  <!-- Main Content -->
+  <div class="container-fluid mt-4">
+    <div class="row">
+      <!-- Static Sidebar for desktop -->
+      <div class="col-lg-3 d-none d-lg-block">
+          <%-include('./partials/staticsidebar') %>
+      </div>
+
+      <!-- Main Dashboard Section -->
+      <div class="col-lg-9">
+
+        <main class="p-1">
+          <%- include('../partials/messages') %>
+
+          <div class="container">
+    <!-- Top "Thumbnail" Section -->
+    <div class="mb-4 class-thumbnail shadow-sm">
+      <img src="/images/classroom.png" class="" alt="Session Thumbnail">
+    </div>
+
+    <!-- Session Title & Info -->
+    <h2 class="fw-bold"><%=session.title%></h2>
+    <p class="text-muted mb-2">Description: <%=session.description || 'not provided'%></p>
+    <p class="text-muted mb-2">Tutor: <%=session.tutor || 'not provided'%></p>
+    <p class="text-muted">  Time:  <%= session.scheduled_at.toLocaleString('en-US', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: 'numeric',
+                                  minute: '2-digit'
+                                }) %></p>
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs mt-4" id="sessionTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button" role="tab" aria-controls="materials" aria-selected="true">Materials</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="meta-tab" data-bs-toggle="tab" data-bs-target="#meta" type="button" role="tab" aria-controls="meta" aria-selected="false">Meta Info</button>
+      </li>
+    </ul>
+
+    <!-- Tabs Content -->
+    <div class="tab-content p-3 border border-top-0 bg-white" id="sessionTabContent">
+      <!-- Materials Tab -->
+      <div class="tab-pane fade show active" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+        <ul class="list-group">
+          <li class="list-group-item">
+            <a href="#" download class="text-decoration-none">📄 Download Slides (PDF)</a>
+          </li>
+          <li class="list-group-item">
+            <a href="#" download class="text-decoration-none">📘 Reading List (DOCX)</a>
+          </li>
+          <li class="list-group-item">
+            <a href="#" download class="text-decoration-none">📦 Assignment 1 (ZIP)</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Meta Info Tab -->
+      <div class="tab-pane fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
+        <dl class="row">
+          <dt class="col-sm-4">Location</dt>
+          <dd class="col-sm-8"><%=session.location || 'google meet'%></dd>
+
+          <dt class="col-sm-4">Duration</dt>
+          <dd class="col-sm-8"><%=session.duration || '2'%>hr(s)</dd>
+
+          <dt class="col-sm-4">Session Type</dt>
+          <dd class="col-sm-8"><%=session.type || 'lecture'%></dd>
+          <dt class="col-sm-4">Language</dt>
+          <dd class="col-sm-8"><%=session.language || 'English'%></dd>
+
+    
+        </dl>
+      </div>
+    </div>
+  </div>
+
+
+        </main>
+
+      </div>
+
+    </div>
+  </div>

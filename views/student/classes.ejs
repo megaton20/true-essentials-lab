@@ -57,8 +57,8 @@
                           let showRejoin = false;
 
                           if (!data.status) {
-                            statusText = 'Pending';
-                            statusClass = 'bg-secondary';
+                            statusText = 'waiting for Tutor';
+                            statusClass = 'bg-warning';
                           } else if (data.is_joined && isToday) {
                             statusText = 'Attended';
                             statusClass = 'bg-success';
@@ -97,19 +97,20 @@
                               </p>
                             </div>
 
-                            <div>
-                                <% if (!showJoin) { %>
-                                <button class="btn btn-sm btn-outline-danger " disabled> <i class="fas fa-lock"></i> Class is Locked at the moment!</button>
+                            <div class="d-flex gap-2">
+                                <% if (!showJoin && !showRejoin) { %>
+                                
+                                  <button class="btn btn-sm btn-outline-danger " disabled> <i class="fas fa-lock"></i> Class is Locked!</button>
                               <% } else { %>
                                 
                               <% if (showRejoin) { %>
-                                <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Class is Still Active Rejoin</a>
+                                <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Still Active, Rejoin</a>
                               <% } else if (showJoin) { %>
                                 <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Join The Class Now</a>
                               <% } %>
-
-                                <% } %>
-
+                              <% } %>
+                              
+                              <a href="/user/class/<%=data.id%>" class="btn btn-outline-secondary">Details</a>
 
                             </div>
                           </div>

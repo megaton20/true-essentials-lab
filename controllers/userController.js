@@ -198,7 +198,15 @@ if (referralCheck.length > 0) {
   });
 };
 
+exports.getClassDetails = async (req, res) => {
 
+   const session = await ClassSession.findById(req.params.id)
+// chec \k if user is paid before contiuning
+  res.render('./student/class', {
+    user: req.user,
+    session: session || []
+  });
+};
 
 exports.getCourseForSeason= async (req, res) => {
     const userId = req.user.id;

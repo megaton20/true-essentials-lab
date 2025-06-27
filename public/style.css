@@ -80,6 +80,7 @@ body{
   background-color: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  color: #076a25;
 }
 
 
@@ -133,8 +134,19 @@ body{
     border: 1px solid var(--primary-color) !important;
 }
 
+.class-thumbnail{
+  height: 300px;
+  border: 1px solid var(--bg-dark);
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: #9be3b1;
+  /* object-fit:contain; */
+}
+.class-thumbnail img{
+  max-width: 100%;
+}
 .class-card {
-  height: 150px;
+  height: 140px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -156,39 +168,6 @@ body{
       background: linear-gradient(135deg, #0eb819, #076a25);
     }
 
-
-    .overview h4 {
-      font-size: 17px;
-      color: #076a25;
-      margin-left: 10px;
-    }
-
-    .overview .over {
-      display: flex;
-      margin: 10px 0;
-      padding-left: 10px;
-      align-items: center;
-    }
-
-    .overview .log {
-      margin-top: 270px;
-      display: flex;
-      color: rgb(188, 187, 187);
-      padding-left: 10px;
-    }
-
-    .overview .log h4 {
-      font-size: 17px;
-      color: #ff0044;
-    }
-
-    .overview .over i {
-      color: rgba(202, 202, 202, 0.749);
-    }
-
-    .overview .over:hover {
-      color: green;
-    }
 
 
 
@@ -269,48 +248,7 @@ body{
     }
 
 
-    /* calendar */
 
-    .calendar {
-      height: 280px;
-      width: 100%;
-      border-radius: 15px;
-      overflow: hidden;
-    }
-
-    .calendar-header {
-      background: #076a25;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .day {
-      width: 30px;
-      height: 30px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin: 4px;
-      border-radius: 50%;
-      font-weight: 400;
-      color: #333;
-      transition: 0.3s;
-    }
-
-    .day.today {
-      background-color: #076a25;
-      color: white;
-    }
-
-    .day.other-month {
-      color: #ccc;
-    }
-
-    .day:hover {
-      background-color: #f0f0f0;
-      cursor: pointer;
-    }
 
 
 
@@ -326,61 +264,5 @@ body{
       margin-bottom: 20px;
     }
 
-    .video-card {
-      height: 100px;
-      overflow: hidden;
-      text-decoration: none;
-      color: inherit;
-      transition: box-shadow 0.2s ease;
-    }
-
-    .video-card:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .video-thumb {
-      height: 100px;
-      width: 100%;
-      object-fit: cover;
-    }
-
-    .video-body {
-      padding-top: 10px;
-      font-size: 0.85rem;
-    }
-
-    .video-title {
-      font-size: 1rem;
-      margin-bottom: 0.25rem;
-    }
-  
 
     /* admin */
-
-
-
-    .dashboard-header {
-      background-color: #343a40;
-      color: white;
-      padding: 20px;
-    }
-
-    .dashboard-header h1 {
-      margin: 0;
-    }
-
-    .card {
-      border-radius: 10px;
-    }
-
-    .modal-title {
-      font-weight: bold;
-    }
-
-    .form-label {
-      font-weight: 500;
-    }
-
-    .btn i {
-      margin-right: 5px;
-    }

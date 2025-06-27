@@ -24,8 +24,8 @@ module.exports =  {
 
      affiliateApplicationStatus: async function(req, res, next){
       const result =  await Affiliate.getSingleApplicationsStatus(req.user.id)
-            
-      if (result.length > 0) {
+                  
+      if (result) {
         req.flash('error_msg', `already an applicant, wait!`)
        return res.redirect('/affiliate/pending/applicants')
       }
