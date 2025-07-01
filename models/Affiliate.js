@@ -205,16 +205,16 @@ static async approveAffiliate(applicationId, status, adminId, userId) {
     // Only handle referral setup if approved
     if (status === 'approved') {
       const isReferrer = await Affiliate.getAffiliateByUserId(userId);
-
+      
       let referralCode;
-      if (isReferrer.rows.length === 0) {
+      if (isReferrer.length === 0) {
         referralCode = uuidv4().split('-')[0];
         await pool.query(
           `INSERT INTO referrers (user_id, referral_code, id) VALUES ($1, $2, $3)`,
           [userId, referralCode, uuidv4()]
         );
       } else {
-        referralCode = isReferrer.rows[0].referral_code;
+        referralCode = isReferrer[0].referral_code;
       }
 
       const referralLink = `${process.env.LIVE_DIRR || 'http://localhost:' + process.env.PORT}/auth/register/?ref=${referralCode}`;

@@ -152,6 +152,8 @@ const AffiliateController = {
 
       const result = await Affiliate.updateBank(bank_code,account_name, account_number, req.user.id);
 
+      // console.log(result);
+      
       if (result) {
         req.flash('success_msg', "Application submitted")
 
