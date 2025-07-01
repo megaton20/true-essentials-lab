@@ -58,16 +58,19 @@ router.get('/forget-password', forwardAuthenticated, (req, res) => res.render('f
 
 
 router.post('/change-password/request',forwardAuthenticated, async (req,res)=>{
-      console.log("requesting email to gen token...");
         const { email } = req.body;
 
       if (!email) {
       req.flash('error_msg', `Error: Enter a valid email address`);
-      return res.redirect('back');
+      return res.redirect('/auth/forget-password');
       }
 
       const results = await User.findByEmail(email)
-
+    if (!results) {
+      req.flash('error_msg', `email not found in our record`)
+     return res.redirect('/auth/forget-password')
+      
+    }
        if (results.length <= 0) {
       req.flash('error_msg', `Error: No user found with this email`);
       return res.redirect('/auth/forget-password');
