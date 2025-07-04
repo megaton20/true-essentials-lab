@@ -85,6 +85,18 @@ exports.deleteUser = async (req, res) => {
 
   
   try {
+    const user = await User.getById(userID)
+    if (!user) {
+       req.flash("error_msg", "user not found... delete failed!")  
+      return res.redirect(`/admin/users`)
+    }
+
+       if (user.role == "admin") {
+       req.flash("error_msg", "user cannot be deleted!")  
+      return res.redirect(`/admin/users`)
+    }
+
+
     const isDelete = await User.deleteUser(userID);    
     if (isDelete) {
      req.flash("success_msg", "user deleted!")  
