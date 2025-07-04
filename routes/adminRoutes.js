@@ -14,9 +14,10 @@ router.get('/error',ensureAdmin, (req,res)=>{
 router.get('/', ensureAdmin, adminController.adminDashboard);
 router.get('/users', ensureAdmin, adminController.getAllUsers);
 router.get('/users/:id', ensureAdmin, adminController.findOneUsers);
+router.delete('/users/delete/:id', ensureAdmin, adminController.deleteUser);
 
 router.post('/class', ensureAdmin, adminController.createClass);
-router.get('/class/:id', ensureAdmin, adminController.getClassSession);
+router.get('/class/:id/:course', ensureAdmin, adminController.getClassSession);
 router.put('/class/:id/edit', ensureAdmin, adminController.updateById);
 router.put('/class/:id/:status', ensureAdmin, adminController.toggleClasssVisibility);
 router.delete('/class/:id', ensureAdmin, adminController.deleteClass);

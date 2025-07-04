@@ -80,7 +80,24 @@ exports.findOneUsers = async (req, res) => {
   }
     //  res.render('./admin/dashboard')
 };
+exports.deleteUser = async (req, res) => {
+  const userID = req.params.id
 
+  
+  try {
+    const isDelete = await User.deleteUser(userID);    
+    if (isDelete) {
+     req.flash("success_msg", "user deleted!")  
+    }else{
+      req.flash("error_msg", "user delete failed!")  
+
+    }
+    return res.redirect(`/admin/users`)
+  } catch (error) {
+    console.log(`error deleting user: ${error}`);
+    res.redirect('/')
+  }
+};
 
 // courses
 
@@ -238,12 +255,15 @@ exports.deleteCourse = async (req, res) => {
 
 exports.getClassSession = async (req, res) => {
   const id = req.params.id
+  const backUrl = `admin/course/class/${req.params.course}`
+  
     const attendance = await Attendance.getAttendanceForSession(id)
 
     const singleClass = await ClassSession.findById(id); 
         res.render('./admin/class', {
       singleClass,
-      attendance
+      attendance,
+      backUrl
     })
 };
 

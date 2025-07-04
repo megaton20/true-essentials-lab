@@ -17,7 +17,7 @@
       <div class="col-lg-9">
         <main class="p-1">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="/admin/courses" class="btn btn-outline-primary btn-sm">Back</a>
+            <a href="/admin/courses" class="btn btn-outline-primary btn-sm">All Courses</a>
             
             <%- include('../partials/messages') %>
             <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#createClassModal">
@@ -53,7 +53,7 @@
 
                         <!-- Bottom Section: Action -->
                         <div class="d-flex gap-1">
-                          <a href="/admin/class/<%= data.id %>" class="btn btn-sm btn-outline-secondary">View Details</a>
+                          <a href="/admin/class/<%= data.id %>/<%=courseId%>" class="btn btn-sm btn-outline-secondary">View Details</a>
                              <form action="/admin/class/<%= data.id %>" method="post">
                           <input type="hidden" name="_method" value="DELETE">
                            <input type="hidden" name="courseId" value="<%=courseId%>">
