@@ -26,7 +26,7 @@ const paymentReminderTemplate = (user) => teaEmailWrapper(
     <p>Hi ${user.full_name},</p>
     <p>We noticed you haven't completed your payment. Don't miss out on upcoming classes and materials!</p>
     <p><a href="${getBaseUrl()}/user">Click here to complete your payment</a></p>
-    <p>– TEA Team</p>
+    <p>– True Series Academy Team</p>
   `
 );
 
@@ -42,7 +42,7 @@ const welcomeToClassTemplate = (user, session) => teaEmailWrapper(
       <li><strong>Meeting Link:</strong> <a href="${session.meet_link}">Join Class</a></li>
     </ul>
     <p>Glad to have you on board!</p>
-    <p>– TEA Team</p>
+    <p>– True Series Academy Team</p>
   `
 );
 
@@ -62,7 +62,7 @@ const dayBeforeTemplate = (user, sessions) => teaEmailWrapper(
       `).join('')}
     </ul>
     <p>Please be prepared and join on time.</p>
-    <p>– TEA Team</p>
+    <p>– True Series Academy Team</p>
   `
 );
 
