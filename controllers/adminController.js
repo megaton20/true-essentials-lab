@@ -9,6 +9,7 @@ const Season = require('../models/Season');
 const User = require('../models/User');
 const Course = require('../models/Course');
 const SeasonUser = require('../models/SeasonUsers');
+const Category = require('../models/Category');
 
 exports.adminDashboard = async (req, res) => {
   try {
@@ -65,6 +66,43 @@ exports.getAllUsers = async (req, res) => {
   }
     //  res.render('./admin/dashboard')
 };
+
+exports.createCategories = async (req, res) => {
+
+    try {
+    
+     const isCreated =  await Category.create(req.body.name, uuidv4());
+
+     if (isCreated) {
+       req.flash('success_msg', 'categories added')
+      }else{
+       req.flash('error_msg', 'categories not added')
+
+     }
+
+    res.redirect('/admin/categories')
+  } catch (err) {
+    req.flash('error_msg', 'error loading categories')
+    console.log(err);
+    
+    return res.redirect('/admin')
+  }
+};
+exports.getAllCategories = async (req, res) => {
+
+    try {
+    const categories = await Category.allWithCourses(); 
+
+    res.render('./admin/categories',
+       { 
+        categories:categories|| []
+       });
+  } catch (err) {
+    req.flash('error_msg', 'error loading categories')
+    return res.redirect('/admin')
+  }
+};
+
 
 exports.findOneUsers = async (req, res) => {
 
@@ -144,11 +182,13 @@ exports.getAllCourse = async (req, res) => {
     // Filter out present season courses from allCourses to get pastCourses
     const presentCourseIds = presentCourses.map(c => c.id);
     const pastCourses = allCourses.filter(c => !presentCourseIds.includes(c.id));
+    const categories = await Category.all()
 
     res.render('./admin/courses', {
       season: currentSeason,
       presentCourses,
-      pastCourses
+      pastCourses,
+      categories: categories || []
     });
 
   } catch (error) {
@@ -198,12 +238,14 @@ exports.getOneCourse = async (req, res) => {
 
 
 exports.createCourse = async (req, res) => {
-  const {title, description} = req.body
+  const {title, description, category_id} = req.body
   const teacherId = req.user.id
+
+  
  
   
   try {
-    const result = await Course.create({id:uuidv4(), title,description, teacherId });
+    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id });
 
     if (result.success) {
       req.flash('success', result.message);
@@ -221,12 +263,12 @@ exports.createCourse = async (req, res) => {
 };
 
 exports.editCourse = async (req, res) => {
-  const {title, description} = req.body
+  const {title, description, category_id} = req.body
   const teacherId = req.user.id
  
   
   try {
-    const stats = await Course.update(req.params.id, {title,description, teacherId });
+    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id});
     res.redirect('/admin/success') 
   } catch (error) {
     res.redirect('/admin/error') 

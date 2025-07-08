@@ -6,12 +6,17 @@ const { checkRegistrationOpen, checkPaymentOpen } = require('../middleware/setti
 
 const { ensureAuthenticated } = require("../config/auth");
 const Season = require('../models/Season');
+const Category = require('../models/Category');
 
 
 
 // Admin creates a class
 router.get('/', async (req, res) => {
-  res.render('index')
+      const categories = await Category.allWithCourses(); 
+
+  res.render('index', {
+    categories: categories || []
+  })
 });
 router.get('/read-more', async (req, res) => {
   res.render('read-more')

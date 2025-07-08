@@ -61,6 +61,21 @@
           <label class="form-label">Course Title</label>
           <input type="text" name="title" class="form-control" required />
         </div>
+
+       
+        <div class="mb-3">
+          <label class="form-label">Category</label>
+          <select name="category_id" class="form-select" required>
+            <% if (categories && categories.length > 0) { %>
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat.id %>"><%= cat.name %></option>
+              <% }) %>
+            <% } else { %>
+              <option value="uncategorized">Uncategorized</option>
+            <% } %>
+          </select>
+        </div>
+
         <div class="mb-3">
           <label class="form-label">Course Description</label>
           <textarea name="description" rows="3" class="form-control" required></textarea>
@@ -90,6 +105,21 @@
           <label class="form-label">Course Title</label>
           <input type="text" name="title" class="form-control" id="edit-title" required />
         </div>
+
+             <div class="mb-3">
+          <label class="form-label">Category</label>
+       <select name="category_id" class="form-select" id="edit-category" required>
+          <% if (categories && categories.length > 0) { %>
+            <% categories.forEach(cat => { %>
+              <option value="<%= cat.id %>"><%= cat.name %></option>
+            <% }) %>
+          <% } else { %>
+            <option value="">Uncategorized</option>
+          <% } %>
+        </select>
+
+        </div>
+        
         <div class="mb-3">
           <label class="form-label">Course Description</label>
           <textarea name="description" rows="3" class="form-control" id="edit-description" required></textarea>
@@ -103,6 +133,7 @@
   </div>
 </div>
 
+
 <script>
   const editCourseModal = document.getElementById('editCourseModal');
   const editForm = document.getElementById('edit-form');
@@ -114,6 +145,7 @@
       const id = button.getAttribute('data-id');
       const title = button.getAttribute('data-title');
       const description = button.getAttribute('data-description');
+      const categoryId = button.getAttribute('data-category-id');
 
       document.getElementById('edit-id').value = id;
       document.getElementById('edit-title').value = title;
@@ -121,6 +153,14 @@
 
       // Set form action dynamically
       editForm.action = `/admin/courses/${id}`;
+
+      // Set the selected category in the dropdown
+      const categorySelect = document.getElementById('edit-category');
+      if (categorySelect) {
+        [...categorySelect.options].forEach(option => {
+          option.selected = option.value === categoryId;
+        });
+      }
     });
   }
 </script>

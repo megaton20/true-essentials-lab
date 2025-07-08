@@ -8,7 +8,7 @@ class Course {
     const createTableQuery = `
       CREATE TABLE courses (
         id VARCHAR PRIMARY KEY,
-        course_id VARCHAR REFERENCES courses(id) ON DELETE CASCADE,
+        category_id VARCHAR REFERENCES categories(id) ON DELETE CASCADE,
         season_id VARCHAR NOT NULL REFERENCES seasons(id) ON DELETE CASCADE,
         title VARCHAR(100) NOT NULL,
         description TEXT,
@@ -28,7 +28,7 @@ class Course {
     this.teacher_id = data.teacher_id;
     this.created_at = data.created_at;
   }
-static async create({ id, title, description, teacherId }) {
+static async create({ id, title, description, teacherId, category_id }) {
   const season = await Season.getCurrent();
 
   if (!season) {
@@ -38,11 +38,11 @@ static async create({ id, title, description, teacherId }) {
   try {
     const result = await pool.query(
       `
-      INSERT INTO courses (id, title, description, teacher_id, season_id)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO courses (id, title, description, teacher_id, season_id, category_id)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
       `,
-      [id, title, description, teacherId, season.id]
+      [id, title, description, teacherId, season.id, category_id]
     );
 
     if (result.rows.length > 0) {
@@ -58,16 +58,16 @@ static async create({ id, title, description, teacherId }) {
 }
 
 
-  static async update(id, { title, description, teacherId }) {
+  static async update(id, { title, description, teacherId, category_id }) {
     try {
       const result = await pool.query(
         `
         UPDATE courses
-        SET title = $1, description = $2, teacher_id = $3
-        WHERE id = $4
+        SET title = $1, description = $2, teacher_id = $3, category_id = $4
+        WHERE id = $5
         RETURNING *;
         `,
-        [title, description, teacherId, id]
+        [title, description, teacherId,category_id, id]
       );
 
       return new Course(result.rows[0]);
