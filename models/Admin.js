@@ -7,8 +7,8 @@ class Admin extends User {
           static async getDashboardStats() {
             try {
               const totalStudentsRes = await pool.query(
-                'SELECT COUNT(*) FROM users WHERE role = $1',
-                ['student']
+                'SELECT COUNT(*) FROM users WHERE role = $1 AND is_email_verified = $2',
+                ['student', true]
               );
               const pendingVerificationsRes = await pool.query(
                 "SELECT COUNT(*) FROM users WHERE role = $1 AND is_email_verified = false",
@@ -72,7 +72,7 @@ class Admin extends User {
 
         static async allUsers(){
           try {
-            const result = await pool.query(`SELECT * FROM users ORDER BY created_at DESC`)
+            const result = await pool.query(`SELECT * FROM users WHERE is_email_verified = $1 AND role = $2 ORDER BY created_at DESC`, [true, 'student'])
              return result.rows;
           } catch (error) {
             console.log(error);

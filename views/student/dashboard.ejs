@@ -9,8 +9,17 @@
   <!-- Welcome Banner -->
   <div class="bg-success text-center text-white rounded p-4 mb-4 shadow-sm">
     <div class="text-center">
-      <h2 class="mb-1">Dashboard</h2>
-      <p class="mb-0">Welcome back, <%= user.full_name %>! View your courses and track your classes.</p>
+        <% if (season) { %>
+                  <p class="mb-1">Welcome to</p>
+                  <h4><%= season.name %></h4>
+                  <p class="fw-bold">Season Ends: <span id="countdown">Loading... </span></p>
+                  <div class="mt-2 text-muted small">
+                  </div>
+                <% } else { %>
+                  <p class="mb-1">No active season at the moment.</p>
+          <% } %>
+          <hr>
+      <p class="mb-0"><%= user.full_name %> You View Our courses and track your classes.</p>
     </div>
   </div>
 
@@ -27,24 +36,10 @@
 
         <div class="mb-4">
           <div class="row">
-            <!-- Season Info -->
-            <div class="col-md-4 mb-3">
-              <div class="p-2 border text-center" data-aos="fade" data-aos-delay="100">
-                <% if (season) { %>
-                  <p class="mb-1">Welcome to</p>
-                  <h4><%= season.name %></h4>
-                  <p class="fw-bold">Season Ends: <span id="countdown">Loading... </span></p>
-                  <div class="mt-2 text-muted small">
-                  </div>
-                <% } else { %>
-                  <p class="mb-1">No active season at the moment.</p>
-                <% } %>
-              </div>
-            </div>
+               <!-- Course List -->
+        <% if (courses) { %>
 
-
-            <!-- Course List -->
-                 <% if (courses) { %>
+          <p>These are the following courses for this season</p>
 
             <% courses.forEach(function (data, index) { %>
               <div class="col-md-4 mb-3">
@@ -53,7 +48,7 @@
                     <!-- Left: Image -->
                     <div style="flex: 0 0 100px;">
                       <img 
-                        src="<%= data.image_url ? data.image_url : '/images/default.PNG' %>" 
+                        src="<%= data.image_url ? data.image_url : '/images/online-class.png' %>" 
                         alt="Course image" 
                         class="img-fluid rounded"
                         style="height: 100px; width: 100px; object-fit: cover;">

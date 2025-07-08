@@ -47,36 +47,37 @@
                     <% } %>
                   </div>
                 </div>
-                <div class="row mb-3">
-                  <div class="col-md-4 text-muted">Payment Status:</div>
-                  <div class="col-md-8">
-                    <% if (user.has_paid) { %>
-                      <span class="badge bg-success">Paid</span>
-                    <% } else { %>
-                      <span class="badge bg-warning text-dark">Pending</span>
-                    <% } %>
-                  </div>
-                </div>
+             
               </div>
             </div>
 
-              <form action="/admin/teacher" method="POST" class="card shadow-sm p-4 mt-4">
-                <h5 class="mb-4">📋 Add to Teacher </h5>
+              <% if (user.role == "teacher") { %>
+                      <div class="text-center justify-content-center mt-5">
+                        <p class="badge bg-success">this user is a teacher</p>
+                        <p>Demote teacher to user?</p>
+                      </div>
+                    <% } else { %>
 
-                <!-- Specification Input -->
-                <div class="mb-3">
-                  <label for="spec" class="form-label">Your Specification</label>
-                  <input type="text" class="form-control" id="spec" name="specification" placeholder="e.g. Fullstack Developer" required>
-                </div>
+                    <form action="/admin/teacher" method="POST" class="card shadow-sm p-4 mt-4">
+                        <h5 class="mb-4">📋 Add to Teacher </h5>
 
-                <!-- Hidden User ID -->
-                <input type="hidden" name="user_id" value="<%= user.id %>">
+                        <!-- Specification Input -->
+                        <div class="mb-3">
+                          <label for="spec" class="form-label">Your Specification</label>
+                          <input type="text" class="form-control" id="spec" name="specification" placeholder="e.g. Fullstack Developer" required>
+                        </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-paper-plane me-2"></i>Submit
-                </button>
-              </form>
+                        <!-- Hidden User ID -->
+                        <input type="hidden" name="user_id" value="<%= user.id %>">
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary">
+                          <i class="fas fa-paper-plane me-2"></i>Submit
+                        </button>
+                      </form>
+
+                      <% } %>
+             
 
           </main>
       </div>
