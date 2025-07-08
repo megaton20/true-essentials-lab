@@ -46,9 +46,14 @@
             <div class="col-md-4">
               <div class="mt-2 p-4 border rounded shadow-sm bg-light">
                 <p><strong>Scheduled Time:</strong><br> <%= new Date(singleClass.scheduled_at).toLocaleString() %></p>
-                <p><strong>Meet Link:</strong><br>
-                  <a href="<%= singleClass.meet_link %>" target="_blank"><%= singleClass.meet_link %></a>
-                </p>
+                <div class="mt-2 mb-2">
+                  <a href="<%= singleClass.meet_link %>" target="_blank" class="btn btn-outline-success">Go to Streaming Platform</a>
+                </div>
+
+                  <!-- delete button -->
+                           <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#completeModal-<%= singleClass.id %>">
+                            <i class="fas fa-check"></i>
+                          </button>
 
                 <p><strong>Show Link:</strong> <%= singleClass.show_link %></p>
                 <form action="/admin/class/<%= singleClass.id %>/<%= singleClass.show_link ? 'false' : 'true' %>" method="post">
@@ -130,4 +135,27 @@
       </form>
     </div>
   </div>
+
+
+        <div class="modal fade" id="completeModal-<%= singleClass.id %>" tabindex="-1" aria-labelledby="completeModalLabel-<%= singleClass.id %>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="completeModalLabel-<%= singleClass.id %>">Confirm Action</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              Update class session:  <strong><%= singleClass.title %></strong>?
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="/admin/class/complete/<%= singleClass.id %>" method="post">
+                              <input type="hidden" name="_method" value="PUT">
+                              <button type="submit" class="btn btn-success">Yes, change</button>
+                            </form>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div> 
 

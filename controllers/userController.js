@@ -41,6 +41,21 @@ exports.getDashboard = async (req, res) => {
     // Fetch courses under this season
     const courses = await Course.listAllBySeason(currentSeason.id);
 
+    for (const course of courses) {
+      const totalQuery = `SELECT COUNT(*) FROM class_sessions WHERE course_id = $1`;
+      const completeQuery = `SELECT COUNT(*) FROM class_sessions WHERE course_id = $1 AND is_complete = true`;
+
+      const totalRes = await pool.query(totalQuery, [course.id]);
+      const completeRes = await pool.query(completeQuery, [course.id]);
+
+      const total = parseInt(totalRes.rows[0].count);
+      const completed = parseInt(completeRes.rows[0].count);
+
+      course.total_sessions = total;
+      course.completed_sessions = completed;
+      course.progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+    }
+
     res.render('./student/dashboard', {
       courses,
       season: currentSeason,

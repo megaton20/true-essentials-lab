@@ -118,7 +118,7 @@ exports.createClass = async (req, res) => {
   const createdBy = req.user.id
   try {
     const stats = await ClassSession.create({title, description, scheduledAt: scheduled_at,meetLink: meet_link,id:uuidv4(), courseId, createdBy});
-    res.redirect('/admin/success') 
+    res.redirect('/admin/courses') 
   } catch (error) {
     res.redirect('/admin/error') 
     console.log("error on create class: "+ error);
@@ -358,6 +358,33 @@ exports.getVisibleLink = async (req, res) => {
     const stats = await ClassSession.getVisibleLink(joinCode); 
   } catch (error) {
     
+  }
+};
+
+
+
+
+
+exports.completeClass = async (req, res) => {
+  const classID = req.params.id
+  const courseId = req.body.courseId
+  const status = true
+  
+  return console.log(classID);
+  
+  try {
+    const isDelete = await ClassSession.completeClass(classID, status);
+    
+    if (isDelete) {
+     req.flash("success_msg", "class schedule changed!")  
+    }else{
+      req.flash("error_msg", "class schedule change failed!")  
+
+    }
+    return res.redirect(`/admin/course/class/${courseId}`)
+  } catch (error) {
+    console.log(`error updating class: ${error}`);
+    res.redirect('/')
   }
 };
 

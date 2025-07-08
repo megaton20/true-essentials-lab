@@ -19,7 +19,7 @@
                   <p class="mb-1">No active season at the moment.</p>
           <% } %>
           <hr>
-      <p class="mb-0"><%= user.full_name %> You View Our courses and track your classes.</p>
+      <p class="mb-0"><%= user.full_name %> You can now View Our courses and track your classes.</p>
     </div>
   </div>
 
@@ -39,32 +39,55 @@
                <!-- Course List -->
         <% if (courses) { %>
 
-          <p>These are the following courses for this season</p>
+          <p class="mb-4">These are the following courses for this season</p>
 
-            <% courses.forEach(function (data, index) { %>
-              <div class="col-md-4 mb-3">
-                <div class="p-3 border rounded shadow-sm class-card" data-aos="fade" data-aos-delay="<%= (index + 1) * 200 %>">
-                  <div class="d-flex gap-1">
-                    <!-- Left: Image -->
-                    <div style="flex: 0 0 100px;">
-                      <img 
-                        src="<%= data.image_url ? data.image_url : '/images/online-class.png' %>" 
-                        alt="Course image" 
-                        class="img-fluid rounded"
-                        style="height: 100px; width: 100px; object-fit: cover;">
-                    </div>
+          <% courses.forEach(function (data, index) { %>
+            <div class="col-md-4 mb-3">
+              <div class="p-3 border rounded shadow-sm h-100 d-flex flex-column justify-content-between class-card" 
+                  data-aos="fade" 
+                  data-aos-delay="<%= (index + 1) * 200 %>">
+                  
+                <div class="d-flex align-items-start gap-3">
+                  <!-- Course Image -->
+                  <div style="flex-shrink: 0;">
+                    <img 
+                      src="<%= data.image_url || '/images/online-class.png' %>" 
+                      alt="Course image" 
+                      class="img-fluid rounded" 
+                      style="width: 100px; height: 100px; object-fit: cover;">
+                  </div>
 
-                    <!-- Right: Text Info -->
-                    <div class="flex-grow-1 pr-3">
-                      <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
-                      <p class="mb-1 text-truncate" style="font-size: 13px;"><%= data.description %></p>
-                      <p class="mb-1 text-truncate" style="font-size: 11px;">Total Classes: <%= data.total || 'not provided' %></p>
-                      <a href="/user/course/<%= data.id %>" class="btn btn-sm btn-outline-dark mt-1">View Classes</a>
+                  <!-- Course Info -->
+                  <div class="flex-grow-1 text-truncate" style="min-width: 0;">
+                    <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
+                    <p class="mb-1 text-muted text-truncate" style="font-size: 13px;"><%= data.description %></p>
+                    <p class="mb-1 text-muted" style="font-size: 11px;">Total Classes: <%= data.total_sessions || 0 %></p>
+                    
+                    <!-- Progress Bar -->
+                    <div class="progress mb-1" style="height: 8px;">
+                      <div class="progress-bar" 
+                          role="progressbar" 
+                          style="width: <%= data.progress || 0 %>%;" 
+                          aria-valuenow="<%= data.progress || 0 %>" 
+                          aria-valuemin="0" 
+                          aria-valuemax="100">
+                      </div>
                     </div>
+                    <small class="text-muted" style="font-size: 11px;">
+                      <%= data.completed_sessions || 0 %> of <%= data.total_sessions || 0 %> completed
+                    </small>
                   </div>
                 </div>
+
+                <!-- View Button -->
+                <div class="text-end mt-3">
+                  <a href="/user/course/<%= data.id %>" class="btn btn-sm btn-outline-dark w-100">View Classes</a>
+                </div>
+
               </div>
-            <% }) %>
+            </div>
+          <% }) %>
+
             
             <!-- if no course listed -->
                <% } else { %>

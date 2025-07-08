@@ -19,6 +19,7 @@ class ClassSession {
           show_link BOOLEAN DEFAULT FALSE, -- to control visibility
           created_by VARCHAR REFERENCES users(id) ON DELETE CASCADE,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          is_complete BOOLEAN DEFAULT FALSE,
           status BOOLEAN DEFAULT FALSE
         );
         
@@ -147,6 +148,16 @@ class ClassSession {
 
       return result.rowCount > 0
   }
+
+    static async completeClass(id,status){
+    const result = await pool.query(`
+        UPDATE SET is_complete = $1 class_sessions
+        WHERE id = $2
+      `, [status, id]);
+
+      return result.rowCount > 0
+  }
+
 }
 
 module.exports = ClassSession;
