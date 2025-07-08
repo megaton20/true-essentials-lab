@@ -76,6 +76,8 @@ router.delete('/teacher/:id/delete', TeacherController.destroy);
 
 router.get('/categories', ensureAdmin, adminController.getAllCategories);
 router.post('/categories', ensureAdmin, adminController.createCategories);
+router.put('/categories/:id', ensureAdmin, adminController.editCategories);
+router.delete('/categories/:id', ensureAdmin, adminController.deleteCategories);
 
 
 module.exports = router;

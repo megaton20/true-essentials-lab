@@ -55,17 +55,17 @@
             
                     <td>
                     
+                    <a href="#"
+                      class="btn btn-sm btn-outline-warning"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editCategoryModal"
+                      data-id="<%= data.id %>"
+                      data-title="<%= data.name %>"
+                      data-details="<%= data.details %>"
+                      data-icon="<%= data.icon %>">
+                      <i class="fas fa-edit"></i>
+                    </a>
 
-                         <a href="#" 
-                          class="btn btn-sm btn-outline-warning"
-                          data-bs-toggle="modal" 
-                          data-bs-target="#editCourseModal"
-                          data-id="<%= data.id %>"
-                          data-title="<%= data.title %>"
-                          data-description="<%= data.description %>"
-                            data-category-id="<%= data.category_id %>">
-                          <i class="fas fa-edit"></i>
-                        </a>
 
                         <!-- Trigger Button -->
                       <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-<%= data.id %>">
@@ -86,7 +86,7 @@
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                              <form action="/admin/users/delete/<%= data.id %>" method="post">
+                              <form action="/admin/categories/<%= data.id %>" method="post">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <button type="submit" class="btn btn-danger">Yes, Delete</button>
                               </form>
@@ -120,6 +120,11 @@
         </div>
         <div class="modal-body">
           <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required /></div>
+          <div class="mb-3"><label class="form-label">Font</label><input type="text" name="icon" class="form-control" required /></div>
+          <div class="mb-3">
+            <label class="form-label">Details</label>
+            <textarea name="details" id="" class="form-control" required></textarea>
+          </div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -130,64 +135,67 @@
   </div>
 
 
-  <!-- Edit Course Modal -->
-<div class="modal fade" id="editCourseModal" tabindex="-1">
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1">
   <div class="modal-dialog">
-  <form class="modal-content" method="POST" id="edit-form">
-              <input type="hidden" name="_method" value="PUT">
+    <form class="modal-content" method="POST" id="edit-form">
+      <input type="hidden" name="_method" value="PUT">
+
       <div class="modal-header">
-        <h5 class="modal-title">Edit Course</h5>
+        <h5 class="modal-title">Edit Category</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
+
       <div class="modal-body">
         <input type="hidden" name="id" id="edit-id">
+
         <div class="mb-3">
           <label class="form-label">Name</label>
           <input type="text" name="name" class="form-control" id="edit-title" required />
         </div>
 
-          
         <div class="mb-3">
-          <label class="form-label"> Description</label>
-          <textarea name="description" rows="3" class="form-control" id="edit-description" required></textarea>
+          <label class="form-label">Font Icon (e.g. fas fa-code)</label>
+          <input type="text" name="icon" class="form-control" id="edit-icon" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Details</label>
+          <textarea name="details" rows="3" class="form-control" id="edit-details"  required></textarea>
         </div>
       </div>
+
       <div class="modal-footer">
         <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> Save Changes</button>
+        <button type="submit" class="btn btn-warning">
+          <i class="fas fa-save"></i> Save Changes
+        </button>
       </div>
     </form>
   </div>
 </div>
 
 
-  <script>
-  const editCourseModal = document.getElementById('editCourseModal');
+
+<script>
+  const editCategoryModal = document.getElementById('editCategoryModal');
   const editForm = document.getElementById('edit-form');
 
-  if (editCourseModal) {
-    editCourseModal.addEventListener('show.bs.modal', function (event) {
+  if (editCategoryModal) {
+    editCategoryModal.addEventListener('show.bs.modal', function (event) {
       const button = event.relatedTarget;
 
       const id = button.getAttribute('data-id');
       const title = button.getAttribute('data-title');
-      const description = button.getAttribute('data-description');
-      const categoryId = button.getAttribute('data-category-id');
+      const details = button.getAttribute('data-details');
+      const icon = button.getAttribute('data-icon');
 
       document.getElementById('edit-id').value = id;
       document.getElementById('edit-title').value = title;
-      document.getElementById('edit-description').value = description;
+      document.getElementById('edit-icon').value = icon;
+      document.getElementById('edit-details').value = details;
 
-      // Set form action dynamically
-      editForm.action = `/admin/courses/${id}`;
-
-      // Set the selected category in the dropdown
-      const categorySelect = document.getElementById('edit-category');
-      if (categorySelect) {
-        [...categorySelect.options].forEach(option => {
-          option.selected = option.value === categoryId;
-        });
-      }
+      editForm.action = `/admin/categories/${id}`;
     });
   }
 </script>

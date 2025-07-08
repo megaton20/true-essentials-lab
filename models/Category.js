@@ -27,14 +27,14 @@ class Category {
   }
 
     // Create new category
-  static async create(name, id) {
+  static async create(name, id, details, icon) {
     const slug = slugify(name, { lower: true, strict: true });
     const query = `
-      INSERT INTO categories (name, slug, id)
-      VALUES ($1, $2,$3)
+      INSERT INTO categories (name, slug,details, icon, id)
+      VALUES ($1, $2,$3, $4,$5)
       RETURNING *;
     `;
-    const { rows } = await pool.query(query, [name, slug, id]);
+    const { rows } = await pool.query(query, [name, slug,details,icon, id]);
     return rows[0];
   }
 
@@ -60,16 +60,16 @@ class Category {
   }
 
       // Update category name (and slug)
-      static async update(id, newName) {
+      static async update(id, newName, details, icon) {
         const newSlug = slugify(newName, { lower: true, strict: true });
         const query = `
           UPDATE categories
-          SET name = $1, slug = $2
-          WHERE id = $3
+          SET name = $1, slug = $2, details = $3, icon = $4
+          WHERE id = $5
           RETURNING *;
         `;
-        const { rows } = await pool.query(query, [newName, newSlug, id]);
-        return rows[0];
+        const { rows:result } = await pool.query(query, [newName, newSlug,details, icon, id]);
+        return result[0];
       }
 
 
@@ -91,7 +91,7 @@ class Category {
 
   static async allWithCourses() {
   const query = `
-    SELECT c.id AS category_id, c.name, c.icon, c.slug, c.created_at, co.id AS course_id, co.title
+    SELECT c.id AS category_id, c.name, c.icon, c.slug, c.created_at, co.id AS course_id, co.title, c.details
     FROM categories c
     LEFT JOIN courses co ON co.category_id = c.id
     ORDER BY c.created_at DESC;
@@ -107,6 +107,7 @@ class Category {
         name: row.name,
         slug: row.slug,
         icon: row.icon,
+        details: row.details,
         created_at: row.created_at,
         courses: [],
         course_count: 0

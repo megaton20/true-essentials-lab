@@ -68,10 +68,11 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.createCategories = async (req, res) => {
+  const {name,details, icon} = req.body
 
     try {
     
-     const isCreated =  await Category.create(req.body.name, uuidv4());
+     const isCreated =  await Category.create(name, uuidv4(), details,icon);
 
      if (isCreated) {
        req.flash('success_msg', 'categories added')
@@ -88,6 +89,56 @@ exports.createCategories = async (req, res) => {
     return res.redirect('/admin')
   }
 };
+
+
+exports.editCategories = async (req, res) => {
+
+    const {name, icon, details} = req.body
+
+  
+    try {
+    
+     const isCreated =  await Category.update(req.params.id,name,details,icon  );
+
+     if (isCreated) {
+       req.flash('success_msg', 'categories updated')
+      }else{
+       req.flash('error_msg', 'categories not updated')
+
+     }
+
+    res.redirect('/admin/categories')
+  } catch (err) {
+    req.flash('error_msg', 'error loading categories')
+    console.log(err);
+    
+    return res.redirect('/admin')
+  }
+};
+
+exports.deleteCategories = async (req, res) => {
+
+    try {
+    
+     const isDeleted =  await Category.delete(req.params.id);
+
+     if (isDeleted) {
+       req.flash('success_msg', 'categories deleted')
+      }else{
+       req.flash('error_msg', 'categories not deleted')
+
+     }
+
+    res.redirect('/admin/categories')
+  } catch (err) {
+    req.flash('error_msg', 'error loading categories')
+    console.log(err);
+    
+    return res.redirect('/admin')
+  }
+};
+
+
 exports.getAllCategories = async (req, res) => {
 
     try {

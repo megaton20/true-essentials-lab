@@ -62,6 +62,10 @@ exports.getCatDetails = async (req,res)=>{
   const categoryId = req.params.id;
   const category = await Category.findById(categoryId);
 
+  if (!category) {
+    req.flash('error_msg', "category not found or was removed...")
+    return res.redirect('/user')
+  }
   const courses = await Course.findByCategory(categoryId);
 
       const currentSeason = await Season.getCurrent();
