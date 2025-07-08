@@ -9,7 +9,8 @@ class Category {
             CREATE TABLE categories (
           id VARCHAR PRIMARY KEY,
           name TEXT NOT NULL,
-          icon TEXT,
+          details VARCHAR,
+          icon TEXT DEFAULT 'fa fas-folder',
           slug TEXT UNIQUE NOT NULL,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
@@ -90,7 +91,7 @@ class Category {
 
   static async allWithCourses() {
   const query = `
-    SELECT c.id AS category_id, c.name, c.slug, c.created_at, co.id AS course_id, co.title
+    SELECT c.id AS category_id, c.name, c.icon, c.slug, c.created_at, co.id AS course_id, co.title
     FROM categories c
     LEFT JOIN courses co ON co.category_id = c.id
     ORDER BY c.created_at DESC;
@@ -105,6 +106,7 @@ class Category {
         id: row.category_id,
         name: row.name,
         slug: row.slug,
+        icon: row.icon,
         created_at: row.created_at,
         courses: [],
         course_count: 0

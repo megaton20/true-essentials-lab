@@ -125,6 +125,17 @@ static async create({ id, title, description, teacherId, category_id }) {
       return result.rowCount > 0
   }
 
+      static async findByCategory(categoryId) {
+      const query = `
+        SELECT * FROM courses
+        WHERE category_id = $1
+        ORDER BY created_at DESC;
+      `;
+      const { rows:result } = await pool.query(query, [categoryId]);
+      return result || [];
+    }
+
+
 }
 
 module.exports = Course;

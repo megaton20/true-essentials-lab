@@ -8,25 +8,28 @@ const Season = require('../models/Season');
 const Course = require('../models/Course');
 const axios = require('axios');
 const Affiliate = require('../models/Affiliate');
+const Category = require('../models/Category');
 
 
 
 exports.getDashboard = async (req, res) => {
   const userId = req.user.id;
   const customerToPay = 70000;
-
+  
+ 
   try {
+    const categories = await Category.allWithCourses(); 
     const currentSeason = await Season.getCurrent();
 
     if (!currentSeason) {
       // No active season
       req.flash('error', 'No active season available at the moment.');
       return res.render('./student/dashboard', {
-        courses: [],
         season: null,
         user: req.user,
         customerToPay,
         ebooks: [],
+        categories:categories || []
       });
     }
 
@@ -37,9 +40,44 @@ exports.getDashboard = async (req, res) => {
       ...req.user,
       seasonInfo: userSeason,
     };
+    
 
-    // Fetch courses under this season
-    const courses = await Course.listAllBySeason(currentSeason.id);
+    res.render('./student/dashboard', {
+      season: currentSeason,
+      user: req.user,
+      customerToPay,
+      ebooks: [],
+      categories:categories || []
+
+    });
+
+  } catch (err) {
+    console.error('Error loading dashboard:', err);
+    res.status(500).send('Something went wrong. Please try again later.');
+  }
+};
+
+exports.getCatDetails = async (req,res)=>{
+  const userId = req.user.id
+  const categoryId = req.params.id;
+  const category = await Category.findById(categoryId);
+
+  const courses = await Course.findByCategory(categoryId);
+
+      const currentSeason = await Season.getCurrent();
+   if (!currentSeason) {
+      // No active season
+      req.flash('error', 'No active season available at the moment.');
+      return res.redirect('/user');
+    }
+
+      const userSeason = await SeasonUser.get(userId, currentSeason.id);
+
+    // Merge season info into user
+    req.user = {
+      ...req.user,
+      seasonInfo: userSeason,
+    };
 
     for (const course of courses) {
       const totalQuery = `SELECT COUNT(*) FROM class_sessions WHERE course_id = $1`;
@@ -56,19 +94,17 @@ exports.getDashboard = async (req, res) => {
       course.progress = total > 0 ? Math.round((completed / total) * 100) : 0;
     }
 
-    res.render('./student/dashboard', {
-      courses,
-      season: currentSeason,
-      user: req.user,
-      customerToPay,
-      ebooks: [],
-    });
 
-  } catch (err) {
-    console.error('Error loading dashboard:', err);
-    res.status(500).send('Something went wrong. Please try again later.');
-  }
-};
+  res.render('./student/cat-details', {
+    category,
+    categoryId,
+    courses,
+    user: req.user
+  });
+
+}
+
+
 exports.getProfile = async (req, res) => {
   const userId = req.user.id;
 
@@ -155,6 +191,7 @@ exports.editProfile = async (req, res) => {
 
 exports.getCourseSchedule = async (req, res) => {
   const customerToPay = 70000;
+  const backUrl =req.params.categoryId
 
   const currentSeason = await Season.getCurrent();
   let sessions = await ClassSession.listByCourse(req.params.id);
@@ -209,7 +246,8 @@ if (referralCheck.length > 0) {
   res.render('./student/classes', {
     sessions: updatedSessions,
     user: req.user,
-    customerToPay
+    customerToPay,
+    backUrl
   });
 };
 
