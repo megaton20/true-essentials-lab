@@ -2,19 +2,34 @@
     <!-- nav -->
     <%-include('./partials/openTopNav')  %>
 
+      <style>
+    .typing {
+      display: inline;
+      border-right: 2px solid #333;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: blink 0.75s step-end infinite;
+    }
+
+    @keyframes blink {
+      from, to { border-color: transparent }
+      50% { border-color: #333 }
+    }
+  </style>
+
     <!-- Hero Section -->
-            <section class="bg-success text-white py-5" id="home">
+            <section class=" text-dark py-5" id="home">
             <div class="container">
                 <div class="row align-items-center">
-                <div class="col-md-7 text-center text-md-start">
+                <div class="col-md-7 text-center text-md-start" data-aos="fade-up">
                     <br>
                     <br>
-                    <h1 class="display-4 fw-bold">Welcome To True Series</h1>
+                    <h1 class="display-4 fw-bold"> <span id="typed-text" class="typing"></span></h1>
                     <p class="lead">
                     Join our 6 weeks Program — refer students to our program and earn money, It's free and easy to join!
                     </p>
                 </div>
-                <div class="col-md-5 d-none d-md-block text-center">
+                <div class="col-md-5 d-none d-md-block text-center" data-aos="slide-left">
                     <img src="/images/classroom.png" class="hero-img img-fluid" alt="Affiliate illustration">
                 </div>
                 </div>
@@ -31,7 +46,7 @@
             <% categories.forEach(cat => { %>
                   <div class="col-md-3 mb-3">
               <a href="/user/category/<%= cat.id %>" class="text-decoration-none text-dark">
-                <div class="p-3 border rounded shadow-sm h-100 d-flex flex-column justify-content-between class-card" data-aos="fade">
+                <div class="p-3 border rounded shadow-sm h-100 d-flex flex-column justify-content-between class-card" data-aos="fade-up">
                   
                   <div class="d-flex align-items-start gap-3">
                     <!-- Icon or Image -->
@@ -257,3 +272,45 @@
                 </div>
             </div>
             </footer>
+
+
+             <script>
+    const phrases = [
+      "Welcome To True Series",
+      "Empower Your Future",
+      "Learn, Refer & Earn",
+      "6 Weeks to Success"
+    ];
+
+    let currentPhrase = 0;
+    let currentLetter = 0;
+    const typedText = document.getElementById("typed-text");
+
+    function type() {
+      let phrase = phrases[currentPhrase];
+      typedText.textContent = phrase.substring(0, currentLetter);
+      currentLetter++;
+
+      if (currentLetter > phrase.length) {
+        setTimeout(erase, 2500); // Pause before erasing
+      } else {
+        setTimeout(type, 100);
+      }
+    }
+
+    function erase() {
+      let phrase = phrases[currentPhrase];
+      typedText.textContent = phrase.substring(0, currentLetter);
+      currentLetter--;
+
+      if (currentLetter < 0) {
+        currentPhrase = (currentPhrase + 1) % phrases.length;
+        setTimeout(type, 500); // Pause before typing next
+      } else {
+        setTimeout(erase, 50);
+      }
+    }
+
+    // Start typing effect
+    type();
+  </script>

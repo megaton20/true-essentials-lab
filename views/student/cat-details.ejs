@@ -39,13 +39,13 @@
 
           <div class="row">
                <!-- Course List -->
-        <% if (courses) { %>
+        <% if (courses && courses.length > 0) { %>
 
           <p class="mb-4">These are the following courses for this season</p>
 
           <% courses.forEach(function (data, index) { %>
             <div class="col-md-4 mb-3">
-              <div class="p-3 border rounded shadow-sm h-100 d-flex flex-column justify-content-between class-card" 
+              <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="p-3 border rounded shadow-sm h-100 d-flex flex-column justify-content-between class-card" 
                   data-aos="fade">
                   
                 <div class="d-flex align-items-start gap-3">
@@ -80,19 +80,14 @@
                   </div>
                 </div>
 
-                <!-- View Button -->
-                <div class="text-end mt-3">
-                  <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="btn btn-sm btn-outline-dark w-100">View Classes</a>
-                </div>
-
-              </div>
+              </a>
             </div>
           <% }) %>
 
             
             <!-- if no course listed -->
                <% } else { %>
-                  <p class="mb-1">No Course Listed for this SeasonS at the moment.</p>
+                  <p class="mb-1">No Course Listed for this Category at the moment.</p>
                 <% } %>
           </div>
         </div>

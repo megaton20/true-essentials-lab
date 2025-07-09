@@ -71,6 +71,9 @@ router.get('/info/affiliate', (req, res) => {
 router.get('/info/affiliate/terms', (req, res) => {
   res.render('affiliate-terms')
 });
+router.get('/info/terms', (req, res) => {
+  res.render('terms')
+});
 
 
 

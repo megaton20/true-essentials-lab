@@ -94,7 +94,7 @@ class Category {
     SELECT c.id AS category_id, c.name, c.icon, c.slug, c.created_at, co.id AS course_id, co.title, c.details
     FROM categories c
     LEFT JOIN courses co ON co.category_id = c.id
-    ORDER BY c.created_at DESC;
+    ORDER BY c.created_at ASC;
   `;
   const { rows } = await pool.query(query);
 
