@@ -9,12 +9,7 @@
 
   <!-- Main Content -->
   <div class="container-fluid mt-4">
-          <div class="bg-success text-center text-white rounded p-4 mb-4 shadow-sm">
-            <div class="text-center">
-              <h2 class="mb-1">Class Schedules</h2>
-              <p class="mb-0">Welcome back, <%= user.full_name %>! View your courses and track your classes.</p>
-            </div>
-          </div>
+         
 
     <div class="row">
       <!-- Static Sidebar for desktop -->
@@ -24,12 +19,20 @@
 
       <!-- Main Dashboard Section -->
       <div class="col-lg-9">
-
         <main class="p-1">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="/user/category/<%=backUrl%>" class="btn btn-outline-primary btn-sm">Back</a>
-            
+          
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="/user/category/<%=categoryId%>" class="btn btn-outline-primary btn-sm">Back</a>
           </div>
+
+         <div class="bg-grad text-center text-white rounded p-4 mb-4 shadow-sm">
+            <div class="text-center">
+              <h2 class="mb-1">Class Schedules for <%=courses.title%></h2>
+              <p class="mb-0">Welcome back, <%= user.full_name %>! View your courses and track your classes.</p>
+            </div>
+          </div>
+
+     
           <%- include('../partials/messages') %>
           <!-- Stats -->
 
@@ -80,7 +83,7 @@
                         %>
 
                         <div class="col-md-3 mb-3" >
-                          <div class="p-3 border rounded shadow-sm class-card class d-flex flex-column justify-content-between" data-aos="fade" data-aos-delay="<%= (index + 1) * 100 %>">
+                          <div class="p-3 border rounded shadow-sm class-card class d-flex flex-column justify-content-between" data-aos="fade">
                             <div class="d-flex justify-content-between mb-2">
                               <span class="badge <%= statusClass %> status-badge"><%= statusText %></span>
                             </div>
@@ -113,7 +116,7 @@
                               <% } %>
                               <% } %>
                               
-                              <a href="/user/class/<%=data.id%>" class="btn btn-outline-secondary">Details</a>
+                              <a href="/user/class/<%=data.id%>/course/<%=courseId%>/category/<%=categoryId%>" class="btn btn-outline-secondary">Details</a>
 
                             </div>
                           </div>

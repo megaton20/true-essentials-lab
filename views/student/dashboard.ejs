@@ -6,7 +6,18 @@
 
 <!-- Main Content -->
 <div class="container-fluid mt-4">
-  <!-- Welcome Banner -->
+ 
+
+  <div class="row">
+    <!-- Static Sidebar for desktop -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <%-include('./partials/staticsidebar') %>
+    </div>
+
+    <!-- Main Dashboard Section -->
+    <div class="col-lg-9">
+      <main class="p-0">
+         <!-- Welcome Banner -->
   <div class="bg-grad text-center text-white rounded p-4 mb-4 shadow-sm">
     <div class="text-center">
         <% if (season) { %>
@@ -22,16 +33,6 @@
       <p class="mb-0"><%= user.full_name %> You can now View Our courses and track your classes.</p>
     </div>
   </div>
-
-  <div class="row">
-    <!-- Static Sidebar for desktop -->
-    <div class="col-lg-3 d-none d-lg-block">
-      <%-include('./partials/staticsidebar') %>
-    </div>
-
-    <!-- Main Dashboard Section -->
-    <div class="col-lg-9">
-      <main class="p-0">
         <%- include('../partials/messages') %>
 
         <div class="mb-4">

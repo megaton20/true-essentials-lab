@@ -195,7 +195,8 @@ exports.editProfile = async (req, res) => {
 
 exports.getCourseSchedule = async (req, res) => {
   const customerToPay = 70000;
-  const backUrl =req.params.categoryId
+  const categoryId =req.params.categoryId
+  const courseId = req.params.id
 
   const currentSeason = await Season.getCurrent();
   let sessions = await ClassSession.listByCourse(req.params.id);
@@ -245,23 +246,27 @@ if (referralCheck.length > 0) {
   };
 }
 
-// console.log(req.user.referrer_id);
+
+  const courses = await Course.findById(courseId)
 
   res.render('./student/classes', {
     sessions: updatedSessions,
     user: req.user,
     customerToPay,
-    backUrl
+    categoryId,
+    courseId,
+    courses: courses || []
   });
 };
 
 exports.getClassDetails = async (req, res) => {
 
    const session = await ClassSession.findById(req.params.id)
-// chec \k if user is paid before contiuning
   res.render('./student/class', {
     user: req.user,
-    session: session || []
+    session: session || [],
+    categoryId:req.params.categoryId,
+    courseId:req.params.courseId
   });
 };
 

@@ -1,15 +1,19 @@
  <div class="bg-white shadow-sm p-3 rounded">
-          <h5 class="fw-bold mb-4">TEA</h5>
           <nav class="nav flex-column">
             <a href="/user" class="nav-link text-dark">Overview</a>
+            <a href="/user/profile" class="nav-link text-dark">Profile</a>
+
             <div class="mb-4">
              <% if (!user.is_affiliate) { %>
                 <a href="/affiliate/signup" class="nav-link text-dark">Refer To Earn</a>
               <% } else { %>
                 <a href="/affiliate/dashboard" class="nav-link text-dark">Earnings</a>
               <% } %>
-
-
+             <% if (user.role == "teacher") { %>
+                <a href="/teacher" class="nav-link text-dark">Teacher</a>
+              <% } else { %>
+              <% } %>
+            </div>
       
             <a href="/logout" class="nav-link text-danger">Logout</a>
           </nav>
