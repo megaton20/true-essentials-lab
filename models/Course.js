@@ -91,6 +91,18 @@ static async create({ id, title, description, teacherId, category_id, takeawaysJ
     }
   }
 
+  static async listAllByCreator(userId) {
+    
+    try {
+      const {rows:result} = await pool.query(`SELECT * FROM courses WHERE teacher_id = $1 ORDER BY created_at DESC;`, [userId]);
+      return result || [];
+    } catch (error) {
+      console.error('Error listing all courses:', error);
+      return [];
+    }
+  }
+
+
   static async findById(id) {
     try {
       const result = await pool.query(

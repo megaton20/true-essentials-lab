@@ -4,6 +4,8 @@ const Attendance = require('../models/Attendance');
 const pool = require('../config/db');
 const Season = require('../models/Season');
 const SeasonUser = require('../models/SeasonUsers');
+const Course = require('../models/Course');
+const Category = require('../models/Category');
 
 
 
@@ -13,16 +15,7 @@ exports.getDash = async (req, res) => {
     const userId = req.user.id;
 
     // Step 1: Check current season
-    const currentSeason = await Season.getCurrent();
-    let userSeason = null;
-
-    if (currentSeason) {
-      userSeason = await SeasonUser.get(userId, currentSeason.id);
-      req.user = {
-        ...req.user,
-        seasonInfo: userSeason
-      };
-    }
+            const categories = await Category.all()
 
     // Step 2: Check if user is a teacher
     const teacherQuery = `SELECT id FROM teachers WHERE user_id = $1`;
@@ -33,21 +26,12 @@ exports.getDash = async (req, res) => {
       return res.redirect('/handler');
     }
 
-    const teacherId = teacherRows[0].id;
-
-    // Step 3: Get all assigned courses
-    const courseIdsQuery = `
-      SELECT c.*
-      FROM teacher_courses tc
-      JOIN courses c ON c.id = tc.course_id
-      WHERE tc.teacher_id = $1
-    `;
-    const { rows: myAssignedCourses } = await pool.query(courseIdsQuery, [teacherId]);
-
+    const course = await Course.listAllByCreator(userId)
     // Step 4: Render dashboard
     res.render('./teacher/dashboard', {
-      courses: myAssignedCourses,
-      user: req.user
+      courses: course || [],
+      user: req.user,
+      categories:categories || []
     });
 
   } catch (error) {
@@ -56,18 +40,99 @@ exports.getDash = async (req, res) => {
   }
 };
 
+exports.getAllCourse = async (req, res) => {
+  const userId = req.user.id
+  try {
+
+    // All courses (for both current and past)
+    const allCourses = await Course.listAllByCreator(userId);
+        const categories = await Category.all()
+    
+    res.render('./teacher/courses', {
+      courses: allCourses,
+      user:req.user,
+      categories: categories || []
+    });
+
+  } catch (error) {
+    console.error("Error in loading courses:", error);
+    res.redirect('/admin/error');
+  }
+};
+
+exports.createCourse = async (req, res) => {
+  const {title, description, category_id, takeaways} = req.body
+  const teacherId = req.user.id
+const takeawaysJson = JSON.stringify(takeaways);
+  
+ 
+  try {
+    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id, takeawaysJson });
+
+    if (result.success) {
+      req.flash('success', result.message);
+    } else {
+      req.flash('error', result.message);
+    }
+    res.redirect('/teacher/courses');
+
+  } catch (error) {
+    res.redirect('/admin/error') 
+    console.log("error on create course: "+ error);
+    
+    
+  }
+};
+
+exports.getOneCourse = async (req, res) => {
+
+  try {
+      const course = await Course.findById(req.params.id);
+
+      // 2. Attach total class session count
+      const classCountQuery = `SELECT COUNT(*) FROM class_sessions WHERE course_id = $1`;
+      const { rows: classResult } = await pool.query(classCountQuery, [course.id]);
+      course.totalClasses = parseInt(classResult[0].count); // attach as well
+    const categories = await Category.all()
+
+      
+      res.render('./teacher/course', {
+         course, 
+         categories: categories || [], 
+         user:req.user 
+        });
+
+  } catch (error) {
+    res.redirect('/admin/error') 
+    console.log("error on create class: "+ error);
+    
+    
+  }
+};
+
+exports.editCourse = async (req, res) => {
+  const {title, description, category_id, takeaways} = req.body
+  const teacherId = req.user.id
+  const takeawaysJson = JSON.stringify(takeaways);
+  
+  
+  try {
+    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id, takeawaysJson});
+    res.redirect(`/teacher/course/details/${req.params.id}`) 
+  } catch (error) {
+    res.redirect('/teacher/error') 
+    console.log("error on update course: "+ error);
+    
+    
+  }
+};
+
+
 exports.getCourseSchedule = async (req, res) => {
   const id = req.params.id
-  const userId = req.user.id
-  const sessions = await ClassSession.listByCourse(id)
-      const currentSeason = await Season.getCurrent();
-  const userSeason = await SeasonUser.get(userId, currentSeason.id);
 
-  // check if user don pay
-  req.user = {
-    ...req.user,
-    seasonInfo: userSeason
-  };
+  const sessions = await ClassSession.listByCourse(id)
+
   res.render('./teacher/classes', {
     sessions,
     user: req.user,
@@ -75,18 +140,64 @@ exports.getCourseSchedule = async (req, res) => {
   });
 };
 
+
+
+
+
+exports.createClass = async (req, res) => {
+  const {title, description, scheduled_at, meet_link, courseId} = req.body
+  const createdBy = req.user.id
+  try {
+    const stats = await ClassSession.create({title, description, scheduledAt: scheduled_at,meetLink: meet_link,id:uuidv4(), courseId, createdBy});
+    res.redirect('/teacher/courses') 
+  } catch (error) {
+    res.redirect('/teacher/error') 
+    console.log("error on create class: "+ error);
+  }
+};
+
+exports.deleteClass = async (req, res) => {
+  const classID = req.params.id
+  const courseId = req.body.courseId
+  
+  try {
+    const isDelete = await ClassSession.deleteClass(classID);
+    
+    if (isDelete) {
+     req.flash("success_msg", "class schedule deleted!")  
+    }else{
+      req.flash("error_msg", "class schedule delete failed!")  
+
+    }
+    return res.redirect(`/teacher/course/class/${courseId}`)
+  } catch (error) {
+    console.log(`error deleting class: ${error}`);
+    res.redirect('/')
+  }
+};
+
+
+exports.deleteCourse = async (req, res) => {
+  const courseID = req.params.id
+
+  try {
+    const isDelete = await Course.deleteCourse(courseID);    
+    if (isDelete) {
+     req.flash("success_msg", "course deleted!")  
+    }else{
+      req.flash("error_msg", "course delete failed!")  
+
+    }
+    return res.redirect(`/teacher/courses`)
+  } catch (error) {
+    console.log(`error deleting class: ${error}`);
+    res.redirect('/')
+  }
+};
+
+
 exports.getClassSession = async (req, res) => {
   const id = req.params.id
-    const userId = req.user.id
-  const sessions = await ClassSession.listByCourse(id)
-      const currentSeason = await Season.getCurrent();
-  const userSeason = await SeasonUser.get(userId, currentSeason.id);
-
-  // check if user don pay
-  req.user = {
-    ...req.user,
-    seasonInfo: userSeason
-  };
 
     const attendance = await Attendance.getAttendanceForSession(id)
 
@@ -96,19 +207,6 @@ exports.getClassSession = async (req, res) => {
       attendance,
       user: req.user
     })
-};
-
-
-exports.createClass = async (req, res) => {
-  const {title, description, scheduled_at, meet_link, courseId} = req.body
-  const createdBy = req.user.id
-  try {
-    const stats = await ClassSession.create({title, description, scheduledAt: scheduled_at,meetLink: meet_link,id:uuidv4(), courseId, createdBy});
-    res.redirect('/teacher') 
-  } catch (error) {
-    res.redirect('/teacher/error') 
-    console.log("error on create class: "+ error);
-  }
 };
 
 exports.updateById = async (req, res) => {
@@ -124,6 +222,8 @@ exports.updateById = async (req, res) => {
     
   }
 };
+
+
 
 exports.grantAccess = async (req, res) => {
   

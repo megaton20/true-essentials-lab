@@ -1,5 +1,3 @@
-
-
   <!-- Navbar -->
   <%-include('./partials/topnav') %>
 
@@ -9,81 +7,39 @@
 
   <!-- Main Content -->
   <div class="container-fluid mt-4">
-
-
-
-
     <div class="row">
       <!-- Static Sidebar for desktop -->
       <div class="col-lg-3 d-none d-lg-block">
       <%-include('./partials/staticsidebar') %>
       </div>
 
-      <!-- Main Dashboard Section -->
+      <!-- Class Details Section -->
       <div class="col-lg-9">
-
-                   <div class="d-flex justify-content-between align-items-center mb-3">
-           
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCourseModal">
+        <main class="p-1">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="/teacher" class="btn btn-outline-primary btn-sm">Back</a>
+              <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCourseModal">
                   <i class="fas fa-code"></i> Create Course
                 </button>
           </div>
-          
-
-                <div class="bg-success text-white rounded p-4 mb-4 shadow-sm d-flex justify-content-between align-items-center">
-              <div>
-                <h2 class="mb-1"> Teacher Dashboard</h2>
-                <p class="mb-0">Welcome back! Manage your assigned courses and track your classes.</p>
-              </div>
-              <div>
-                <!-- <img src="/images/teacher-icon.png" alt="Teacher Icon" style="height: 50px;"> -->
-              </div>
-            </div>
-
-        <main class="p-1">
           <%- include('../partials/messages') %>
 
+           <section class="mb-4">
+            <h5 class="text-primary">📘 My Courses </h5>
+            <div class="row">
+              <% courses.forEach((data, index) => { %>
+                <%- include('./partials/course-card', { data, index }) %>
+              <% }) %>
+            </div>
+          </section>
 
-              <div class="bg-white shadow-sm p-3 rounded mb-4">
-                <h5>My Courses</h5>
-                <div class="row">
-                  <% courses.forEach(function(data, index) { %>
-                <div class="col-md-6 col-lg-3 mb-3">
-                    <div class="border p-3 rounded h-100 d-flex flex-column justify-content-between"  data-aos="fade" >
-                      
-                       <!-- Middle Section: Title and Date -->
-                        <div class="mb-2">
-                          <p class="text-muted mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></p>
-                          <p class="text-muted mb-0" style="font-size: 11px;">
-                            <%= data.created_at.toLocaleString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                              hour: 'numeric',
-                              minute: '2-digit'
-                            }) %>
-                          </p>
-                        </div>
-
-                        <div>
-                            <a href="/teacher/course/details/<%= data.id %>" class="btn btn-sm btn-outline-secondary mt-2">View Details</a>
-                            <a href="/teacher/course/class/<%= data.id %>" class="btn btn-sm btn-outline-secondary mt-2">View Classes</a>
-                        </div>
-
-                    </div>
-                  </div>
-                  <% }) %>
-                </div>
-              </div>
-        
         </main>
-
       </div>
-
     </div>
   </div>
 
-<!-- Create Course Modal -->
+
+  <!-- Create Course Modal -->
 <div class="modal fade" id="createCourseModal" tabindex="-1">
   <div class="modal-dialog">
     <form class="modal-content" method="POST" action="/teacher/courses/create">
@@ -134,3 +90,7 @@
     </form>
   </div>
 </div>
+
+
+
+
