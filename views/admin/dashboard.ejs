@@ -116,10 +116,35 @@
           <label class="form-label">Course Title</label>
           <input type="text" name="title" class="form-control" required />
         </div>
+
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+          <select name="category_id" class="form-select" id="edit-category" required>
+              <% if (categories && categories.length > 0) { %>
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat.id %>"><%= cat.name %></option>
+                <% }) %>
+              <% } else { %>
+                <option value="uncategorized">Uncategorized</option>
+              <% } %>
+            </select>
+
+            </div>
+
+     
+        
         <div class="mb-3">
           <label class="form-label">Course Description</label>
           <textarea name="description" rows="3" class="form-control" required></textarea>
         </div>
+
+        <div class="mb-3">
+          <label class="form-label">Take away</label>
+          <input type="text" name="takeaways" class="form-control" placeholder="Enter takeaway 1" required />
+          <input type="text" name="takeaways" class="form-control mt-2" placeholder="Enter takeaway 2" required />
+          <input type="text" name="takeaways" class="form-control mt-2" placeholder="Enter takeaway 3" required />
+        </div>
+
       
       </div>
       <div class="modal-footer">

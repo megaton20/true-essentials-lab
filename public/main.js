@@ -12,3 +12,34 @@
     duration: 800,
     once: true
   });
+
+
+    // Generate random pastel color
+  function getRandomColor() {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 70%, 80%)`; // soft, readable colors
+  }
+
+  // Apply random color to all elements with the class "random-bg"
+  document.querySelectorAll('.random-bg').forEach(el => {
+    el.style.backgroundColor = getRandomColor();
+  });
+
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('takeaways-container');
+    const addBtn = document.getElementById('add-takeaway');
+
+    let count = container.querySelectorAll('input').length;
+
+    addBtn.addEventListener('click', function () {
+      count++;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.name = 'takeaways';
+      input.className = 'form-control mb-1';
+      input.placeholder = 'Enter takeaway ' + count;
+      input.required = true;
+      container.appendChild(input);
+    });
+  });

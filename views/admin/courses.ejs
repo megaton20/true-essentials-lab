@@ -62,24 +62,34 @@
           <input type="text" name="title" class="form-control" required />
         </div>
 
-       
-        <div class="mb-3">
-          <label class="form-label">Category</label>
-          <select name="category_id" class="form-select" required>
-            <% if (categories && categories.length > 0) { %>
-              <% categories.forEach(cat => { %>
-                <option value="<%= cat.id %>"><%= cat.name %></option>
-              <% }) %>
-            <% } else { %>
-              <option value="uncategorized">Uncategorized</option>
-            <% } %>
-          </select>
-        </div>
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+          <select name="category_id" class="form-select" id="edit-category" required>
+              <% if (categories && categories.length > 0) { %>
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat.id %>"><%= cat.name %></option>
+                <% }) %>
+              <% } else { %>
+                <option value="uncategorized">Uncategorized</option>
+              <% } %>
+            </select>
 
+            </div>
+
+     
+        
         <div class="mb-3">
           <label class="form-label">Course Description</label>
           <textarea name="description" rows="3" class="form-control" required></textarea>
         </div>
+
+        <div class="mb-3">
+          <label class="form-label">Take away</label>
+          <input type="text" name="takeaways" class="form-control" placeholder="Enter takeaway 1" required />
+          <input type="text" name="takeaways" class="form-control mt-2" placeholder="Enter takeaway 2" required />
+          <input type="text" name="takeaways" class="form-control mt-2" placeholder="Enter takeaway 3" required />
+        </div>
+
       
       </div>
       <div class="modal-footer">
@@ -90,82 +100,6 @@
   </div>
 </div>
 
-<!-- Edit Course Modal -->
-<div class="modal fade" id="editCourseModal" tabindex="-1">
-  <div class="modal-dialog">
-  <form class="modal-content" method="POST" id="edit-form">
-              <input type="hidden" name="_method" value="PUT">
-      <div class="modal-header">
-        <h5 class="modal-title">Edit Course</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" name="id" id="edit-id">
-        <div class="mb-3">
-          <label class="form-label">Course Title</label>
-          <input type="text" name="title" class="form-control" id="edit-title" required />
-        </div>
 
-             <div class="mb-3">
-          <label class="form-label">Category</label>
-       <select name="category_id" class="form-select" id="edit-category" required>
-          <% if (categories && categories.length > 0) { %>
-            <% categories.forEach(cat => { %>
-              <option value="<%= cat.id %>"><%= cat.name %></option>
-            <% }) %>
-          <% } else { %>
-            <option value="">Uncategorized</option>
-          <% } %>
-        </select>
-
-        </div>
-        
-        <div class="mb-3">
-          <label class="form-label">Course Description</label>
-          <textarea name="description" rows="3" class="form-control" id="edit-description" required></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> Save Changes</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-
-<script>
-  const editCourseModal = document.getElementById('editCourseModal');
-  const editForm = document.getElementById('edit-form');
-
-  if (editCourseModal) {
-    editCourseModal.addEventListener('show.bs.modal', function (event) {
-      const button = event.relatedTarget;
-
-      const id = button.getAttribute('data-id');
-      const title = button.getAttribute('data-title');
-      const description = button.getAttribute('data-description');
-      const categoryId = button.getAttribute('data-category-id');
-
-      document.getElementById('edit-id').value = id;
-      document.getElementById('edit-title').value = title;
-      document.getElementById('edit-description').value = description;
-
-      // Set form action dynamically
-      editForm.action = `/admin/courses/${id}`;
-
-      // Set the selected category in the dropdown
-      const categorySelect = document.getElementById('edit-category');
-      if (categorySelect) {
-        [...categorySelect.options].forEach(option => {
-          option.selected = option.value === categoryId;
-        });
-      }
-    });
-  }
-</script>
-
-
- 
 
 

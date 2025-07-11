@@ -97,7 +97,7 @@ exports.getCatDetails = async (req,res)=>{
       course.completed_sessions = completed;
       course.progress = total > 0 ? Math.round((completed / total) * 100) : 0;
     }
-
+    
 
   res.render('./student/cat-details', {
     category,

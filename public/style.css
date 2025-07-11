@@ -37,6 +37,27 @@ body{
 .navbar-brand a{
   color: #076a25 !important;
 }
+
+  .check-circle-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #28a745; /* green */
+    color: #fff;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  ul.list-unstyled li {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+
+  
   .profile-img {
       width: 40px;
       height: 40px;

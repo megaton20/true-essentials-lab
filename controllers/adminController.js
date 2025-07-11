@@ -35,6 +35,9 @@ exports.adminDashboard = async (req, res) => {
     `);
     const pastResult = pastResultQuery.rows || [];
 
+        const categories = await Category.all()
+
+
     res.render('./admin/dashboard', {
       stats,
       courseBySeason,
@@ -43,7 +46,8 @@ exports.adminDashboard = async (req, res) => {
       upcoming: upcoming || null,
       pastResult,
       teachers: teachers || [],
-      currentUser: currentUser || []
+      currentUser: currentUser || [],
+      categories: categories || [] 
     });
   } catch (err) {
     console.error("Error loading admin dashboard:", err);
@@ -252,8 +256,8 @@ exports.getOneCourse = async (req, res) => {
 
   try {
       const course = await Course.findById(req.params.id);
-   
-       const { rows: allAeachers } = await pool.query(`
+
+      const { rows: allAeachers } = await pool.query(`
           SELECT t.*, u.full_name, u.email
           FROM teachers t
           JOIN users u ON u.id = t.user_id;
@@ -275,9 +279,10 @@ exports.getOneCourse = async (req, res) => {
       const classCountQuery = `SELECT COUNT(*) FROM class_sessions WHERE course_id = $1`;
       const { rows: classResult } = await pool.query(classCountQuery, [course.id]);
       course.totalClasses = parseInt(classResult[0].count); // attach as well
+    const categories = await Category.all()
 
-      // 3. Pass the single enriched object to the view
-      res.render('./admin/course', { course, allAeachers });
+      
+      res.render('./admin/course', { course, allAeachers, categories: categories || [] });
 
   } catch (error) {
     res.redirect('/admin/error') 
@@ -289,14 +294,14 @@ exports.getOneCourse = async (req, res) => {
 
 
 exports.createCourse = async (req, res) => {
-  const {title, description, category_id} = req.body
+  const {title, description, category_id, takeaways} = req.body
   const teacherId = req.user.id
-
+const takeawaysJson = JSON.stringify(takeaways);
   
  
   
   try {
-    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id });
+    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id, takeawaysJson });
 
     if (result.success) {
       req.flash('success', result.message);
@@ -307,23 +312,24 @@ exports.createCourse = async (req, res) => {
 
   } catch (error) {
     res.redirect('/admin/error') 
-    console.log("error on create class: "+ error);
+    console.log("error on create course: "+ error);
     
     
   }
 };
 
 exports.editCourse = async (req, res) => {
-  const {title, description, category_id} = req.body
+  const {title, description, category_id, takeaways} = req.body
   const teacherId = req.user.id
- 
+  const takeawaysJson = JSON.stringify(takeaways);
+  
   
   try {
-    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id});
-    res.redirect('/admin/success') 
+    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id, takeawaysJson});
+    res.redirect(`/admin/courses/details/${req.params.id}`) 
   } catch (error) {
     res.redirect('/admin/error') 
-    console.log("error on create class: "+ error);
+    console.log("error on update course: "+ error);
     
     
   }

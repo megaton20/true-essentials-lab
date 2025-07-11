@@ -89,17 +89,27 @@ class Category {
         return parseInt(rows[0].count);
       }
 
-  static async allWithCourses() {
+static async allWithCourses() {
   const query = `
-    SELECT c.id AS category_id, c.name, c.icon, c.slug, c.created_at, co.id AS course_id, co.title, c.details
+    SELECT 
+      c.id AS category_id, 
+      c.name, 
+      c.icon, 
+      c.slug, 
+      c.details, 
+      c.created_at,
+      co.id AS course_id, 
+      co.title, 
+      co.takeaways
     FROM categories c
     LEFT JOIN courses co ON co.category_id = c.id
     ORDER BY c.created_at ASC;
   `;
+
   const { rows } = await pool.query(query);
 
-  // Group into categories with embedded courses
   const grouped = {};
+
   for (const row of rows) {
     if (!grouped[row.category_id]) {
       grouped[row.category_id] = {
@@ -109,20 +119,26 @@ class Category {
         icon: row.icon,
         details: row.details,
         created_at: row.created_at,
-        courses: [],
-        course_count: 0
+        courses: []
       };
     }
+
+    // If course exists in the row, add it to the category
     if (row.course_id) {
       grouped[row.category_id].courses.push({
         id: row.course_id,
-        title: row.title
+        title: row.title,
+        takeaways: row.takeaways ? row.takeaways : []
       });
-      grouped[row.category_id].course_count++;
     }
   }
 
-  return Object.values(grouped);
+  
+  // Add course_count and return as array
+  return Object.values(grouped).map(category => ({
+    ...category,
+    course_count: category.courses.length
+  }));
 }
 
 

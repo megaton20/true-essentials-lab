@@ -1,0 +1,31 @@
+     <% categories.forEach(cat => { %>
+            <div class="col-md-3 mb-3">
+              <a href="/user/category/<%= cat.id %>" class="text-decoration-none text-dark">
+                <div class="p-3 border rounded shadow-sm h-100 d-flex flex-column justify-content-between class-card" data-aos="fade">
+                  
+                  <div class="d-flex align-items-start gap-3">
+                    <!-- Icon or Image -->
+                    <div>
+                     <div 
+                        class="text-dark d-flex align-items-center justify-content-center random-bg" 
+                        style="border-radius: 50%; width: 50px; height: 50px;">
+                        <i class="<%= cat.icon %> fs-4"></i>
+                      </div>
+
+
+                    </div>
+
+                    <!-- Info -->
+                    <div class="text-truncate" style="min-width: 0;">
+                      <p class="text-truncate mb-0"><%= cat.name %></p>                   
+                      <p class="text-muted mt-0" style="font-size: 11px;">
+                        <%= cat.course_count %> <%= cat.course_count == 1 ? 'Course' : 'Courses' %>
+                      </p>
+                    </div>
+                  </div>
+
+
+                </div>
+              </a>
+            </div>
+          <% }) %>

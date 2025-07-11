@@ -13,7 +13,8 @@ class Course {
         title VARCHAR(100) NOT NULL,
         description TEXT,
         teacher_id VARCHAR REFERENCES users(id),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        takeaways JSONB DEFAULT '[]'::jsonb
       );
     `;
 
@@ -28,7 +29,7 @@ class Course {
     this.teacher_id = data.teacher_id;
     this.created_at = data.created_at;
   }
-static async create({ id, title, description, teacherId, category_id }) {
+static async create({ id, title, description, teacherId, category_id, takeawaysJson }) {
   const season = await Season.getCurrent();
 
   if (!season) {
@@ -38,11 +39,11 @@ static async create({ id, title, description, teacherId, category_id }) {
   try {
     const result = await pool.query(
       `
-      INSERT INTO courses (id, title, description, teacher_id, season_id, category_id)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO courses (id, title, description, teacher_id, season_id, category_id, takeaways)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *;
       `,
-      [id, title, description, teacherId, season.id, category_id]
+      [id, title, description, teacherId, season.id, category_id, takeawaysJson]
     );
 
     if (result.rows.length > 0) {
@@ -58,16 +59,17 @@ static async create({ id, title, description, teacherId, category_id }) {
 }
 
 
-  static async update(id, { title, description, teacherId, category_id }) {
+  static async update(id, { title, description, teacherId, category_id, takeawaysJson }) {
+
     try {
       const result = await pool.query(
         `
         UPDATE courses
-        SET title = $1, description = $2, teacher_id = $3, category_id = $4
-        WHERE id = $5
+        SET title = $1, description = $2, teacher_id = $3, category_id = $4, takeaways = $5
+        WHERE id = $6
         RETURNING *;
         `,
-        [title, description, teacherId,category_id, id]
+        [title, description, teacherId,category_id,takeawaysJson, id]
       );
 
       return new Course(result.rows[0]);
@@ -96,7 +98,8 @@ static async create({ id, title, description, teacherId, category_id }) {
         [id]
       );
       if (result.rows.length === 0) return null;
-      return new Course(result.rows[0]);
+
+      return result.rows[0];
     } catch (error) {
       console.error('Error finding course by ID:', error);
       return null;
