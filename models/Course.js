@@ -59,17 +59,22 @@ static async create({ id, title, description, teacherId, category_id, price,take
 }
 
 
-  static async update(id, { title, description, teacherId, category_id, takeawaysJson }) {
+  static async update(id, { title, description, teacherId, category_id,price, takeawaysJson }) {
+
+      let fee = 0.00
+   if(price){
+    fee = price
+   }
 
     try {
       const result = await pool.query(
         `
         UPDATE courses
-        SET title = $1, description = $2, teacher_id = $3, category_id = $4, takeaways = $5
-        WHERE id = $6
+        SET title = $1, description = $2, teacher_id = $3, category_id = $4, takeaways = $5, price = $6
+        WHERE id = $7
         RETURNING *;
         `,
-        [title, description, teacherId,category_id,takeawaysJson, id]
+        [title, description, teacherId,category_id,takeawaysJson, fee, id]
       );
 
       return new Course(result.rows[0]);

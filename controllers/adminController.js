@@ -10,10 +10,12 @@ const Course = require('../models/Course');
 const Category = require('../models/Category');
 
 exports.adminDashboard = async (req, res) => {
+  const userId = req.user.id
   try {
     const stats = await Admin.getDashboardStats(); 
 
-    let course = await Course.listAll(); 
+    let course = await Course.listAll();
+    let myCourse = await Course.listAllByCreator(userId)
     let currentUser = await User.lisAll();
 
     const classStatus = await Admin.getClassStatus();
@@ -24,6 +26,7 @@ exports.adminDashboard = async (req, res) => {
     res.render('./admin/dashboard', {
       stats,
       course,
+      myCourse,
       classStatus: classStatus || [],
       teachers: teachers || [],
       currentUser: currentUser || [],
@@ -263,14 +266,14 @@ exports.getOneCourse = async (req, res) => {
 
 
 exports.createCourse = async (req, res) => {
-  const {title, description, category_id, takeaways} = req.body
+  const {title, description, category_id, takeaways, price} = req.body
   const teacherId = req.user.id
 const takeawaysJson = JSON.stringify(takeaways);
   
  
   
   try {
-    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id, takeawaysJson });
+    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id,price, takeawaysJson });
 
     if (result.success) {
       req.flash('success', result.message);
@@ -288,13 +291,13 @@ const takeawaysJson = JSON.stringify(takeaways);
 };
 
 exports.editCourse = async (req, res) => {
-  const {title, description, category_id, takeaways} = req.body
+  const {title, description, category_id, takeaways, price} = req.body
   const teacherId = req.user.id
   const takeawaysJson = JSON.stringify(takeaways);
   
   
   try {
-    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id, takeawaysJson});
+    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id,price, takeawaysJson});
     res.redirect(`/admin/courses/details/${req.params.id}`) 
   } catch (error) {
     res.redirect('/admin/error') 

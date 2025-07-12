@@ -2,20 +2,25 @@
           <nav class="nav flex-column">
             <a href="/user" class="nav-link text-dark">Overview</a>
             <div class="mb-4">
+
+                 <% if (user.role == "teacher") { %>
+                <a href="/teacher" class="nav-link text-dark">Teacher</a>
+                <a href="/teacher/courses" class="nav-link text-dark">Courses</a>
+              <% } else { %>
+              <% } %>
+            </div>
+
              <% if (!user.is_affiliate) { %>
                 <a href="/affiliate/signup" class="nav-link text-dark">Refer To Earn</a>
               <% } else { %>
                 <a href="/affiliate/dashboard" class="nav-link text-dark">Earnings</a>
               <% } %>
 
-              <% if (user.role == "teacher") { %>
-                <a href="/teacher" class="nav-link text-dark">Teacher</a>
-                <a href="/teacher/courses" class="nav-link text-dark">Courses</a>
-              <% } else { %>
-              <% } %>
+           
 
 
+              <hr>
       
-            <a href="/logout" class="nav-link text-danger">Logout</a>
+            <a href="/logout" class=" btn btn-outline-danger ">Logout</a>
           </nav>
         </div>

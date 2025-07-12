@@ -28,7 +28,8 @@
             <div class="col-md-8">
               <div class="mt-2 p-3 border rounded shadow-sm bg-light">
                 <h4 class="mb-2"><%= course.title %></h4>
-                <p><strong>Description:</strong><br> <%= course.description || 'No description provided.' %></p>
+                <p><strong>Description:</strong> <%= course.description || 'No description provided.' %></p>
+                <p><strong>Price:</strong> <%= course.price || '0.00' %></p>
                 <p><strong>Created:</strong><br> <%= new Date(course.created_at).toLocaleString() %></p>
              
                 <hr>
@@ -110,6 +111,11 @@
             <div class="mb-3">
               <label for="classTitle" class="form-label">Class Title</label>
               <input type="text" class="form-control" id="classTitle" name="title" value="<%= course.title %>" required>
+            </div>
+
+             <div class="mb-3">
+              <label for="classTitle" class="form-label">Course Price</label>
+              <input type="number" class="form-control" id="price" name="price" value="<%= course.price %>" required>
             </div>
 
             <div class="mb-3">

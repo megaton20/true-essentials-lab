@@ -54,17 +54,37 @@
                       src="<%= data.image_url || '/images/online-class.png' %>" 
                       alt="Course image" 
                       class="img-fluid rounded" 
-                      style="width: 100px; height: 100px; object-fit: cover;">
+                      style="width: 70px; height: 70px; object-fit: cover;">
                   </div>
 
                   <!-- Course Info -->
                   <div class="flex-grow-1 text-truncate" style="min-width: 0;">
                     <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
                     <p class="mb-1 text-muted text-truncate" style="font-size: 13px;"><%= data.description %></p>
-                    <p class="mb-1 text-muted" style="font-size: 11px;">Total Classes: <%= data.total_sessions || 0 %></p>
+                    
+                    <div class="mt-2">
+                <% if (enrolledCourseIds.includes(data.id)) { %>
 
+                  <% } else { %>
+                   <form method="POST" action="/user/course/<%= data.id %>/enroll" class="enroll-form" data-course-id="<%= data.id %>" data-price="<%= data.price %>">
+                  <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
+                  <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
+                  <input type="hidden" name="course_id" class="courseId" value="<%= data.id %>">
+                  <input type="hidden" name="amount" class="amount" value="<%= data.price %>">
+
+                  <% if (data.price <= 0) { %>
+                    <button class="btn btn-sm btn-outline-success">Enroll for Free</button>
+                  <% } else { %>
+                    <button type="submit" class="btn btn-sm btn-outline-success pay-btn">Pay – ₦<%= data.price %></button>
+                  <% } %>
+                </form>
+
+                  <% } %>
+
+                    </div>
                     <!-- Progress Bar -->
                     <% if (enrolledCourseIds.includes(data.id)) { %>
+                      <p class="mb-1 text-muted" style="font-size: 11px;">Total Classes: <%= data.total_sessions || 0 %></p>
                       <div class="progress mb-1" style="height: 8px;">
                         <div class="progress-bar" 
                             role="progressbar" 
@@ -84,23 +104,9 @@
                 <!-- Action Button -->
                 <div class="mt-2 ">
                   <% if (enrolledCourseIds.includes(data.id)) { %>
-                    <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="btn btn-sm btn-primary">Open Course</a>
+                    <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="btn btn-sm btn-success">You own This Course</a>
                   <% } else { %>
-
-                <form method="POST" action="/user/course/<%= data.id %>/enroll" class="enroll-form" data-course-id="<%= data.id %>" data-price="<%= data.price %>">
-                  <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
-                  <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
-                  <input type="hidden" name="course_id" class="courseId" value="<%= data.id %>">
-                  <input type="hidden" name="amount" class="amount" value="<%= data.price %>">
-
-                  <% if (data.price <= 0) { %>
-                    <button class="btn btn-sm btn-outline-success">Enroll for Free</button>
-                  <% } else { %>
-                    <button type="submit" class="btn btn-sm btn-outline-success pay-btn">Pay – ₦<%= data.price %></button>
-                  <% } %>
-                </form>
-
-
+              
                   <% } %>
                 </div>
 

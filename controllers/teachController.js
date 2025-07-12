@@ -58,13 +58,13 @@ exports.getAllCourse = async (req, res) => {
 };
 
 exports.createCourse = async (req, res) => {
-  const {title, description, category_id, takeaways} = req.body
+  const {title, description, category_id,price, takeaways} = req.body
   const teacherId = req.user.id
 const takeawaysJson = JSON.stringify(takeaways);
   
  
   try {
-    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id, takeawaysJson });
+    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id,price, takeawaysJson });
 
     if (result.success) {
       req.flash('success', result.message);
@@ -108,13 +108,13 @@ exports.getOneCourse = async (req, res) => {
 };
 
 exports.editCourse = async (req, res) => {
-  const {title, description, category_id, takeaways} = req.body
+  const {title, description, category_id, takeaways, price} = req.body
   const teacherId = req.user.id
   const takeawaysJson = JSON.stringify(takeaways);
   
   
   try {
-    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id, takeawaysJson});
+    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id,price, takeawaysJson});
     res.redirect(`/teacher/course/details/${req.params.id}`) 
   } catch (error) {
     res.redirect('/teacher/error') 

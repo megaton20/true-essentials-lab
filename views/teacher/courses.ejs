@@ -54,6 +54,11 @@
         </div>
 
             <div class="mb-3">
+              <label for="classTitle" class="form-label">Course Price</label>
+              <input type="number" class="form-control" id="price" name="price" >
+            </div>
+
+            <div class="mb-3">
               <label class="form-label">Category</label>
           <select name="category_id" class="form-select" id="edit-category" required>
               <% if (categories && categories.length > 0) { %>
