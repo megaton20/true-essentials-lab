@@ -9,14 +9,11 @@
         <a href="/user" class="nav-link text-dark">Overview</a>
           
         <% if (!user.is_affiliate) { %>
-                <a href="/affiliate/signup" class="nav-link text-dark">Refer To Earn</a>
-                
-            <% } %>
-           <% if (user.seasonInfo && user.seasonInfo.has_paid) { %>
+                <a href="/affiliate/signup" class="nav-link text-dark">Refer To Earn</a>        
+           <% } else { %>
             <a href="/affiliate/dashboard" class="nav-link text-dark">Earnings</a>
-          <% } else { %>
-            <!-- Optional: show nothing or another link -->
-          <% } %>
+         <% } %>
+
 
              <% if (user.role == "teacher") { %>
                 <a href="/teacher" class="nav-link text-dark">Teacher</a>

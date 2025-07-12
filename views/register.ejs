@@ -7,8 +7,6 @@
         <div class="w-100 px-4" style="max-width: 450px;">
           <div class="text-center mb-4">
             <a href="/"><img src="/images/logo.png" alt="Logo" class="img-fluid mb-3" style="max-height: 60px;" /></a>
-            <p>Theme: <%= season.name%></p>
-            <p>Season Closes: <span id="countdown">Loading countdown...</span></p>
           </div>
           <%- include('./partials/messages') %>
           
@@ -63,27 +61,19 @@
   </div>
 
   <script>
-  const regCloseDate = new Date("<%= season.reg_close.toISOString() %>");
+  
+          // Run after the DOM is loaded
+          document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            const agreeCheckbox = document.getElementById('agree');
 
-  function updateCountdown() {
-    const now = new Date().getTime();
-    const distance = regCloseDate - now;
+            form.addEventListener('submit', function (event) {
+              if (!agreeCheckbox.checked) {
+                event.preventDefault(); // Stop form submission
+                alert('You must agree to the Terms & Conditions before continuing.');
+                agreeCheckbox.focus();
+              }
+            });
+          });
 
-    if (distance <= 0) {
-      document.getElementById("countdown").innerText = "Registration Closed";
-      clearInterval(timer);
-      return;
-    }
-
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    document.getElementById("countdown").innerText =
-      `${days}d ${hours}h ${minutes}m ${seconds}s`;
-  }
-
-  const timer = setInterval(updateCountdown, 1000);
-  updateCountdown(); // run immediately
 </script>

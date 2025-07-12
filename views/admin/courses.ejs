@@ -25,18 +25,9 @@
           <%- include('../partials/messages') %>
 
            <section class="mb-4">
-            <h5 class="text-primary">📘 Courses for Current Season</h5>
+            <h5 class="text-primary">📘 Courses</h5>
             <div class="row">
-              <% presentCourses.forEach((data, index) => { %>
-                <%- include('./partials/course-card', { data, index }) %>
-              <% }) %>
-            </div>
-          </section>
-
-          <section class="mb-4">
-            <h5 class="text-secondary">🗂️ Past Season Courses</h5>
-            <div class="row">
-              <% pastCourses.forEach((data, index) => { %>
+              <% allCourses.forEach((data, index) => { %>
                 <%- include('./partials/course-card', { data, index }) %>
               <% }) %>
             </div>

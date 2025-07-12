@@ -2,8 +2,6 @@ const ClassSession = require('../models/ClassSession');
 const { v4: uuidv4 } = require('uuid');
 const Attendance = require('../models/Attendance');
 const pool = require('../config/db');
-const Season = require('../models/Season');
-const SeasonUser = require('../models/SeasonUsers');
 const Course = require('../models/Course');
 const Category = require('../models/Category');
 
@@ -14,7 +12,6 @@ exports.getDash = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Step 1: Check current season
             const categories = await Category.all()
 
     // Step 2: Check if user is a teacher

@@ -13,13 +13,6 @@
             <a href="/" class="btn btn-outline-success">Back to Home</a>
           </div>
 
-          <% if (nextSeason) { %>
-            <div id="countdown-box" class="mt-4">
-              <h5 class="text-success">⏳ Registration opens in:</h5>
-              <div id="countdown" class="fs-4 fw-bold"></div>
-            </div>
-          <% } %>
-
 
         </div>
       </div>
@@ -38,29 +31,3 @@
   </div>
 
 
-  <script>
-  <% if (nextSeason) { %>
-    const targetDate = new Date("<%= nextSeason.reg_open.toISOString() %>");
-
-    function updateCountdown() {
-      const now = new Date();
-      const diff = targetDate - now;
-
-      if (diff <= 0) {
-        document.getElementById("countdown").innerText = "Registration is now open!";
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      document.getElementById("countdown").innerText =
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  <% } %>
-</script>

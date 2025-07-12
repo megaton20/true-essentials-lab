@@ -127,15 +127,15 @@ static async getBySessionIds(studentId, sessionIds = []) {
   return res.rows;
 }
 
-static async studentClassIds(studentId, seasonId) {
+static async studentClassIds(studentId) {
   try {
     const res = await pool.query(`
       SELECT cs.id
       FROM class_sessions cs
       INNER JOIN courses c ON cs.session_id = c.id
       INNER JOIN class_attendance ca ON ca.session_id = cs.id
-      WHERE ca.user_id = $1 AND c.season_id = $2
-    `, [studentId, seasonId]);
+      WHERE ca.user_id = $1 
+    `, [studentId]);
 
     return res.rows.map(row => row.id);
   } catch (err) {

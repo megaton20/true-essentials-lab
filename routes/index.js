@@ -2,10 +2,7 @@ const router = require('express').Router();
 const pool = require('../config/db');
 const axios = require('axios');
 const { ensureVerifiedEmail } = require('../middleware/auth')
-const { checkRegistrationOpen, checkPaymentOpen } = require('../middleware/settingsMiddleware');
-
 const { ensureAuthenticated } = require("../config/auth");
-const Season = require('../models/Season');
 const Category = require('../models/Category');
 
 
@@ -79,7 +76,7 @@ router.get('/info/terms', (req, res) => {
 
 
 // paystack
-router.post('/pay', checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail, async (req, res) => {
+router.post('/pay', ensureAuthenticated, ensureVerifiedEmail, async (req, res) => {
   const { email, amount, referrerId } = req.body;  
 
   req.session.referrerId = referrerId
@@ -106,7 +103,7 @@ router.post('/pay', checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail, 
   }
 });
 
-router.get('/verify',checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail, async (req, res) => {
+router.get('/verify', ensureAuthenticated, ensureVerifiedEmail, async (req, res) => {
   const reference = req.query.reference;
 
   if (!reference) {
@@ -167,17 +164,9 @@ router.get('/verify',checkPaymentOpen, ensureAuthenticated, ensureVerifiedEmail,
           return res.redirect('/user');
         }
       }
-
-      // Mark the current user as having paid
-       const currentSeason = await Season.getCurrent();
        
       try {
-      await pool.query(
-                `UPDATE season_users 
-                SET has_paid = $1, payment_reference = $4, paid_at = NOW() 
-                WHERE user_id = $2 AND season_id = $3`,
-                [true, req.user.id, currentSeason.id, reference]  // This is OK since order matches
-              );
+      
 
         req.flash('success_msg', 'Payment has been sent!');
       } catch (error) {

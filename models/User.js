@@ -30,7 +30,7 @@ class User {
   }
 
   static async create({ fullName, email, passwordHash, id }) {
-    const phone = 1234
+    const phone = 123456789
     try {
       const result = await pool.query(`
       INSERT INTO users (full_name, email, password_hash, id, phone )
@@ -104,6 +104,17 @@ class User {
   static async getById(userId) {
     try {
       const res = await pool.query(`SELECT * FROM users WHERE id = $1`, [userId]);
+      return res.rows[0];
+    } catch (error) {
+      console.log(`error getting user: ${error.message}`);
+
+    }
+  }
+
+  
+  static async lisAll() {
+    try {
+      const res = await pool.query(`SELECT * FROM users`);
       return res.rows[0];
     } catch (error) {
       console.log(`error getting user: ${error.message}`);

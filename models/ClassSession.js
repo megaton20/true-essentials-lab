@@ -31,7 +31,6 @@ class ClassSession {
     constructor(data) {
     this.id = data.id;
     this.title = data.title;
-    this.season_id = data.season_id;
     this.description = data.description;
     this.scheduled_at = data.scheduled_at;
     this.class_link = data.class_link;

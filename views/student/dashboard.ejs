@@ -20,17 +20,9 @@
          <!-- Welcome Banner -->
   <div class="bg-grad text-center text-white rounded p-4 mb-4 shadow-sm">
     <div class="text-center">
-        <% if (season) { %>
-                  <p class="mb-1">Welcome to</p>
-                  <h4><%= season.name %></h4>
-                  <p class="fw-bold">Season Ends: <span id="countdown">Loading... </span></p>
-                  <div class="mt-2 text-muted small">
-                  </div>
-                <% } else { %>
-                  <p class="mb-1">No active season at the moment.</p>
-          <% } %>
+        <p>All Categories</p>
           <hr>
-      <p class="mb-0"><%= user.full_name %> You can now View Our courses and track your classes.</p>
+      <p class="mb-0">Welcome <%= user.full_name %>!</p>
     </div>
   </div>
         <%- include('../partials/messages') %>
@@ -49,32 +41,4 @@
   </div>
 </div>
 
-<!-- Countdown Script -->
-<% if (season) { %>
-<script>
-  const regCloseDate = new Date("<%= new Date(season.reg_close).toISOString() %>");
-
-  function updateCountdown() {
-    const now = new Date().getTime();
-    const distance = regCloseDate - now;
-
-    if (distance <= 0) {
-      document.getElementById("countdown").innerText = "Registration Closed";
-      clearInterval(timer);
-      return;
-    }
-
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    document.getElementById("countdown").innerText =
-      `${days}d ${hours}h ${minutes}m ${seconds}s`;
-  }
-
-  const timer = setInterval(updateCountdown, 1000);
-  updateCountdown(); // initial call
-</script>
-<% } %>
 

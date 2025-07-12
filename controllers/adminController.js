@@ -5,46 +5,26 @@ const ClassSession = require('../models/ClassSession');
 const { v4: uuidv4 } = require('uuid');
 const Attendance = require('../models/Attendance');
 const pool = require('../config/db');
-const Season = require('../models/Season');
 const User = require('../models/User');
 const Course = require('../models/Course');
-const SeasonUser = require('../models/SeasonUsers');
 const Category = require('../models/Category');
 
 exports.adminDashboard = async (req, res) => {
   try {
     const stats = await Admin.getDashboardStats(); 
-    const currentSeason = await Season.getCurrent();
 
-    let courseBySeason = [];
-    let currentUser = []
-
-    if (currentSeason) {
-      courseBySeason = await Course.listAllBySeason(currentSeason.id); 
-      currentUser = await SeasonUser.getUsers(currentSeason.id);
-    }
+    let course = await Course.listAll(); 
+    let currentUser = await User.lisAll();
 
     const classStatus = await Admin.getClassStatus();
-    const active = currentSeason;
-    const upcoming = await Season.getUpcoming();
-
     const teachers = await User.findTeacher();
-
-    const pastResultQuery = await pool.query(`
-      SELECT * FROM seasons WHERE reg_close < NOW() ORDER BY reg_close DESC
-    `);
-    const pastResult = pastResultQuery.rows || [];
-
-        const categories = await Category.all()
+    const categories = await Category.all()
 
 
     res.render('./admin/dashboard', {
       stats,
-      courseBySeason,
+      course,
       classStatus: classStatus || [],
-      active: active || null,
-      upcoming: upcoming || null,
-      pastResult,
       teachers: teachers || [],
       currentUser: currentUser || [],
       categories: categories || [] 
@@ -223,26 +203,15 @@ exports.createClass = async (req, res) => {
 
 exports.getAllCourse = async (req, res) => {
   try {
-    const currentSeason = await Season.getCurrent();
-    const seasonId = currentSeason ? currentSeason.id : null;
 
-    // Get current season's courses
-    const presentCourses = seasonId
-      ? await Course.listAllBySeason(seasonId)
-      : [];
+ 
 
     // All courses (for both current and past)
     const allCourses = await Course.listAll();
-
-    // Filter out present season courses from allCourses to get pastCourses
-    const presentCourseIds = presentCourses.map(c => c.id);
-    const pastCourses = allCourses.filter(c => !presentCourseIds.includes(c.id));
     const categories = await Category.all()
 
     res.render('./admin/courses', {
-      season: currentSeason,
-      presentCourses,
-      pastCourses,
+      allCourses,
       categories: categories || []
     });
 
@@ -469,7 +438,7 @@ exports.completeClass = async (req, res) => {
   const courseId = req.body.courseId
   const status = true
   
-  return console.log(classID);
+  return console.log("complete class as ended..");
   
   try {
     const isDelete = await ClassSession.completeClass(classID, status);
@@ -570,103 +539,4 @@ exports.getAttendanceForSession =  async (req, res) => {
 }
 
 
-
-exports.seasonsManager = async (req, res) => {
-  try {
-    const active = await Season.getCurrent();
-    const upcoming = await Season.getUpcoming();
-
-    const allSeasons = await pool.query(`SELECT * FROM seasons ORDER BY reg_open DESC`);
-
-    res.render('./admin/seasons', {
-      active,
-      upcoming,
-      seasons: allSeasons.rows // 👈 this is critical
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error loading season manager.");
-  }
-};
-
-exports.getOneSeason = async (req, res) => {
-
-  try {
-      const season = await Season.findById(req.params.id);
-
-    const currentUser = await SeasonUser.getUsers(season.id);
-
-      res.render('./admin/season',
-         { 
-        season: season || [], 
-        currentUser:currentUser ||[] 
-      });
-
-  } catch (error) {
-    res.redirect('/admin/error') 
-    console.log("error on gettind season details: "+ error);
-    
-    
-  }
-};
-
-
-exports.createSeason = async (req, res) => {
-  const { name, reg_open, reg_close } = req.body;
-  try {
-    await Season.create({ name, reg_open, reg_close, id:uuidv4() });
-    res.redirect('/admin/seasons');
-  } catch (err) {
-    res.status(500).send('Error creating season: ' + err.message);
-  }
-};
-
-exports.editSeason = async (req, res) => {
-  
-  const { name, reg_open, reg_close, id } = req.body;
-  try {
-    const updated = await Season.edit(id, name, reg_open, reg_close );
-    if (updated) {
-      req.flash('success_msg', "update Completed!")
-    }else{
-      req.flash('error_msg', "Failed to update")
-    }
-    res.redirect('/admin/seasons');
-  } catch (err) {
-    res.status(500).send('Error creating season: ' + err.message);
-  }
-};
-exports.getUsersBySeason = async (req, res) => {
-  const { season_id } = req.params;
-  const result = await db.query(
-    `SELECT users.*, seasons.name AS season_name
-     FROM users
-     JOIN seasons ON users.season_id = seasons.id
-     WHERE seasons.id = $1`,
-    [season_id]
-  );
-  res.render('admin/users-by-season', {
-    seasonName: result.rows[0]?.season_name || 'Unknown',
-    users: result.rows
-  });
-};
-
-exports.deleteSeason = async (req, res) => {
-  const courseID = req.params.id
-
-  
-  try {
-    const isDelete = await Season.deleteCourse(courseID);    
-    if (isDelete) {
-     req.flash("success_msg", "season deleted!")  
-    }else{
-      req.flash("error_msg", "season delete failed!")  
-
-    }
-    return res.redirect(`/admin/seasons`)
-  } catch (error) {
-    console.log(`error deleting class: ${error}`);
-    res.redirect('/')
-  }
-};
 

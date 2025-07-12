@@ -37,17 +37,6 @@
                 <a href="/admin/users"><%= stats.totalStudents %></a>
               </div>
             </div>
-            
-           <div class="col-md-3">
-              <div class="bg-white p-3 rounded shadow-sm">
-                <% if (active) { %>
-                  <h6><%= active.name %> users</h6>
-                <% } else { %>
-                  <h6>No active season</h6>
-                <% } %>
-                <p><%= currentUser?.length || 0 %></p>
-              </div>
-            </div>
 
 
             <div class="col-md-3">
@@ -67,9 +56,9 @@
 
 
                  <div class="bg-white shadow-sm p-3 rounded mb-4">
-                <h5>Courses For this season</h5>
+                <h5>Courses overview</h5>
                 <div class="row">
-                  <% courseBySeason.forEach(function(data, index) { %>
+                  <% course.forEach(function(data, index) { %>
                   <div class="col-md-6 col-lg-3 mb-3">
                     <div class="border p-3 rounded h-100 d-flex flex-column justify-content-between"  data-aos="fade">
                       

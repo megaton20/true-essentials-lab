@@ -24,10 +24,7 @@
              <!-- Welcome Banner -->
           <div class="bg-grad text-center text-white rounded p-4 mb-4 shadow-sm">
             <div class="text-center">
-                <h3 class="text-uppercase"><%= category.name %></h3>
-                <p style="font-size: 12px;"><%= courses.length %> Course(s)</p>
-                  <hr>
-              <p class="mb-0"><%= category.details %></p>
+               
             </div>
           </div>
 
@@ -64,7 +61,7 @@
                     <p class="mb-1 text-muted" style="font-size: 11px;">Total Classes: <%= data.total_sessions || 0 %></p>
 
                     <!-- Progress Bar -->
-                    <% if (enrolledCourseIds.includes(data.id)) { %>
+                
                       <div class="progress mb-1" style="height: 8px;">
                         <div class="progress-bar" 
                             role="progressbar" 
@@ -77,31 +74,14 @@
                       <small class="text-muted" style="font-size: 11px;">
                         <%= data.completed_sessions || 0 %> of <%= data.total_sessions || 0 %> completed
                       </small>
-                    <% } %>
+                 
                   </div>
                 </div>
 
                 <!-- Action Button -->
                 <div class="mt-2 ">
-                  <% if (enrolledCourseIds.includes(data.id)) { %>
-                    <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="btn btn-sm btn-primary">Open Course</a>
-                  <% } else { %>
-
-                <form method="POST" action="/user/course/<%= data.id %>/enroll" class="enroll-form" data-course-id="<%= data.id %>" data-price="<%= data.price %>">
-                  <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
-                  <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
-                  <input type="hidden" name="course_id" class="courseId" value="<%= data.id %>">
-                  <input type="hidden" name="amount" class="amount" value="<%= data.price %>">
-
-                  <% if (data.price <= 0) { %>
-                    <button class="btn btn-sm btn-outline-success">Enroll for Free</button>
-                  <% } else { %>
-                    <button type="submit" class="btn btn-sm btn-outline-success pay-btn">Pay – ₦<%= data.price %></button>
-                  <% } %>
-                </form>
-
-
-                  <% } %>
+                    <a href="/user/course/<%= data.id %>/<%=data.category_id %>" class="btn btn-sm btn-primary">Open Course</a>
+            
                 </div>
 
               </div>
@@ -120,41 +100,3 @@
     </div>
   </div>
 </div>
-
-
-<script>
-  document.querySelectorAll('.enroll-form').forEach(form => {
-    form.addEventListener('submit', async function (e) {
-      const price = parseFloat(form.dataset.price);
-      if (price <= 0) return; // Free course, submit normally
-
-      e.preventDefault();
-
-      const email = form.querySelector('.user-email').value;
-      const courseId = form.querySelector('.courseId').value;
-      const userId = form.querySelector('.user-id').value;
-      const amount = form.querySelector('.amount').value;
-      const payFor = 'course'
-
-      try {
-        const response = await fetch(`/user/course/${courseId}/enroll`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, amount, courseId, payFor, userId })
-        });
-
-        const data = await response.json();
-
-        if (data.status) {
-          window.location.href = data.data.authorization_url;
-        } else {
-          alert(data.message || 'Payment failed.');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Error processing payment.');
-      }
-    });
-  });
-</script>
-

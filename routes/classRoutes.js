@@ -2,8 +2,6 @@ const router = require('express').Router();
 const ClassSession = require('../models/ClassSession');
 const Attendance = require('../models/Attendance');
 const { v4: uuidv4 } = require('uuid');
-const Season = require('../models/Season');
-const SeasonUser = require('../models/SeasonUsers');
 const sendEmail = require('../utils/mailer');
 const { welcomeToClassTemplate } = require('../utils/templates');
 const pool = require('../config/db');
@@ -25,13 +23,10 @@ router.get('/:code/:id', async (req, res) => {
         return res.redirect('/user')
      }
 
-       const currentSeason = await Season.getCurrent();
-  const userSeason = await SeasonUser.get(req.user.id, currentSeason.id);
 
   // check if user don pay
   req.user = {
     ...req.user,
-    seasonInfo: userSeason
   };
      
     // mark attendance
@@ -52,7 +47,7 @@ router.get('/:code/:id', async (req, res) => {
         await sendEmail(
           row.email,
           `Welcome to ${row.title}`,
-          welcomeToClassTemplate(row, row) // assuming template uses full session & user info from `row`
+          welcomeToClassTemplate(row, row) 
         );
 
         await pool.query(`

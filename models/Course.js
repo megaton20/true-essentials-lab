@@ -1,6 +1,5 @@
 const pool = require('../config/db');
 const createTableIfNotExists = require('../utils/createTableIfNotExists');
-const Season = require('./Season');
 
 class Course {
   // Auto-create table on class load
@@ -9,11 +8,11 @@ class Course {
       CREATE TABLE courses (
         id VARCHAR PRIMARY KEY,
         category_id VARCHAR REFERENCES categories(id) ON DELETE CASCADE,
-        season_id VARCHAR NOT NULL REFERENCES seasons(id) ON DELETE CASCADE,
         title VARCHAR(100) NOT NULL,
         description TEXT,
         teacher_id VARCHAR REFERENCES users(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        price NUMERIC (10,2) DEFAULT 0 NOT NULL,
         takeaways JSONB DEFAULT '[]'::jsonb
       );
     `;
@@ -23,27 +22,28 @@ class Course {
 
   constructor(data) {
     this.id = data.id;
-    this.season_id = data.season_id;
     this.title = data.title;
     this.description = data.description;
     this.teacher_id = data.teacher_id;
+    this.price = data.price;
     this.created_at = data.created_at;
   }
-static async create({ id, title, description, teacherId, category_id, takeawaysJson }) {
-  const season = await Season.getCurrent();
 
-  if (!season) {
-    return { success: false, message: 'No active season found.' };
-  }
+
+static async create({ id, title, description, teacherId, category_id, price,takeawaysJson }) {
+   let fee = 0.00
+   if(price){
+    fee = price
+   }
 
   try {
     const result = await pool.query(
       `
-      INSERT INTO courses (id, title, description, teacher_id, season_id, category_id, takeaways)
+      INSERT INTO courses (id, title, description, teacher_id, category_id, price, takeaways)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *;
       `,
-      [id, title, description, teacherId, season.id, category_id, takeawaysJson]
+      [id, title, description, teacherId, category_id, fee, takeawaysJson]
     );
 
     if (result.rows.length > 0) {
@@ -118,18 +118,7 @@ static async create({ id, title, description, teacherId, category_id, takeawaysJ
     }
   }
 
-  static async listAllBySeason(seasonId) {
-  try {
-    const {rows: result} = await pool.query(
-      `SELECT * FROM courses WHERE season_id = $1 ORDER BY created_at DESC`,
-      [seasonId]
-    );
-    return result || []
-  } catch (error) {
-    console.error('Error fetching courses for season:', error);
-    return [];
-  }
-}
+
 
   static async deleteCourse(id){
     const result = await pool.query(`

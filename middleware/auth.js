@@ -1,4 +1,5 @@
 const Affiliate = require("../models/Affiliate");
+const Enrollment = require("../models/Enrollment");
 
 
 module.exports =  {
@@ -57,6 +58,19 @@ module.exports =  {
         return  next()
       }
       req.flash('error_msg', "invalid request...")
+       return res.redirect('/user')
+    },
+
+       ensureEnrolled: async function(req, res, next){
+
+        const isEnrolled = await Enrollment.isEnrolled(req.user.id, req.params.id);
+
+
+      if (isEnrolled) {
+        return  next()
+      }
+
+      req.flash('error_msg', "You need to pay to access this course ...")
        return res.redirect('/user')
     }
 
