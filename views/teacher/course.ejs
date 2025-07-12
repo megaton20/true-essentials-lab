@@ -18,7 +18,14 @@
         <main class="p-1">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <a href="/teacher/courses" class="btn btn-outline-primary btn-sm">Back</a>
-            <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editClassModal">Edit</button>
+
+               <% if (course.teacher_id == user.id) { %>
+
+                       <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editClassModal">Edit</button>
+                   
+                      <% } else { %>
+                        <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" disabled> Can not be Edited</button>
+                  <% } %>
           </div>
 
           <%- include('../partials/messages') %>

@@ -4,6 +4,7 @@ const Attendance = require('../models/Attendance');
 const pool = require('../config/db');
 const Course = require('../models/Course');
 const Category = require('../models/Category');
+const Teacher = require('../models/Teacher');
 
 
 
@@ -14,19 +15,22 @@ exports.getDash = async (req, res) => {
 
             const categories = await Category.all()
 
-    // Step 2: Check if user is a teacher
     const teacherQuery = `SELECT id FROM teachers WHERE user_id = $1`;
-    const { rows: teacherRows } = await pool.query(teacherQuery, [userId]);
+    const { rows: teacherRowsId } = await pool.query(teacherQuery, [userId]);
 
-    if (teacherRows.length === 0) {
+    if (teacherRowsId.length === 0) {
       req.flash('error', 'You are not registered as a teacher.');
       return res.redirect('/handler');
     }
 
+    
     const course = await Course.listAllByCreator(userId)
-    // Step 4: Render dashboard
+
+    const assignedCourse = await Teacher.getAssignedCourses(teacherRowsId[0].id)
+
     res.render('./teacher/dashboard', {
       courses: course || [],
+      assignedCourse: assignedCourse || [],
       user: req.user,
       categories:categories || []
     });
@@ -91,7 +95,7 @@ exports.getOneCourse = async (req, res) => {
       const { rows: classResult } = await pool.query(classCountQuery, [course.id]);
       course.totalClasses = parseInt(classResult[0].count); // attach as well
     const categories = await Category.all()
-
+    
       
       res.render('./teacher/course', {
          course, 

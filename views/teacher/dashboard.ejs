@@ -74,7 +74,41 @@
                   </div>
                   <% }) %>
                 </div>
+
               </div>
+
+               <div class="bg-white shadow-sm p-3 rounded mb-4">
+
+                  <h5>Assigned Courses</h5>
+                <div class="row">
+                  <% assignedCourse.forEach(function(data, index) { %>
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <div class="border p-3 rounded h-100 d-flex flex-column justify-content-between"  data-aos="fade" >
+                      
+                       <!-- Middle Section: Title and Date -->
+                        <div class="mb-2">
+                          <p class="text-muted mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></p>
+                          <p class="text-muted mb-0" style="font-size: 11px;">
+                            <%= data.created_at.toLocaleString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit'
+                            }) %>
+                          </p>
+                        </div>
+
+                        <div>
+                            <a href="/teacher/course/details/<%= data.id %>" class="btn btn-sm btn-outline-secondary mt-2">View Details</a>
+                            <a href="/teacher/course/class/<%= data.id %>" class="btn btn-sm btn-outline-secondary mt-2">View Classes</a>
+                        </div>
+
+                    </div>
+                  </div>
+                  <% }) %>
+                </div>
+               </div>
         
         </main>
 

@@ -115,6 +115,25 @@ class Teacher {
     await pool.query(`DELETE FROM teachers WHERE id = $1`, [id]);
     return true;
   }
+
+  static async getAssignedCourses(teacherId) {
+  try {
+    const query = `
+      SELECT c.*
+      FROM teacher_courses ca
+      JOIN courses c ON ca.course_id = c.id
+      WHERE ca.teacher_id = $1
+      ORDER BY c.created_at ASC
+    `;
+    const { rows:result } = await pool.query(query, [teacherId]);
+    
+    return result || [];
+  } catch (error) {
+    console.error('Error fetching assigned courses:', error);
+    return [];
+  }
+}
+
 }
 
 module.exports = Teacher;

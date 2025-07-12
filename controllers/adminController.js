@@ -254,7 +254,7 @@ exports.getOneCourse = async (req, res) => {
     const categories = await Category.all()
 
       
-      res.render('./admin/course', { course, allAeachers, categories: categories || [] });
+      res.render('./admin/course', {user:req.user, course, allAeachers, categories: categories || [] });
 
   } catch (error) {
     res.redirect('/admin/error') 
