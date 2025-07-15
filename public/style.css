@@ -59,6 +59,7 @@ body{
   .scroll-wrapper {
     overflow: hidden;
     padding: 1rem 0;
+    padding: 10px;
   }
 
   .scroll-container {
@@ -67,7 +68,7 @@ body{
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     gap: 1rem;
-    padding: 0 1rem;
+    padding: 0 2px;
   }
 
   .scroll-container::-webkit-scrollbar {
