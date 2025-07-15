@@ -1,0 +1,152 @@
+<style>
+  .course-banner {
+    width: 100%;
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .sticky-enroll-btn {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .sticky-enroll-btn {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      display: block;
+      background: #fff;
+      padding: 1rem;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+    }
+  }
+
+  .enroll-btn-desktop {
+    display: inline-block;
+  }
+
+  @media (max-width: 768px) {
+    .enroll-btn-desktop {
+      display: none;
+    }
+  }
+
+</style>
+
+<!-- Navbar -->
+<%-include('./partials/topnav') %>
+
+<!-- Sidebar -->
+<%-include('./partials/sidenav') %>
+
+<!-- Main Content -->
+<div class="container-fluid mt-4">
+  
+
+  <div class="row">
+    <!-- Static Sidebar for desktop -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <%-include('./partials/staticsidebar') %>
+    </div>
+
+    <!-- Main Dashboard Section -->
+    <div class="col-lg-9">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="/user" class="btn btn-outline-primary btn-sm">Back</a>
+          </div>
+
+      <main class="p-0">
+        <%- include('../partials/messages') %>
+
+
+
+            <div class="container mt-3 mb-5">
+                <!-- Course Banner -->
+                <div 
+                    class="course-banner"
+                    style="background-image: url('<%= course.image_url || "/images/online-class.png" %>')">
+                </div>
+
+                <!-- Course Info -->
+                <h4 class="mb-1"><%= course.title %></h4>
+                <p class="text-muted">by <%= course.teacher_name || "Course Instructor" %></p>
+               
+                <div class="d-flex gap-4">
+                    <p class="text-muted"><i class="fas fa-heart "></i> <%= course.like_count || "0" %> likes</p>
+                    <p class="text-muted"><i class="fas fa-users "></i> <%= course.enrolled_count || "0" %> Enrolled</p>
+                </div>
+
+                <hr>
+
+                <p>Description</p>
+                <div class="mb-4">
+                    <p><%= course.description %></p>
+                </div>
+
+                <hr>
+
+            <ul class="list-unstyled ps-1">
+                  <% if (course.takeaways && course.takeaways.length > 0) { %>
+                    <p>Take away from this course</p>
+                    <% course.takeaways.forEach(function(takeaway) { %>
+                      <li class="d-flex align-items-center mb-2">
+                        <span class="check-circle-icon me-2">
+                          <i class="fas fa-check"></i>
+                        </span>
+                        <span><%= takeaway %></span>
+                      </li>
+                    <% }); %>
+                  <% } else { %>
+                    <li class="text-muted">No takeaways provided.</li>
+                  <% } %>
+                </ul>
+
+                <br>
+                <br>
+
+            <!-- Desktop Button -->
+            <div class="enroll-btn-desktop mb-3 mt-4">
+                <% if (isEnrolled) { %>
+                <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success btn-block">View Course</a>
+                <% } else { %>
+                <form method="POST" action="/user/course/<%= course.id %>/enroll">
+                    <input type="hidden" name="email" value="<%= user.email %>">
+                    <input type="hidden" name="amount" value="<%= course.price %>">
+                    <% if (course.price > 0) { %>
+                    <button type="submit" class="btn btn-success btn-block">Enroll Now For ₦<%= course.price %></button>
+                <% } else { %>
+                    <button type="submit" class="btn btn-success btn-block">Enroll For Free Now</button>
+                <% } %> 
+                </form>
+                <% } %>
+            </div>
+            </div>
+
+            <!-- Sticky Button on Mobile -->
+            <div class="sticky-enroll-btn text-center">
+            <% if (isEnrolled) { %>
+                <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success w-100">View Course</a>
+            <% } else { %>
+                <form method="POST" action="/user/course/<%= course.id %>/enroll">
+                <input type="hidden" name="email" value="<%= user.email %>">
+                <input type="hidden" name="amount" value="<%= course.price %>">
+                      <% if (course.price > 0) { %>
+                        <button type="submit" class="btn btn-success w-100 money-format">Enroll Now For ₦<%= course.price %></button>
+                <% } else { %>
+                    <button type="submit" class="btn btn-success w-100">Enroll For Free Now</button>
+                <% } %> 
+                </form>
+            <% } %>
+            </div>
+
+        
+      </main>
+    </div>
+  </div>
+</div>

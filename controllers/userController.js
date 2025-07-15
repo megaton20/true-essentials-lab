@@ -21,12 +21,15 @@ exports.getDashboard = async (req, res) => {
  
   try {
     const categories = await Category.allWithCourses(); 
+    const freeCourses = await Course.findFree()
 
+    
     res.render('./student/dashboard', {
       user: req.user,
       customerToPay,
       ebooks: [],
-      categories:categories || []
+      categories:categories || [],
+      freeCourses: freeCourses || []
 
     });
 
@@ -126,19 +129,30 @@ exports.getCourses = async (req, res) => {
   try {
     // Get enrolled course IDs for the user
     const enrolledCourses = await Enrollment.listEnrolledCourses(userId);
-
-    // // If enrollment returns course data directly, skip this
-    // const courses = await Promise.all(
-    //   enrolledCourses.map(async (courseId) => {
-    //     const course = await Course.findById(courseId);
-    //     return course;
-    //   })
-    // );
-
     
     res.render('./student/my-courses', {
-      // courses: courses.filter(Boolean), // Filter out nulls
       courses: enrolledCourses, // Filter out nulls
+      user: req.user
+    });
+
+  } catch (err) {
+    console.error('Error loading courses:', err);
+    req.flash('error', 'Failed to load your courses.');
+    res.redirect('/');
+  }
+};
+
+exports.getCourseDetails = async (req, res) => {
+  const courseId = req.params.id;
+
+  try {
+    // Get enrolled course IDs for the user
+    const enrolledCourses = await Course.getCourseDetails(courseId);
+    const isEnrolled = await Enrollment.isEnrolled(req.user.id, courseId);
+
+    res.render('./student/courses-details', {
+      course: enrolledCourses,
+      isEnrolled, 
       user: req.user
     });
 

@@ -27,12 +27,33 @@
   </div>
         <%- include('../partials/messages') %>
 
+        
+        <div class="container my-4">
+          <h5 class="mb-3">Free Courses </h5>
+          <div class="scroll-wrapper">
+            <div class="scroll-container">
+              <% freeCourses.forEach(course => { %>
+                <div class="course-card">
+                  <img src="<%= course.image_url || '/images/online-class.png' %>" alt="<%= course.title %>">
+
+                  <div class="card-overlay">
+                    <div class="course-title"><%= course.title %></div>
+                    <div class="course-meta">
+                      <span><i class="fas fa-heart text-danger"></i> <%= course.like_count || 0 %></span>
+                      <span><i class="fas fa-users text-light"></i> <%= course.enrolled_count || 0 %></span>
+                    </div>
+                    <a href="/user/course/<%= course.id %>/details" class="btn btn-sm btn-light view-button">View</a>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+
+
         <div class="mb-4">
            <div class="row">
              <%- include('../partials/courses') %>
-
-
-
            </div>
 
         </div>
@@ -42,3 +63,21 @@
 </div>
 
 
+<script>
+  const scrollContainer = document.getElementById('free-courses-scroll');
+  const cards = scrollContainer.querySelectorAll('.course-card');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        cards.forEach(card => card.classList.remove('focused'));
+        entry.target.classList.add('focused');
+      }
+    });
+  }, {
+    root: scrollContainer,
+    threshold: 0.5
+  });
+
+  cards.forEach(card => observer.observe(card));
+</script>

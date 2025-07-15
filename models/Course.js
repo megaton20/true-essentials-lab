@@ -16,6 +16,16 @@ class Course {
         takeaways JSONB DEFAULT '[]'::jsonb
       );
     `;
+    const createCourseLike = `
+    CREATE TABLE course_likes (
+  user_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  course_id VARCHAR NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+  liked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, course_id)
+);
+
+`
+    await createTableIfNotExists('course_likes', createCourseLike);
 
     await createTableIfNotExists('courses', createTableQuery);
   }
@@ -123,6 +133,65 @@ static async create({ id, title, description, teacherId, category_id, price,take
     }
   }
 
+  static async findFree() {
+    try {
+      const {rows:result} = await pool.query(
+        `SELECT 
+          c.*, 
+          COALESCE(l.like_count, 0) AS like_count,
+          COALESCE(e.enrolled_count, 0) AS enrolled_count
+        FROM courses c
+        LEFT JOIN (
+          SELECT course_id, COUNT(*) AS like_count
+          FROM course_likes
+          GROUP BY course_id
+        ) l ON l.course_id = c.id
+        LEFT JOIN (
+          SELECT course_id, COUNT(*) AS enrolled_count
+          FROM enrollment
+          GROUP BY course_id
+        ) e ON e.course_id = c.id
+        WHERE c.price <= 0;
+
+        `);
+      return result;
+    } catch (error) {
+      console.error('Error finding free course:', error);
+      return null;
+    }
+  }
+  static async getCourseDetails(id) {
+    try {
+        const { rows: result } = await pool.query(
+          `SELECT 
+            c.*, 
+            u.full_name AS teacher_name,
+            COALESCE(l.like_count, 0) AS like_count,
+            COALESCE(e.enrolled_count, 0) AS enrolled_count
+          FROM courses c
+          LEFT JOIN users u ON c.teacher_id = u.id
+          LEFT JOIN (
+            SELECT course_id, COUNT(*) AS like_count
+            FROM course_likes
+            GROUP BY course_id
+          ) l ON l.course_id = c.id
+          LEFT JOIN (
+            SELECT course_id, COUNT(*) AS enrolled_count
+            FROM enrollment
+            GROUP BY course_id
+          ) e ON e.course_id = c.id
+          WHERE c.id = $1
+          LIMIT 1;`,
+          [id]
+        );
+
+      return result[0] || [];
+    } catch (error) {
+      console.error('Error finding free course:', error);
+      return null;
+    }
+  }
+
 
 
   static async deleteCourse(id){
@@ -142,6 +211,17 @@ static async create({ id, title, description, teacherId, category_id, price,take
       `;
       const { rows:result } = await pool.query(query, [categoryId]);
       return result || [];
+    }
+
+    static async listAllWithCategory() {
+      const query = `
+        SELECT c.*, cat.name AS category_name
+        FROM courses c
+        LEFT JOIN categories cat ON c.category_id = cat.id
+        ORDER BY cat.name, c.created_at DESC;
+      `;
+      const { rows } = await pool.query(query);
+      return rows;
     }
 
 

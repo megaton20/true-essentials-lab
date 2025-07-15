@@ -43,3 +43,19 @@
       container.appendChild(input);
     });
   });
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const formatter = new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 2
+    });
+
+    document.querySelectorAll('.money-format').forEach(el => {
+      const amount = parseFloat(el.textContent.replace(/[^0-9.]/g, ''));
+      if (!isNaN(amount)) {
+        el.textContent = formatter.format(amount);
+      }
+    });
+  });

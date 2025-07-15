@@ -56,6 +56,94 @@ body{
     line-height: 1.5;
   }
 
+  .scroll-wrapper {
+    overflow: hidden;
+    padding: 1rem 0;
+  }
+
+  .scroll-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  .scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .course-card {
+    flex: 0 0 85%;
+    max-width: 300px;
+    scroll-snap-align: center;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  .card-overlay {
+    background-image: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.4));
+    height: 100%;
+    width: 100%;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    transition: .2s ease-in-out;
+  }
+    .card-overlay:hover {
+    background-image: linear-gradient(to top, rgba(107, 106, 106, 0.7), rgba(0,0,0,0.2));
+    
+  }
+
+  .course-card img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .course-title {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  .course-meta {
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .course-meta i {
+    margin-right: 5px;
+  }
+
+  .view-button {
+    align-self: flex-start;
+  }
+
+  @media (min-width: 768px) {
+    .course-card {
+      flex: 0 0 45%;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .course-card {
+      flex: 0 0 30%;
+    }
+  }
+
 
   
   .profile-img {
