@@ -266,14 +266,14 @@ exports.getOneCourse = async (req, res) => {
 
 
 exports.createCourse = async (req, res) => {
-  const {title, description, category_id, takeaways, price} = req.body
+  const {title, description, category_id, takeaways, price, level} = req.body
   const teacherId = req.user.id
 const takeawaysJson = JSON.stringify(takeaways);
   
  
   
   try {
-    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id,price, takeawaysJson });
+    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id,price,level, takeawaysJson });
 
     if (result.success) {
       req.flash('success', result.message);
@@ -291,13 +291,13 @@ const takeawaysJson = JSON.stringify(takeaways);
 };
 
 exports.editCourse = async (req, res) => {
-  const {title, description, category_id, takeaways, price} = req.body
+  const {title, description, category_id, takeaways, price, level} = req.body
   const teacherId = req.user.id
   const takeawaysJson = JSON.stringify(takeaways);
   
   
   try {
-    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id,price, takeawaysJson});
+    const stats = await Course.update(req.params.id, {title,description, teacherId, category_id,price,level, takeawaysJson});
     res.redirect(`/admin/courses/details/${req.params.id}`) 
   } catch (error) {
     res.redirect('/admin/error') 

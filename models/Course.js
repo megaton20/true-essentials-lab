@@ -10,6 +10,7 @@ class Course {
         category_id VARCHAR REFERENCES categories(id) ON DELETE CASCADE,
         title VARCHAR(100) NOT NULL,
         description TEXT,
+        difficulty VARCHAR DEFAULT 'easy',
         teacher_id VARCHAR REFERENCES users(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         price NUMERIC (10,2) DEFAULT 0 NOT NULL,
@@ -40,7 +41,7 @@ class Course {
   }
 
 
-static async create({ id, title, description, teacherId, category_id, price,takeawaysJson }) {
+static async create({ id, title, description, teacherId, category_id, price,level, takeawaysJson }) {
    let fee = 0.00
    if(price){
     fee = price
@@ -49,11 +50,11 @@ static async create({ id, title, description, teacherId, category_id, price,take
   try {
     const result = await pool.query(
       `
-      INSERT INTO courses (id, title, description, teacher_id, category_id, price, takeaways)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO courses (id, title, description, teacher_id, category_id, price, takeaways, difficulty)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *;
       `,
-      [id, title, description, teacherId, category_id, fee, takeawaysJson]
+      [id, title, description, teacherId, category_id, fee, takeawaysJson, level]
     );
 
     if (result.rows.length > 0) {
@@ -69,7 +70,7 @@ static async create({ id, title, description, teacherId, category_id, price,take
 }
 
 
-  static async update(id, { title, description, teacherId, category_id,price, takeawaysJson }) {
+  static async update(id, { title, description, teacherId, category_id,price,level, takeawaysJson }) {
 
       let fee = 0.00
    if(price){
@@ -80,11 +81,11 @@ static async create({ id, title, description, teacherId, category_id, price,take
       const result = await pool.query(
         `
         UPDATE courses
-        SET title = $1, description = $2, teacher_id = $3, category_id = $4, takeaways = $5, price = $6
-        WHERE id = $7
+        SET title = $1, description = $2, teacher_id = $3, category_id = $4, takeaways = $5, price = $6, difficulty = $7
+        WHERE id = $8
         RETURNING *;
         `,
-        [title, description, teacherId,category_id,takeawaysJson, fee, id]
+        [title, description, teacherId,category_id,takeawaysJson, fee,level, id]
       );
 
       return new Course(result.rows[0]);
@@ -151,6 +152,36 @@ static async create({ id, title, description, teacherId, category_id, price,take
           FROM enrollment
           GROUP BY course_id
         ) e ON e.course_id = c.id
+        WHERE c.price <= 0 LIMIT 10;
+
+        `);
+      return result;
+    } catch (error) {
+      console.error('Error finding free course:', error);
+      return null;
+    }
+  }
+
+  
+
+  static async allFreeCourses() {
+    try {
+      const {rows:result} = await pool.query(
+        `SELECT 
+          c.*, 
+          COALESCE(l.like_count, 0) AS like_count,
+          COALESCE(e.enrolled_count, 0) AS enrolled_count
+        FROM courses c
+        LEFT JOIN (
+          SELECT course_id, COUNT(*) AS like_count
+          FROM course_likes
+          GROUP BY course_id
+        ) l ON l.course_id = c.id
+        LEFT JOIN (
+          SELECT course_id, COUNT(*) AS enrolled_count
+          FROM enrollment
+          GROUP BY course_id
+        ) e ON e.course_id = c.id
         WHERE c.price <= 0;
 
         `);
@@ -160,6 +191,8 @@ static async create({ id, title, description, teacherId, category_id, price,take
       return null;
     }
   }
+
+
   static async getCourseDetails(id) {
     try {
         const { rows: result } = await pool.query(

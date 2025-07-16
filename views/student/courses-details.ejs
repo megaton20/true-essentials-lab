@@ -75,37 +75,77 @@
 
                 <!-- Course Info -->
                 <h4 class="mb-1"><%= course.title %></h4>
-                <p class="text-muted">by <%= course.teacher_name || "Course Instructor" %></p>
+                <p class="text-muted mb-2" style="font-size:12px;">Created by <%= course.teacher_name || "Course Instructor" %></p>
                
                 <div class="d-flex gap-4">
                     <p class="text-muted"><i class="fas fa-heart "></i> <%= course.like_count || "0" %> likes</p>
                     <p class="text-muted"><i class="fas fa-users "></i> <%= course.enrolled_count || "0" %> Enrolled</p>
+                    <p>
+                      Difficulty: 
+                  <% if (course.difficulty === 'easy') { %>
+                      <span class="badge bg-success">
+                        <i class="fas fa-leaf me-1"></i> Easy
+                      </span>
+                    <% } else if (course.difficulty === 'medium') { %>
+                      <span class="badge bg-warning text-dark">
+                        <i class="fas fa-balance-scale me-1"></i> Medium
+                      </span>
+                    <% } else if (course.difficulty === 'hard') { %>
+                      <span class="badge bg-danger">
+                        <i class="fas fa-mountain me-1"></i> Hard
+                      </span>
+                    <% } else { %>
+                      <span class="badge bg-secondary">
+                        <i class="fas fa-question-circle me-1"></i> Unknown
+                      </span>
+                    <% } %>
+                    </p>
+
+
                 </div>
 
                 <hr>
 
-                <p>Description</p>
-                <div class="mb-4">
-                    <p><%= course.description %></p>
-                </div>
+              <!-- Nav tabs -->
+<ul class="nav nav-tabs mb-3" id="courseTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab" aria-controls="desc" aria-selected="true">Description</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="takeaways-tab" data-bs-toggle="tab" data-bs-target="#takeaways" type="button" role="tab" aria-controls="takeaways" aria-selected="false">Takeaways</button>
+  </li>
+</ul>
 
-                <hr>
+<!-- Tab panes -->
+<div class="tab-content" id="courseTabsContent">
+  <!-- Description Tab -->
+  <div class="tab-pane fade show active" id="desc" role="tabpanel" aria-labelledby="desc-tab">
+    <p class="fw-bold">Course Description</p>
+    <div class="mb-4">
+      <p><%= course.description %></p>
+    </div>
+  </div>
 
-            <ul class="list-unstyled ps-1">
-                  <% if (course.takeaways && course.takeaways.length > 0) { %>
-                    <p>Take away from this course</p>
-                    <% course.takeaways.forEach(function(takeaway) { %>
-                      <li class="d-flex align-items-center mb-2">
-                        <span class="check-circle-icon me-2">
-                          <i class="fas fa-check"></i>
-                        </span>
-                        <span><%= takeaway %></span>
-                      </li>
-                    <% }); %>
-                  <% } else { %>
-                    <li class="text-muted">No takeaways provided.</li>
-                  <% } %>
-                </ul>
+  <!-- Takeaways Tab -->
+  <div class="tab-pane fade" id="takeaways" role="tabpanel" aria-labelledby="takeaways-tab">
+    <p class="fw-bold mb-2">What you'll learn</p>
+    <ul class="list-unstyled ps-1">
+      <% if (course.takeaways && course.takeaways.length > 0) { %>
+        <% course.takeaways.forEach(function(takeaway) { %>
+          <li class="d-flex align-items-center mb-2">
+            <span class="check-circle-icon me-2">
+              <i class="fas fa-check text-light"></i>
+            </span>
+            <span><%= takeaway %></span>
+          </li>
+        <% }); %>
+      <% } else { %>
+        <li class="text-muted">No takeaways provided.</li>
+      <% } %>
+    </ul>
+  </div>
+</div>
+
 
                 <br>
                 <br>
@@ -115,9 +155,11 @@
                 <% if (isEnrolled) { %>
                 <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success btn-block">View Course</a>
                 <% } else { %>
-                <form method="POST" action="/user/course/<%= course.id %>/enroll">
-                    <input type="hidden" name="email" value="<%= user.email %>">
-                    <input type="hidden" name="amount" value="<%= course.price %>">
+                <form method="POST" action="/user/course/<%= course.id %>/enroll" class="enroll-form" data-course-id="<%= course.id %>" data-price="<%= course.price %>">
+                      <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
+                      <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
+                      <input type="hidden" name="course_id" class="courseId" value="<%= course.id %>">
+                      <input type="hidden" name="amount" class="amount" value="<%= course.price %>">
                     <% if (course.price > 0) { %>
                     <button type="submit" class="btn btn-success btn-block">Enroll Now For ₦<%= course.price %></button>
                 <% } else { %>
@@ -133,9 +175,11 @@
             <% if (isEnrolled) { %>
                 <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success w-100">View Course</a>
             <% } else { %>
-                <form method="POST" action="/user/course/<%= course.id %>/enroll">
-                <input type="hidden" name="email" value="<%= user.email %>">
-                <input type="hidden" name="amount" value="<%= course.price %>">
+                <form method="POST" action="/user/course/<%= course.id %>/enroll" class="enroll-form" data-course-id="<%= course.id %>" data-price="<%= course.price %>">
+                      <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
+                      <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
+                      <input type="hidden" name="course_id" class="courseId" value="<%= course.id %>">
+                      <input type="hidden" name="amount" class="amount" value="<%= course.price %>">
                       <% if (course.price > 0) { %>
                         <button type="submit" class="btn btn-success w-100 money-format">Enroll Now For ₦<%= course.price %></button>
                 <% } else { %>
@@ -150,3 +194,41 @@
     </div>
   </div>
 </div>
+
+
+<script>
+  document.querySelectorAll('.enroll-form').forEach(form => {
+    form.addEventListener('submit', async function (e) {
+      const price = parseFloat(form.dataset.price);
+      if (price <= 0) return; // Free course, submit normally
+
+      e.preventDefault();
+
+      const email = form.querySelector('.user-email').value;
+      const courseId = form.querySelector('.courseId').value;
+      const userId = form.querySelector('.user-id').value;
+      const amount = form.querySelector('.amount').value;
+      const payFor = 'course'
+
+      try {
+        const response = await fetch(`/user/course/${courseId}/enroll`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, amount, courseId, payFor, userId })
+        });
+
+      
+        const data = await response.json();
+
+        if (data.status) {
+          window.location.href = data.data.authorization_url;
+        } else {
+          alert(data.message || 'Payment failed.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error processing payment.');
+      }
+    });
+  });
+</script>

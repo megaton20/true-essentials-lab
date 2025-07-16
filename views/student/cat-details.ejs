@@ -86,7 +86,9 @@
                     </div>
                     <!-- Progress Bar -->
                     <% if (enrolledCourseIds.includes(data.id)) { %>
+                      <small class="badge bg-grad">owned</small>
                       <p class="mb-1 text-muted" style="font-size: 11px;">Total Classes: <%= data.total_sessions || 0 %></p>
+                      
                       <div class="progress mb-1" style="height: 8px;">
                         <div class="progress-bar" 
                             role="progressbar" 
@@ -99,6 +101,8 @@
                       <small class="text-muted" style="font-size: 11px;">
                         <%= data.completed_sessions || 0 %> of <%= data.total_sessions || 0 %> completed
                       </small>
+
+                 
                     <% } %>
                   </div>
                   <a href="/user/course/<%= data.id %>/details" class="btn btn-success btn-block "><i class="fas fa-chevron-right "></i></a>
@@ -107,7 +111,7 @@
                 <!-- Action Button -->
                 <div class="mt-2 ">
                   <% if (enrolledCourseIds.includes(data.id)) { %>
-                    <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="btn btn-sm btn-success ">You own This Course</a>
+                    <!-- <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="btn btn-sm btn-success ">You own This Course</a> -->
                   <% } else { %>
               
                   <% } %>

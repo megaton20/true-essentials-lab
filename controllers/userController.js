@@ -39,6 +39,8 @@ exports.getDashboard = async (req, res) => {
   }
 };
 
+
+
 exports.getCategoryCourses = async (req,res)=>{
   const userId = req.user.id
   const categoryId = req.params.id;
@@ -147,11 +149,11 @@ exports.getCourseDetails = async (req, res) => {
 
   try {
     // Get enrolled course IDs for the user
-    const enrolledCourses = await Course.getCourseDetails(courseId);
+    const courseDetails = await Course.getCourseDetails(courseId);
     const isEnrolled = await Enrollment.isEnrolled(req.user.id, courseId);
 
     res.render('./student/courses-details', {
-      course: enrolledCourses,
+      course: courseDetails,
       isEnrolled, 
       user: req.user
     });
@@ -160,6 +162,32 @@ exports.getCourseDetails = async (req, res) => {
     console.error('Error loading courses:', err);
     req.flash('error', 'Failed to load your courses.');
     res.redirect('/');
+  }
+};
+
+
+exports.getFreeCourses = async (req, res) => {
+  const userId = req.user.id;
+  const customerToPay = 70000;
+  
+ 
+  try {
+    const categories = await Category.allWithCourses(); 
+    const freeCourses = await Course.allFreeCourses()
+
+    
+    res.render('./student/free-courses', {
+      user: req.user,
+      customerToPay,
+      ebooks: [],
+      categories:categories || [],
+      freeCourses: freeCourses || []
+
+    });
+
+  } catch (err) {
+    console.error('Error loading dashboard:', err);
+    res.status(500).send('Something went wrong. Please try again later.');
   }
 };
 

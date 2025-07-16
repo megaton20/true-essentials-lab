@@ -58,17 +58,15 @@ body{
 
   .scroll-wrapper {
     overflow: hidden;
-    padding: 1rem 0;
-    padding: 10px;
+    padding: 10px 0px;
   }
-
+  
   .scroll-container {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     gap: 1rem;
-    padding: 0 2px;
   }
 
   .scroll-container::-webkit-scrollbar {
@@ -131,6 +129,10 @@ body{
 
   .view-button {
     align-self: flex-start;
+      border: 1px solid white;
+    border-radius: 25px;
+    color: #fff;
+    margin-top: 30px;
   }
 
   @media (min-width: 768px) {
@@ -145,8 +147,27 @@ body{
     }
   }
 
-
+.course-card-button{
+    flex: 0 0 70%;
+    scroll-snap-align: center;
+    background-color: var(--primary-color);
+    padding: 15px 15px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    color: #fff;
+}
   
+.course-card-button p {
+  margin-bottom: 20px;
+}
+
+.course-card-button .btn{
+  border: 1px solid white;
+  border-radius: 25px;
+  color: #fff;
+  margin-top: 30px;
+}
   .profile-img {
       width: 40px;
       height: 40px;

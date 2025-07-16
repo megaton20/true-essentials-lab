@@ -19,6 +19,7 @@ router.get('/course/:id/details', ensureVerifiedEmail, user.getCourseDetails); /
 router.get('/course/:id/:categoryId', ensureVerifiedEmail,ensureEnrolled, user.getCourseSchedule); // see class schedules
 router.get('/class/:id/course/:courseId/category/:categoryId', ensureVerifiedEmail,ensureEnrolled, user.getClassDetails); // see class details
 router.get('/class-history/:id', ensureVerifiedEmail,ensureEnrolled, user.studentClassRecord);
+router.get('/course/free', ensureVerifiedEmail, user.getFreeCourses);
 
 
 // Enroll in course (handles both free and paid)

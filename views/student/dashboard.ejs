@@ -28,7 +28,7 @@
         <%- include('../partials/messages') %>
 
         
-        <div class="container my-4">
+        <div class="mb-3">
           <p class="mb-3" style="font-size: 14px;">Free Courses </p>
           <div class="scroll-wrapper">
             <div class="scroll-container">
@@ -39,13 +39,24 @@
                   <div class="card-overlay">
                     <div class="course-title"><%= course.title %></div>
                     <div class="course-meta">
-                      <span><i class="fas fa-heart text-danger"></i> <%= course.like_count || 0 %></span>
+                      <!-- <span><i class="fas fa-heart text-danger"></i> <%= course.like_count || 0 %></span> -->
                       <span><i class="fas fa-users text-light"></i> <%= course.enrolled_count || 0 %></span>
                     </div>
-                    <a href="/user/course/<%= course.id %>/details" class="btn btn-sm btn-light view-button">View</a>
+                    <a href="/user/course/<%= course.id %>/details" class="btn view-button">Read more</a>
                   </div>
                 </div>
               <% }) %>
+
+               <div class="course-card-button bg-grad">
+
+                    <div class="">
+                      <p>we have more</p>
+                      <h1>Free Courses</h1>
+                    </div>
+                    <div class="course-meta">
+                      <a href="/user/course/free" class="btn">Explore more</a>
+                    </div>
+                </div>
             </div>
           </div>
         </div>
