@@ -25,6 +25,21 @@ class ClassSession {
         
     `;
 
+    const createCourseVideos = `
+      CREATE TABLE class_videos (
+          id VARCHAR PRIMARY KEY,
+          class_id VARCHAR REFERENCES class_sessions(id) ON DELETE CASCADE,
+          title VARCHAR(255),
+          video_url TEXT,
+          video_public_id TEXT,
+          thumbnail_url TEXT,
+          thumbnail_public_id TEXT,
+          part_number INTEGER,
+          created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      `
+    await createTableIfNotExists('class_videos', createCourseVideos);
      await createTableIfNotExists('class_sessions', createTableQuery);
   }
 

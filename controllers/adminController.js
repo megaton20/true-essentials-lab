@@ -8,6 +8,7 @@ const pool = require('../config/db');
 const User = require('../models/User');
 const Course = require('../models/Course');
 const Category = require('../models/Category');
+const { uploadImage, uploadVideo } = require('../utils/uploadWithCloudinary');
 
 exports.adminDashboard = async (req, res) => {
   const userId = req.user.id
@@ -289,6 +290,61 @@ const takeawaysJson = JSON.stringify(takeaways);
     
   }
 };
+
+exports.createCourseVideo = async (req, res) => {
+
+  const teacherId = req.user.id
+  const courseId = req.params.id
+  const thumbnailPath = req.files['thumbnail'][0].path;  
+  const videoFiles = req.files['videos'];
+  
+  try {
+
+        // Upload thumbnail to Cloudinary
+        const thumbResult = await uploadImage(thumbnailPath);
+                // Insert course into DB
+        const courseResult = await pool.query(
+            `UPDATE SET ? courses (image_url) WHERE id = $2
+             VALUES ($1) RETURNING id`,
+            [title, description, thumbResult.secure_url]
+        );
+
+                // Upload each video
+        for (let i = 0; i < videoFiles.length; i++) {
+            const file = videoFiles[i];
+            const videoResult = await uploadVideo(file.path);
+            await pool.query(
+                `INSERT INTO course_videos (course_id, title, video_url, video_public_id, part_number)
+                 VALUES ($1, $2, $3, $4, $5)`,
+                [
+                    courseId,
+                    `Part ${i + 1}`,
+                    videoResult.secure_url,
+                    videoResult.public_id,
+                    i + 1
+                ]
+            );
+        }
+        
+        return  console.log("i got here");
+        
+    const result = await Course.create({id:uuidv4(), title,description, teacherId, category_id,price,level, takeawaysJson });
+
+    if (result.success) {
+      req.flash('success', result.message);
+    } else {
+      req.flash('error', result.message);
+    }
+    res.redirect('/admin/courses');
+
+  } catch (error) {
+    res.redirect('/admin/error') 
+    console.log("error on create course: "+ error);
+    
+    
+  }
+};
+
 
 exports.editCourse = async (req, res) => {
   const {title, description, category_id, takeaways, price, level} = req.body

@@ -87,8 +87,9 @@ const takeawaysJson = JSON.stringify(takeaways);
 
 exports.getOneCourse = async (req, res) => {
 
+  const courseId = req.params.id
   try {
-      const course = await Course.findById(req.params.id);
+      const course = await Course.findById(courseId);
 
       // 2. Attach total class session count
       const classCountQuery = `SELECT COUNT(*) FROM class_sessions WHERE course_id = $1`;
@@ -96,11 +97,10 @@ exports.getOneCourse = async (req, res) => {
       course.totalClasses = parseInt(classResult[0].count); // attach as well
     const categories = await Category.all()
     
-      
       res.render('./teacher/course', {
          course, 
          categories: categories || [], 
-         user:req.user 
+         user:req.user,
         });
 
   } catch (error) {
@@ -200,13 +200,25 @@ exports.deleteCourse = async (req, res) => {
 exports.getClassSession = async (req, res) => {
   const id = req.params.id
 
+          // Fetch videos for this course
+    const { rows: courseVideos } = await pool.query(
+      `SELECT *
+       FROM class_videos
+       WHERE class_id = $1
+       ORDER BY part_number ASC`,
+      [id]
+    );
+
+
     const attendance = await Attendance.getAttendanceForSession(id)
 
     const singleClass = await ClassSession.findById(id); 
         res.render('./teacher/class', {
       singleClass,
       attendance,
-      user: req.user
+      user: req.user,
+      courseVideos: courseVideos || []
+
     })
 };
 

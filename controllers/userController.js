@@ -263,11 +263,21 @@ exports.getCourseSchedule = async (req, res) => {
 exports.getClassDetails = async (req, res) => {
 
    const session = await ClassSession.findById(req.params.id)
+             // Fetch videos for this course
+    const { rows: courseVideos } = await pool.query(
+      `SELECT id, title, part_number, video_url, thumbnail_url
+       FROM class_videos
+       WHERE class_id = $1
+       ORDER BY part_number ASC`,
+      [req.params.id]
+    );
+
   res.render('./student/class', {
     user: req.user,
     session: session || [],
     categoryId:req.params.categoryId,
-    courseId:req.params.courseId
+    courseId:req.params.courseId,
+    courseVideos: courseVideos || []
   });
 };
 

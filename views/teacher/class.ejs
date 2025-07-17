@@ -86,6 +86,112 @@
               </div>
             </div>
           </div>
+
+          <!--  -->
+
+             <!-- videos / thumb -->
+                <div class="mt-4">
+                <% if (courseVideos && courseVideos.length > 0) { %>
+                  <div class="row">
+                    <!-- Main Video Section -->
+                    <div class="col-lg-9 col-md-12 mb-4">
+               <div class="ratio ratio-16x9 rounded overflow-hidden">
+                <video
+                  id="mainVideo"
+                  class="w-100 h-100"
+                  style="object-fit: cover;"
+                  controls
+                  poster="<%= courseVideos[0]?.thumbnail_url %>"
+                >
+                  <source src="<%= courseVideos[0]?.video_url %>" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+
+
+                      <h4 class="mt-2"><%= courseVideos[0].title || 'Part 1' %></h4>
+                    </div>
+
+                    <!-- Playlist Sidebar -->
+                    <div class="col-lg-3 col-md-12">
+                      <h5>Video Parts</h5>
+               <ul class="list-unstyled">
+                  <% courseVideos.forEach((video) => { %>
+                    <li class="video-item mb-3">
+                      <div class="d-flex align-items-start justify-content-between">
+                        <!-- Video thumbnail preview -->
+                        <div class="d-flex cursor-pointer video-thumbnail"
+                          onclick="loadVideo('<%= video.video_url %>', '<%= video.thumbnail_url %>', '<%= video.title %>')">
+                          <img src="<%= video.thumbnail_url %>" alt="Thumbnail" class="img-thumbnail" style="width: 120px;">
+                          <div class="ms-2">
+                            <strong>Part <%= video.part_number %></strong><br>
+                            <small><%= video.title %></small>
+                          </div>
+                        </div>
+
+                        <!-- Delete form -->
+                        <form action="/teacher/class/video/delete" method="POST" class="ms-3">
+                          <input type="hidden" name="_method" value="DELETE">
+                          <input type="hidden" name="classVideoId" value="<%= video.id %>">
+                          <input type="hidden" name="class_id" value="<%= video.class_id %>">
+                          <input type="hidden" name="video_public_id" value="<%= video.video_public_id %>">
+                          <input type="hidden" name="thumbnail_public_id " value="<%= video.thumbnail_public_id  %>">
+                          <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this video?')">
+                            Delete
+                          </button>
+                        </form>
+                      </div>
+                    </li>
+                  <% }) %>
+                </ul>
+
+                    </div>
+                  </div>
+
+                <% } else { %>
+                  <!-- No videos fallback -->
+                  <div class="text-center py-5">
+                    <h3>No course videos uploaded yet.</h3>
+                    <p class="text-muted">Please check back later or contact the instructor.</p>
+                  </div>
+                <% } %>
+              </div>
+              
+            <div class="col-md-4">
+              <h1>Upload Course Video Part</h1>
+                    <form id="videoUploadForm" action="/teacher/class/video-part" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="classeId" value="<%= singleClass.id %>">
+
+            <div>
+                <label for="title">Video Title (optional):</label>
+                <input type="text" name="title" id="title">
+            </div>
+
+            <div>
+                <label for="part_number">Part Number:</label>
+                <input type="number" name="part_number" id="part_number" required>
+            </div>
+
+            <div>
+                <label for="video">Video File (MP4):</label>
+                <input type="file" name="video" id="video" accept="video/*" required>
+            </div>
+
+            <div>
+                <label for="thumbnail">Thumbnail Image:</label>
+                <input type="file" name="thumbnail" id="thumbnail" accept="image/*" required>
+            </div>
+
+            <button type="submit" id="uploadBtn">
+                <span id="uploadBtnText">Upload</span>
+                <span id="uploadSpinner" style="display: none;">
+                    <div class="loader"></div>
+                </span>
+            </button>
+                    </form>
+
+            </div> 
+          <!--  -->
         </main>
       </div>
     </div>
@@ -127,3 +233,29 @@
     </div>
   </div>
 
+
+  
+  <script>
+  const form = document.getElementById('videoUploadForm');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const btnText = document.getElementById('uploadBtnText');
+  const spinner = document.getElementById('uploadSpinner');
+
+  form.addEventListener('submit', () => {
+    // Disable button and show spinner
+    uploadBtn.disabled = true;
+    btnText.style.display = 'none';
+    spinner.style.display = 'inline-block';
+  });
+</script>
+
+<script>
+  function loadVideo(url, poster, title) {
+    const video = document.getElementById('mainVideo');
+    video.src = url;
+    video.poster = poster;
+    video.load();
+    video.play();
+    document.querySelector('h4').innerText = title;
+  }
+</script>

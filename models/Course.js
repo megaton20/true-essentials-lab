@@ -11,6 +11,7 @@ class Course {
         title VARCHAR(100) NOT NULL,
         description TEXT,
         difficulty VARCHAR DEFAULT 'easy',
+        image_url VARCHAR DEFAULT 'default.jpg',
         teacher_id VARCHAR REFERENCES users(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         price NUMERIC (10,2) DEFAULT 0 NOT NULL,
@@ -26,6 +27,7 @@ class Course {
 );
 
 `
+
     await createTableIfNotExists('course_likes', createCourseLike);
 
     await createTableIfNotExists('courses', createTableQuery);

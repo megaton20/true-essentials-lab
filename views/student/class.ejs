@@ -18,33 +18,49 @@
       </div>
 
       <!-- Main Dashboard Section -->
-      <div class="col-lg-9">
+            <div class="col-lg-9">
 
-         <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="/user/course/<%=courseId%>/<%=categoryId%>" class="btn btn-outline-primary btn-sm">Back</a>
-          </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <a href="/user/course/<%=courseId%>/<%=categoryId%>" class="btn btn-outline-primary btn-sm">Back</a>
+              </div>
 
         <main class="p-1">
           <%- include('../partials/messages') %>
 
-          <div class="container">
-    <!-- Top "Thumbnail" Section -->
-    <div class="mb-4 class-thumbnail shadow-sm">
-      <img src="/images/classroom.png" class="" alt="Session Thumbnail">
-    </div>
+           <!-- videos / thumb -->
+                <div class="mt-4">
+                <% if (courseVideos && courseVideos.length > 0) { %>
+                  <div class="row">
+                    <!-- Main Video Section -->
+                    <div class="col-lg-9 col-md-12 mb-4">
+                      <div class="ratio ratio-16x9 rounded overflow-hidden">
+                        <video
+                          id="mainVideo"
+                          class="w-100 h-100"
+                          style="object-fit: cover;"
+                          controls
+                          poster="<%= courseVideos[0]?.thumbnail_url %>"
+                        >
+                          <source src="<%= courseVideos[0]?.video_url %>" type="video/mp4">
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
 
-    <!-- Session Title & Info -->
-    <h2 class="fw-bold"><%=session.title%></h2>
-    <p class="text-muted mb-2">Description: <%=session.description || 'not provided'%></p>
-    <p class="text-muted mb-2">Tutor: <%=session.tutor || 'not provided'%></p>
-    <p class="text-muted">  Time:  <%= session.scheduled_at.toLocaleString('en-US', {
+
+                      <h4 class="mt-2"><%= courseVideos[0].title || 'Part 1' %></h4>
+                   
+                           <div class="container">
+
+            <h2 class="fw-bold"><%=session.title%></h2>
+                          <p class="text-muted mb-2">Description: <%=session.description || 'not provided'%></p>
+                          <p class="text-muted mb-2">Tutor: <%=session.tutor || 'not provided'%></p>
+                          <p class="text-muted">  Time:  <%= session.scheduled_at.toLocaleString('en-US', {
                                   year: 'numeric',
                                   month: 'long',
                                   day: 'numeric',
                                   hour: 'numeric',
                                   minute: '2-digit'
                                 }) %></p>
-
     <!-- Tabs Navigation -->
     <ul class="nav nav-tabs mt-4" id="sessionTab" role="tablist">
       <li class="nav-item" role="presentation">
@@ -72,27 +88,63 @@
         </ul>
       </div>
 
-      <!-- Meta Info Tab -->
-      <div class="tab-pane fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
-        <dl class="row">
-          <dt class="col-sm-4">Location</dt>
-          <dd class="col-sm-8"><%=session.location || 'google meet'%></dd>
+                <!-- Meta Info Tab -->
+                <div class="tab-pane fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
+                  <dl class="row">
+                    <dt class="col-sm-4">Location</dt>
+                    <dd class="col-sm-8"><%=session.location || 'google meet'%></dd>
 
-          <dt class="col-sm-4">Duration</dt>
-          <dd class="col-sm-8"><%=session.duration || '2'%>hr(s)</dd>
+                    <dt class="col-sm-4">Duration</dt>
+                    <dd class="col-sm-8"><%=session.duration || '2'%>hr(s)</dd>
 
-          <dt class="col-sm-4">Session Type</dt>
-          <dd class="col-sm-8"><%=session.type || 'lecture'%></dd>
-          <dt class="col-sm-4">Language</dt>
-          <dd class="col-sm-8"><%=session.language || 'English'%></dd>
+                    <dt class="col-sm-4">Session Type</dt>
+                    <dd class="col-sm-8"><%=session.type || 'lecture'%></dd>
+                    <dt class="col-sm-4">Language</dt>
+                    <dd class="col-sm-8"><%=session.language || 'English'%></dd>
 
-    
-        </dl>
-      </div>
-    </div>
-  </div>
+              
+                  </dl>
+                </div>
+              </div>
+          </div>
+                   
+                    </div>
+
+                    <!-- Playlist Sidebar -->
+                    <div class="col-lg-3 col-md-12">
+                      <h5>Video Parts</h5>
+                      <ul class="list-unstyled">
+                        <% courseVideos.forEach((video) => { %>
+                          <li class="video-item mb-3">
+                            <div class="d-flex align-items-start cursor-pointer video-thumbnail"
+                              onclick="loadVideo('<%= video.video_url %>', '<%= video.thumbnail_url %>', '<%= video.title %>')">
+                              <img src="<%= video.thumbnail_url %>" alt="Thumbnail" class="img-thumbnail" style="width: 120px;">
+                              <div class="ms-2">
+                                <strong>Part <%= video.part_number %></strong><br>
+                                <small><%= video.title %></small>
+                              </div>
+                            </div>
+                          </li>
+                        <% }) %>
+                      </ul>
+                    </div>
+                  </div>
+
+                <% } else { %>
+                  <!-- No videos fallback -->
+                  <div class="text-center py-5">
+                    <h3>No course videos uploaded yet.</h3>
+                    <p class="text-muted">Please check back later or contact the instructor.</p>
+                  </div>
+                <% } %>
+              </div>
 
 
+
+
+
+
+          
         </main>
 
       </div>

@@ -62,7 +62,7 @@ module.exports =  {
     },
 
        ensureEnrolled: async function(req, res, next){
-
+        
         const isEnrolled = await Enrollment.isEnrolled(req.user.id, req.params.id);
 
 
