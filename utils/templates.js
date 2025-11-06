@@ -6,14 +6,14 @@ const teaEmailWrapper = (subject, content) => `
   <div style="font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 40px 0;">
     <div style="max-width: 600px; margin: auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
       <div style="background: linear-gradient(90deg,rgb(17, 88, 114),rgb(25, 142, 200)); padding: 20px; text-align: center; color: white;">
-        <h1 style="margin: 0;">True Essentials Academy</h1>
+        <h1 style="margin: 0;">True Series Academy</h1>
         <p style="margin: 0; font-size: 14px;">${subject}</p>
       </div>
       <div style="padding: 30px;">
         ${content}
       </div>
       <div style="background: #fafafa; text-align: center; font-size: 12px; padding: 20px; color: #888;">
-        &copy; ${new Date().getFullYear()} True Essentials Academy – All rights reserved.
+        &copy; ${new Date().getFullYear()} True Series Academy – All rights reserved.
       </div>
     </div>
   </div>
@@ -33,7 +33,6 @@ const paymentReminderTemplate = (user) => teaEmailWrapper(
 const welcomeToClassTemplate = (user, session) => teaEmailWrapper(
   `Welcome to ${session.title}`,
   `
-
     <p>Hi ${user.full_name},</p>
     <p>You've successfully joined the class "<strong>${session.title}</strong>".</p>
     <p>Session Details:</p>

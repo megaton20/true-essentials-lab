@@ -83,55 +83,58 @@ exports.register = async (req, res, next) => {
 
 
 
-
 exports.verifyEmailRequest = async (req, res) => {
-  const email = req.body.email;
+  const { email } = req.body; // Destructuring
 
   try {
-    // Query to check if the user's email is already verified
-   const user =  await User.findByEmail(email)
+    const user = await User.findByEmail(email);
 
     if (!user) {
-      req.flash('error_msg', `User with this email does not exist`);
+      req.flash('error_msg', 'User with this email does not exist');
       return res.redirect('/handler');
     }
 
     if (user.is_email_verified) {
-      req.flash('warning_msg', `This user email is already verified`);
+      req.flash('warning_msg', 'This user email is already verified');
       return res.redirect('/handler');
     }
 
     // Generate verification token
     const token = generateResetToken(email);
-    const tokenExpires = new Date(Date.now() + 3600000); // 1 hour from now
+    const tokenExpires = new Date(Date.now() + 3600000); // 1 hour
 
-    // Update query to store the token and its expiry time
-
+    // Update user with token
     const updateResults = await pool.query(
       `UPDATE users SET token_expires = $1, token = $2 WHERE id = $3`,
-       [tokenExpires, token, user.id]);
+      [tokenExpires, token, user.id]
+    );
 
     if (updateResults.rowCount < 1) {
-      req.flash('error_msg', `Unknown error occcured when requesting email token`);
+      req.flash('error_msg', 'Unknown error occurred when requesting email token');
       return res.redirect('/handler');
     }
 
-    const resetLink = `${process.env.LIVE_DIRR || 'http://localhost:2000'}/auth/verify-email?token=${token}`
-    const emailDone = await sendEmail(email, "Verify your Email", verificationEmailSentTemplate(resetLink))
     // Send verification email
+    const resetLink = `${process.env.LIVE_DIRR || 'http://localhost:2000'}/auth/verify-email?token=${token}`;
+    const emailDone = await sendEmail(
+      email, 
+      "Verify your Email", 
+      verificationEmailSentTemplate(resetLink)
+    );
 
-    if (emailDone) {
-      req.flash('success_msg', `Check your mail inbox or spam to activate your account`);
-    } else {
-      req.flash('error_msg', `sending email failed`);
-      
-    }
-    return res.redirect('/auth/verify-email-sent');    
+    // Set appropriate flash message
+    req.flash(emailDone ? 'success_msg' : 'error_msg', 
+      emailDone 
+        ? 'Check your mail inbox or spam to activate your account'
+        : 'Failed to send verification email. Please try again.'
+    );
+
+    return res.redirect(`/auth/verify-${emailDone ? 'email-sent' :'alert' }`);
 
   } catch (error) {
-    console.error(error);
-    req.flash('error_msg', `An error occurred while processing your request`);
-    res.redirect('/auth/verify-alert');
+    console.error('Email verification request error:', error);
+    req.flash('error_msg', 'An error occurred while processing your request');
+    return res.redirect('/auth/verify-alert');
   }
 };
 

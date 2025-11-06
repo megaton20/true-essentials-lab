@@ -1,33 +1,37 @@
-const nodemailer = require('nodemailer');
+const axios = require('axios');
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp-relay.brevo.com',
-  port: 587,
-  secure: false, // use TLS
-  auth: {
-    user: process.env.SMTP_LOGIN,      // e.g. 9ab199001@smtp-brevo.com
-    pass: process.env.EMAIL_PASSWORD,  // your Brevo SMTP key
-  },
-  tls: {
-    rejectUnauthorized: false, // important for Render in some cases
-  },
-});
+const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
 const sendEmail = async (to, subject, html) => {
-  const mailOptions = {
-    from: `"True Essentials Academy" <${process.env.EMAIL}>`,
-    to,
-    subject,
-    html,
+  const mailData = {
+    sender: {
+      name: "True Essentials Academy",
+      email: process.env.EMAIL
+    },
+    to: [
+      {
+        email: to,
+      }
+    ],
+    subject: subject,
+    htmlContent: html,
   };
 
   try {
-    await transporter.sendMail(mailOptions);
-    // console.log(`Email sent to ${to}`);
-    return true
+    const response = await axios.post(BREVO_API_URL, mailData, {
+      headers: {
+        'accept': 'application/json',
+        'api-key': BREVO_API_KEY,
+        'content-type': 'application/json',
+      },
+    });
+
+    console.log(`Email sent to ${to}, message ID: ${response.data.messageId}`);
+    return true;
   } catch (err) {
-    console.error(`Failed to send email to ${to}:`, err);
-    return false
+    console.error(`Failed to send email to ${to}:`, err.response?.data || err.message);
+    return false;
   }
 };
 
