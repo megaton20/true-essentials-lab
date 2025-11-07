@@ -24,6 +24,7 @@ h1, h2, h3, h4, h5, h6{
     --danger-color: #b70b02;
     --danger-color-light: #c31d57;
     --primary-color: green;
+    --secondary-color: #ffb320;
     --primary-color-light: rgb(0, 196, 0);
     --bg-gray-light : #545353;
     --bg-gray : #333;
@@ -99,7 +100,7 @@ body{
     transition: .2s ease-in-out;
   }
     .card-overlay:hover {
-    background-image: linear-gradient(to top, rgba(107, 106, 106, 0.7), rgba(0,0,0,0.2));
+    background-image: linear-gradient(to top, rgba(10, 10, 10, 0.7), rgba(0,0,0,0.2));
     
   }
 
@@ -129,10 +130,14 @@ body{
 
   .view-button {
     align-self: flex-start;
-      border: 1px solid white;
+      border: 1px solid var(--secondary-color);
     border-radius: 25px;
-    color: #fff;
+    color: var(--secondary-color);
     margin-top: 30px;
+  }
+  .view-button:hover {
+    background-color: var(--secondary-color);
+    color: var(--text-light);
   }
 
   @media (min-width: 768px) {
@@ -163,11 +168,52 @@ body{
 }
 
 .course-card-button .btn{
-  border: 1px solid white;
+  border: 1px solid var(--secondary-color);
   border-radius: 25px;
   color: #fff;
   margin-top: 30px;
 }
+
+.scroll-btn {
+    position: absolute;
+    top: 40%;
+    /* right: 50%; */
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 10;
+    display: none;
+    transition: all 0.3s ease;
+  }
+
+  .scroll-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    color: var(--secondary-color);
+    transform: translateY(-20%) scale(1.1);
+  }
+
+  .scroll-btn-left {
+    left: 400px;
+  }
+
+  .scroll-btn-right {
+    right: 10px;
+  }
+
+  @media (min-width: 768px) {
+    .scroll-btn {
+      display: block;
+    }
+  }
+
+
   .profile-img {
       width: 40px;
       height: 40px;

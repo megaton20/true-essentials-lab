@@ -41,7 +41,7 @@
                   <!-- Course Image -->
                   <div style="flex-shrink: 0;">
                     <img 
-                      src="<%= data.image_url || '/images/online-class.png' %>" 
+                      src="<%= data.image_url || '/images/thumbnail.png' %>" 
                       alt="Course image" 
                       class="img-fluid rounded" 
                       style="width: 100px; height: 100px; object-fit: cover;">
@@ -73,7 +73,7 @@
 
                 <!-- Action Button -->
                 <div class="mt-2 ">
-                    <a href="/user/course/<%= data.id %>/<%=data.category_id %>" class="btn btn-sm btn-primary">Open Course</a>
+                    <a href="/user/course/<%= data.id %>/<%=data.category_id %>" class="btn btn-sm btn-success">Open Course</a>
             
                 </div>
 

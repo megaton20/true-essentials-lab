@@ -41,7 +41,7 @@
                <!-- Course List -->
         <% if (courses && courses.length > 0) { %>
 
-          <p class="mb-4">These are the following courses</p>
+          <p class="mb-4 text-warning">Available courses</p>
 
           <% courses.forEach(function (data) { %>
             <div class="col-md-4 mb-3">
@@ -51,7 +51,7 @@
                   <!-- Course Image -->
                   <div style="flex-shrink: 0;">
                     <img 
-                      src="<%= data.image_url || '/images/online-class.png' %>" 
+                      src="<%= data.image_url || '/images/thumbnail.png' %>" 
                       alt="Course image" 
                       class="img-fluid rounded" 
                       style="width: 70px; height: 70px; object-fit: cover;">
