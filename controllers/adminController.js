@@ -402,7 +402,8 @@ exports.getClassSession = async (req, res) => {
         res.render('./admin/class', {
       singleClass,
       attendance,
-      backUrl
+      backUrl,
+      courseId: req.params.course
     })
 };
 
@@ -436,14 +437,15 @@ exports.grantAccess = async (req, res) => {
 }
 
 exports.updateById = async (req, res) => {
-  const {title, description, scheduled_at, meet_link }= req.body
+  const {title, description, scheduled_at, meet_link, courseId}= req.body
   const id = req.params.id
 
   
   try {
  
     const singleClass = await ClassSession.update(title, description, scheduled_at, meet_link, id); 
-    res.redirect(`/admin/class/${id}`) 
+    req.flash(`${singleClass ? "error_msg" : "success_msg"}`, singleClass ? 'was not updated' : 'updated completed')
+    res.redirect(`/admin/class/${id}/${courseId}`) 
   } catch (error) {
     console.log(`error updating class: ${error}`);
     
@@ -459,10 +461,11 @@ exports.findByJoinCode = async (req, res) => {
 };
 
 exports.toggleClasssVisibility = async (req, res) => {  
-  const id = req.params.id
+  const classId = req.params.classId
   const visible = req.params.status
+  const {courseId} = req.body
 try {
-  const stats = await ClassSession.toggleLinkVisibility(id, visible); 
+  const stats = await ClassSession.toggleLinkVisibility(classId, visible); 
 
   if (stats === 1 || stats === true) {
     req.flash("success_msg", "Class status was updated successfully");
@@ -470,12 +473,12 @@ try {
     req.flash("error_msg", "Class status update failed");
   }
 
-  return res.redirect(`/admin/class/${id}`);
+  return res.redirect(`/admin/class/${classId}/${courseId}`);
 
 } catch (error) {
   console.error(`Error updating class status: ${error}`);
   req.flash("error_msg", "Something went wrong while updating status.");
-  return res.redirect(`/admin/class/${id}`);
+  return res.redirect(`/admin/class/${classId}`);
 }
 
 };
@@ -493,22 +496,22 @@ exports.getVisibleLink = async (req, res) => {
 
 
 exports.completeClass = async (req, res) => {
-  const classID = req.params.id
-  const courseId = req.body.courseId
+  const classID = req.params.classId
+  const {courseId} = req.body
   const status = true
   
-  return console.log("complete class as ended..");
   
   try {
     const isDelete = await ClassSession.completeClass(classID, status);
     
     if (isDelete) {
-     req.flash("success_msg", "class schedule changed!")  
+     req.flash("success_msg", "class marked as completed")  
     }else{
-      req.flash("error_msg", "class schedule change failed!")  
+      req.flash("error_msg", "class completion failed")  
 
     }
-    return res.redirect(`/admin/course/class/${courseId}`)
+      
+    return res.redirect(`/admin/class/${classID}/${courseId}`);
   } catch (error) {
     console.log(`error updating class: ${error}`);
     res.redirect('/')

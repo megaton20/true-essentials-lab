@@ -217,19 +217,21 @@ exports.getClassSession = async (req, res) => {
       singleClass,
       attendance,
       user: req.user,
+      courseId: req.params.course,
       courseVideos: courseVideos || []
 
     })
 };
 
 exports.updateById = async (req, res) => {
-  const {title, description, scheduled_at, meet_link }= req.body
+  const {title, description, scheduled_at, meet_link, courseId }= req.body
   const id = req.params.id
 
   try {
  
     const singleClass = await ClassSession.update(title, description, scheduled_at, meet_link, id); 
-    res.redirect(`/teacher/class/${id}`) 
+    req.flash(`${singleClass ? "error_msg" : "success_msg"}`, singleClass ? 'was not updated' : 'updated completed')
+    res.redirect(`/teacher/class/${id}/${courseId}`) 
   } catch (error) {
     console.log(`error updating class: ${error}`);
     
@@ -270,6 +272,7 @@ exports.grantAccess = async (req, res) => {
 exports.toggleClasssVisibility = async (req, res) => {  
   const id = req.params.id
   const visible = req.params.status
+   const {courseId} = req.body
 try {
   const stats = await ClassSession.toggleLinkVisibility(id, visible); 
 
@@ -279,7 +282,7 @@ try {
     req.flash("error_msg", "Class status update failed");
   }
 
-  return res.redirect(`/teacher/class/${id}`);
+  return res.redirect(`/teacher/class/${id}/${courseId}`);
 
 } catch (error) {
   console.error(`Error updating class status: ${error}`);

@@ -22,9 +22,9 @@ router.delete('/users/delete/:id', ensureAdmin, adminController.deleteUser);
 router.post('/class', ensureAdmin, adminController.createClass);
 router.get('/class/:id/:course', ensureAdmin, adminController.getClassSession);
 router.put('/class/:id/edit', ensureAdmin, adminController.updateById);
-router.put('/class/:id/:status', ensureAdmin, adminController.toggleClasssVisibility);
+router.put('/class/:classId/:status', ensureAdmin, adminController.toggleClasssVisibility);
 router.delete('/class/:id', ensureAdmin, adminController.deleteClass);
-router.post('/class/complete/:id', ensureAdmin, adminController.completeClass);
+router.post('/class/complete/:classId', ensureAdmin, adminController.completeClass);
 
 router.put('/class/:classId/grant-access/:userId', ensureAdmin, adminController.grantAccess);
 

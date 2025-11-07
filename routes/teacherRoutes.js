@@ -31,6 +31,15 @@ router.get('/course/class/:id', ensureTeacher, teachController.getCourseSchedule
 router.post('/class', ensureTeacher, teachController.createClass);
 router.delete('/class/:id', ensureTeacher, teachController.deleteClass);
 router.delete('/course/:id', ensureTeacher, teachController.deleteCourse);
+
+router.get('/class/:id/:course', ensureTeacher, teachController.getClassSession);
+router.put('/class/:id/edit', ensureTeacher, teachController.updateById);
+router.put('/class/:id/:status', ensureTeacher, teachController.toggleClasssVisibility);
+
+router.put('/class/:classId/grant-access/:userId', ensureTeacher, teachController.grantAccess);
+router.get('/session/:id/attendance',ensureTeacher, teachController.getAttendanceForSession);
+
+
 router.post('/class/video-part',
     upload.fields([
         { name: 'video', maxCount: 1 },
@@ -77,12 +86,4 @@ router.delete('/class/video/delete',async (req, res)=>{
 
 
 })
-router.get('/class/:id', ensureTeacher, teachController.getClassSession);
-router.put('/class/:id/edit', ensureTeacher, teachController.updateById);
-router.put('/class/:id/:status', ensureTeacher, teachController.toggleClasssVisibility);
-
-router.put('/class/:classId/grant-access/:userId', ensureTeacher, teachController.grantAccess);
-router.get('/session/:id/attendance',ensureTeacher, teachController.getAttendanceForSession);
-
-
 module.exports = router;

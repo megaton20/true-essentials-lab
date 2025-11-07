@@ -50,14 +50,19 @@
                   <a href="<%= singleClass.meet_link %>" target="_blank" class="btn btn-outline-success">Go to Streaming Platform</a>
                 </div>
 
-                  <!-- delete button -->
-                           <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#completeModal">
-                            <i class="fas fa-check"></i>
-                          </button>
+                <button type="button" 
+                        class="btn btn-outline-success <%= singleClass.is_complete ? 'disabled' : '' %>" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#completeModal"
+                        <%= singleClass.is_complete ? 'disabled' : '' %>>
+                  <i class="fas fa-check"></i> 
+                  <%= singleClass.is_complete ? 'Completed' : 'Mark as complete' %>
+                </button>
 
-                <p><strong>Show Link:</strong> <%= singleClass.show_link %></p>
+                <p class="mt-4 mb-3"><strong>Show Link:</strong> <%= singleClass.show_link %></p>
                 <form action="/admin/class/<%= singleClass.id %>/<%= singleClass.show_link ? 'false' : 'true' %>" method="post">
                   <input type="hidden" name="_method" value="PUT">
+                  <input type="hidden" name="courseId" value="<%=courseId%>">
                   <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="toggleShowLink" onchange="this.form.submit()" <%= singleClass.show_link ? 'checked' : '' %>>
                     <label class="form-check-label" for="toggleShowLink">Toggle Show Link</label>
@@ -105,6 +110,7 @@
     <div class="modal-dialog">
       <form class="modal-content" method="post" action="/admin/class/<%= singleClass.id %>/edit">
         <input type="hidden" name="_method" value="PUT">
+        <input type="hidden" name="courseId" value="<%=courseId%>">
         <div class="modal-header">
           <h5 class="modal-title">Edit Class Details</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -145,14 +151,14 @@
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                              Update class session:  <strong><%= singleClass.title %></strong>?
+                              complete class session:  <strong><%= singleClass.title %></strong>?
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <form action="/admin/class/complete/" method="post">
-                              <input type="hidden" name="_method" value="PUT">
-                              <input type="hidden" name="classId" value="<%= singleClass.id %>">
-                              <button type="submit" class="btn btn-success">Yes, change</button>
+                            <form action="/admin/class/complete/<%= singleClass.id %>" method="post">
+                              <!-- <input type="hidden" name="_method" value="PUT"> -->
+                                <input type="hidden" name="courseId" value="<%=courseId%>">
+                              <button type="submit" class="btn btn-success">Yes, complete</button>
                             </form>
 
                             </div>

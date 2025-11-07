@@ -164,8 +164,9 @@ class ClassSession {
   }
 
     static async completeClass(id,status){
-    const result = await pool.query(`
-        UPDATE SET is_complete = $1 class_sessions
+   const result = await pool.query(`
+        UPDATE class_sessions 
+        SET is_complete = $1 
         WHERE id = $2
       `, [status, id]);
 

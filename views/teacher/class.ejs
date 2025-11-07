@@ -46,12 +46,13 @@
                   <a href="<%= singleClass.meet_link %>" target="_blank"><%= singleClass.meet_link %></a>
                 </p>
 
-                <p><strong>Show Link:</strong> <%= singleClass.show_link %></p>
+                <p class="mt-4 mb-4 border"><strong>Show Link:</strong> <%= singleClass.show_link %></p>
                 <form action="/teacher/class/<%= singleClass.id %>/<%= singleClass.show_link ? 'false' : 'true' %>" method="post">
                   <input type="hidden" name="_method" value="PUT">
-                  <div class="form-check form-switch">
+                  <input type="hidden" name="courseId" value="<%=courseId%>">
+                  <div class="form-check form-switch m-3">
                     <input class="form-check-input" type="checkbox" id="toggleShowLink" onchange="this.form.submit()" <%= singleClass.show_link ? 'checked' : '' %>>
-                    <label class="form-check-label" for="toggleShowLink">Toggle Show Link</label>
+                    <label class="form-check-label m-3" for="toggleShowLink">Toggle Show Link</label>
                   </div>
                 </form>
 
@@ -202,6 +203,7 @@
     <div class="modal-dialog">
       <form class="modal-content" method="post" action="/teacher/class/<%= singleClass.id %>/edit">
         <input type="hidden" name="_method" value="PUT">
+         <input type="hidden" name="courseId" value="<%=courseId%>">
         <div class="modal-header">
           <h5 class="modal-title">Edit Class Details</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
