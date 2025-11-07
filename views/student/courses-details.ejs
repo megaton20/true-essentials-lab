@@ -107,44 +107,44 @@
                 <hr>
 
               <!-- Nav tabs -->
-<ul class="nav nav-tabs mb-3" id="courseTabs" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab" aria-controls="desc" aria-selected="true">Description</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="takeaways-tab" data-bs-toggle="tab" data-bs-target="#takeaways" type="button" role="tab" aria-controls="takeaways" aria-selected="false">Takeaways</button>
-  </li>
-</ul>
+              <ul class="nav nav-tabs mb-3" id="courseTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab" aria-controls="desc" aria-selected="true">Description</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="takeaways-tab" data-bs-toggle="tab" data-bs-target="#takeaways" type="button" role="tab" aria-controls="takeaways" aria-selected="false">Takeaways</button>
+                </li>
+              </ul>
 
-<!-- Tab panes -->
-<div class="tab-content" id="courseTabsContent">
-  <!-- Description Tab -->
-  <div class="tab-pane fade show active" id="desc" role="tabpanel" aria-labelledby="desc-tab">
-    <p class="fw-bold">Course Description</p>
-    <div class="mb-4">
-      <p><%= course.description %></p>
-    </div>
-  </div>
+              <!-- Tab panes -->
+              <div class="tab-content" id="courseTabsContent">
+                <!-- Description Tab -->
+                <div class="tab-pane fade show active" id="desc" role="tabpanel" aria-labelledby="desc-tab">
+                  <p class="fw-bold">Course Description</p>
+                  <div class="mb-4">
+                    <p><%= course.description %></p>
+                  </div>
+                </div>
 
-  <!-- Takeaways Tab -->
-  <div class="tab-pane fade" id="takeaways" role="tabpanel" aria-labelledby="takeaways-tab">
-    <p class="fw-bold mb-2">What you'll learn</p>
-    <ul class="list-unstyled ps-1">
-      <% if (course.takeaways && course.takeaways.length > 0) { %>
-        <% course.takeaways.forEach(function(takeaway) { %>
-          <li class="d-flex align-items-center mb-2">
-            <span class="check-circle-icon me-2">
-              <i class="fas fa-check text-light"></i>
-            </span>
-            <span><%= takeaway %></span>
-          </li>
-        <% }); %>
-      <% } else { %>
-        <li class="text-muted">No takeaways provided.</li>
-      <% } %>
-    </ul>
-  </div>
-</div>
+                <!-- Takeaways Tab -->
+                <div class="tab-pane fade" id="takeaways" role="tabpanel" aria-labelledby="takeaways-tab">
+                  <p class="fw-bold mb-2">What you'll learn</p>
+                  <ul class="list-unstyled ps-1">
+                    <% if (course.takeaways && course.takeaways.length > 0) { %>
+                      <% course.takeaways.forEach(function(takeaway) { %>
+                        <li class="d-flex align-items-center mb-2">
+                          <span class="check-circle-icon me-2">
+                            <i class="fas fa-check text-light"></i>
+                          </span>
+                          <span><%= takeaway %></span>
+                        </li>
+                      <% }); %>
+                    <% } else { %>
+                      <li class="text-muted">No takeaways provided.</li>
+                    <% } %>
+                  </ul>
+                </div>
+              </div>
 
 
                 <br>
@@ -153,7 +153,7 @@
             <!-- Desktop Button -->
             <div class="enroll-btn-desktop mb-3 mt-4">
                 <% if (isEnrolled) { %>
-                <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success btn-block">View Course</a>
+                <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success btn-block">View Course Schedules</a>
                 <% } else { %>
                 <form method="POST" action="/user/course/<%= course.id %>/enroll" class="enroll-form" data-course-id="<%= course.id %>" data-price="<%= course.price %>">
                       <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
@@ -173,7 +173,7 @@
             <!-- Sticky Button on Mobile -->
             <div class="sticky-enroll-btn text-center">
             <% if (isEnrolled) { %>
-                <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success w-100">View Course</a>
+                <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success w-100">View Course Schedules </a>
             <% } else { %>
                 <form method="POST" action="/user/course/<%= course.id %>/enroll" class="enroll-form" data-course-id="<%= course.id %>" data-price="<%= course.price %>">
                       <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
