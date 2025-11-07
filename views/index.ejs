@@ -94,7 +94,7 @@
     }
 
     .vendor-hero-title {
-      font-size: 2.5rem;
+      font-size: 1.5rem;
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 20px;
@@ -307,9 +307,9 @@
     /* Typing effect styles */
     .typing-text {
       display: inline-block;
-      font-size: 40px;
+      font-size: 30px;
       color: #ecc84f;
-      white-space: nowrap;
+      padding: 0;
       overflow: hidden;
     }
 
@@ -666,9 +666,9 @@ const tsaPhrases = [
       tsaCurrentLetter++;
 
       if (tsaCurrentLetter > phrase.length) {
-        setTimeout(tsaErase, 2000);
+        setTimeout(tsaErase, 500);
       } else {
-        setTimeout(tsaType, 100);
+        setTimeout(tsaType, 50);
       }
     }
 
