@@ -2,6 +2,27 @@
 <%-include('./partials/openTopNav') %>
 
   <style>
+
+.whatsapp-modal .modal-content,
+.whatsapp-icon {
+  font-size: 4rem;
+  color: #25D366;
+  margin-bottom: 1rem;
+}
+
+
+.feature-item {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+
+
+.modal-header .btn-close {
+  padding: 0.5rem;
+  margin: -0.5rem -0.5rem -0.5rem auto;
+}
+
    .modern-vendor-hero {
     position: relative;
     background: linear-gradient(135deg, #11723d 0%, #19c853 100%);
@@ -362,8 +383,8 @@
             Start Learning Now
           </a>
           <a href="/auth/login" class="btn btn-outline-light">
-            <i class="bi bi-play-circle"></i>
-            View Courses
+            <i class="fa fa-message"></i>
+            Join WhatsApp Community
           </a>
         </div>
       </div>
@@ -428,6 +449,63 @@
     </div>
   </div>
 </section>
+
+
+<!-- WhatsApp Community Join Modal -->
+<div class="modal fade" id="whatsappModal" tabindex="-1" aria-labelledby="whatsappModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-body text-center px-4 pb-4 pt-0">
+        <!-- Icon -->
+        <div class="whatsapp-icon mb-3">
+          <i class="fab fa-whatsapp"></i>
+        </div>
+        
+        <!-- Title -->
+        <h4 class="modal-title fw-bold mb-2" id="whatsappModalLabel">Join Our Community</h4>
+        
+        <!-- Description -->
+        <p class="text-muted mb-4">
+          Connect with fellow learners, get updates, and participate in discussions on WhatsApp
+        </p>
+        
+        <!-- Features -->
+        <div class="features mb-4">
+          <div class="feature-item d-flex align-items-center mb-2">
+            <i class="fas fa-check-circle text-success me-2"></i>
+            <span>Get instant course updates</span>
+          </div>
+          <div class="feature-item d-flex align-items-center mb-2">
+            <i class="fas fa-check-circle text-success me-2"></i>
+            <span>Connect with instructors</span>
+          </div>
+          <div class="feature-item d-flex align-items-center">
+            <i class="fas fa-check-circle text-success me-2"></i>
+            <span>Join study groups</span>
+          </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="d-grid gap-2">
+          <a href="https://chat.whatsapp.com/H0MwZwvINV19K2svyqXypS?mode=ems_copy_t" class="btn btn-success btn-sm" target="_blank" id="joinWhatsappBtn">
+            <i class="fab fa-whatsapp me-2"></i>Join WhatsApp Community
+          </a>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Maybe Later
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <!-- Rest of your existing content remains the same -->
 <section id="categories" class="mt-4">
@@ -609,4 +687,35 @@
 
   // Initialize counters when page loads
   window.addEventListener('load', animateCounters);
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Show modal if backend indicates it should be shown
+  <% if (joinCommunityModal) { %>
+    const whatsappModal = new bootstrap.Modal(document.getElementById('whatsappModal'));
+    whatsappModal.show();
+  <% } %>
+
+  // Add click event listener to the join button
+  document.getElementById('joinWhatsappBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Close the WhatsApp modal immediately
+    const whatsappModal = bootstrap.Modal.getInstance(document.getElementById('whatsappModal'));
+    whatsappModal.hide();
+    
+    // Send AJAX request (fire and forget)
+    fetch('/api/update-join-status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({})
+    }).catch(error => console.error('Error:', error));
+    
+    // Redirect to WhatsApp immediately
+    window.open('https://chat.whatsapp.com/H0MwZwvINV19K2svyqXypS?mode=ems_copy_t', '_blank');
+  });
+});
 </script>

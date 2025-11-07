@@ -84,6 +84,17 @@ app.use('/teacher',ensureAuthenticated, teacherRoutes); // secure routes
 app.use('/affiliate', affiliateRoutes); // open less secure routes
 
 
+app.post('/api/update-join-status', (req, res) => {
+  try {
+    // Set to true to indicate user has seen/joined, so don't show modal again
+    req.session.showJoinCommunity = true;
+    res.json({ success: true });
+  } catch (error) {
+    console.log(`error from joining community: ${error}`);
+    res.status(500).json({ error: 'Failed to update status' });
+  }
+});
+
 app.use((req, res) => {
   let userActive = req.user ? true : false;
   res.render('404', {

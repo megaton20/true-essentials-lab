@@ -9,10 +9,13 @@ const Category = require('../models/Category');
 
 // Admin creates a class
 router.get('/', async (req, res) => {
-      const categories = await Category.allWithCourses(); 
+  
+  const joinCommunityModal = !req.session.showJoinCommunity
+  const categories = await Category.allWithCourses(); 
 
   res.render('index', {
-    categories: categories || []
+    categories: categories || [],
+    joinCommunityModal
   })
 });
 router.get('/read-more', async (req, res) => {
