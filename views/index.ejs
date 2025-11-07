@@ -2,720 +2,742 @@
 <%-include('./partials/openTopNav') %>
 
   <style>
-
-.whatsapp-modal .modal-content,
-.whatsapp-icon {
-  font-size: 4rem;
-  color: #25D366;
-  margin-bottom: 1rem;
-}
-
-
-.feature-item {
-  font-size: 0.9rem;
-  color: #555;
-}
+    .whatsapp-modal .modal-content,
+    .whatsapp-icon {
+      font-size: 4rem;
+      color: #25D366;
+      margin-bottom: 1rem;
+    }
 
 
+    .feature-item {
+      font-size: 0.9rem;
+      color: #555;
+    }
 
-.modal-header .btn-close {
-  padding: 0.5rem;
-  margin: -0.5rem -0.5rem -0.5rem auto;
-}
 
-   .modern-vendor-hero {
-    position: relative;
-    background: linear-gradient(135deg, #11723d 0%, #19c853 100%);
-    color: white;
-    padding: 100px 0;
-    overflow: hidden;
-  }
 
-  .hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-  }
+    .modal-header .btn-close {
+      padding: 0.5rem;
+      margin: -0.5rem -0.5rem -0.5rem auto;
+    }
 
-  .hero-shapes .shape {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-  }
+    .modern-vendor-hero {
+      position: relative;
+      background: linear-gradient(135deg, #11723d 0%, #19c853 100%);
+      color: white;
+      padding: 100px 0;
+      overflow: hidden;
+    }
 
-  .shape-1 { width: 300px; height: 300px; top: -150px; right: -100px; }
-  .shape-2 { width: 200px; height: 200px; bottom: 100px; left: -50px; }
-  .shape-3 { width: 150px; height: 150px; top: 50%; right: 20%; }
-  .shape-4 { width: 300px; height: 300px; top: -50px; right: -50px; }
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+    }
 
-  .hero-content-wrapper {
-    position: relative;
-    z-index: 2;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
-  }
+    .hero-shapes .shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-  .hero-badge {
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-  }
+    .shape-1 {
+      width: 300px;
+      height: 300px;
+      top: -150px;
+      right: -100px;
+    }
 
-  .vendor-hero-title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 20px;
-    min-height: 160px;
-  }
+    .shape-2 {
+      width: 200px;
+      height: 200px;
+      bottom: 100px;
+      left: -50px;
+    }
 
-  .gradient-text {
-    background: linear-gradient(45deg, #41afa5, #198ec8); 
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+    .shape-3 {
+      width: 150px;
+      height: 150px;
+      top: 50%;
+      right: 20%;
+    }
 
-  .hero-description {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    margin-bottom: 30px;
-    opacity: 0.9;
-  }
+    .shape-4 {
+      width: 300px;
+      height: 300px;
+      top: -50px;
+      right: -50px;
+    }
 
-  .hero-stats {
-    display: flex;
-    gap: 40px;
-    margin-bottom: 40px;
-  }
-
-  .stat-item {
-    text-align: center;
-  }
-
-  .stat-number {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 5px;
-  }
-
-  .stat-label {
-    font-size: 0.9rem;
-    opacity: 0.8;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-  }
-
-  .btn-primary-lg {
-    background: #41afa5;
-    color: white;
-  }
-
-  .btn-primary-lg:hover {
-    background: #3a9c93;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(65, 175, 165, 0.3);
-  }
-
-  .btn-outline-light {
-    border-color: rgba(255, 255, 255, 0.3);
-    color: white;
-  }
-
-  .btn-outline-light:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: white;
-  }
-
-  /* Hero Visual */
-  .hero-visual {
-    position: relative;
-  }
-  
-  .floating-card {
-    position: absolute;
-    background: white;
-    color: #333;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    z-index: 3;
-    max-width: 250px;
-  }
-
-  .card-1 {
-    top: 20px;
-    left: -30px;
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .card-2 {
-    bottom: 40px;
-    right: -20px;
-    animation: float 3s ease-in-out infinite 1.5s;
-  }
-
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
-  }
-
-  .store-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #f0f0f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .store-avatar i {
-    font-size: 1.2rem;
-    color: #41afa5;
-  }
-
-  .store-info h6 {
-    margin: 0;
-    font-size: 0.9rem;
-  }
-
-  .store-info span {
-    font-size: 0.8rem;
-    color: #666;
-  }
-
-  .card-stats {
-    display: flex;
-    gap: 20px;
-  }
-
-  .stat {
-    text-align: center;
-  }
-
-  .stat strong {
-    display: block;
-    font-size: 1.1rem;
-    color: #41afa5;
-  }
-
-  .stat span {
-    font-size: 0.8rem;
-    color: #666;
-  }
-
-  .main-hero-image {
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    background: white;
-    padding: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  }
-
-  .main-hero-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 12px;
-  }
-
-  .floating-badge {
-    position: absolute;
-    background: white;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .sales-badge {
-    top: 20px;
-    right: 20px;
-    color: #41afa5;
-  }
-
-  .orders-badge {
-    bottom: 20px;
-    left: 20px;
-    color: #198ec8;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  /* Typing effect styles */
-  .typing-text {
-    height: 60px;
-    display: inline-block;
-    font-size: 51px;
-    color: #ecc84f;
-    /* border-right: 2px solid white; */
-    white-space: nowrap;
-    overflow: hidden;
-    animation: blink 0.75s step-end infinite;
-  }
-
-  @keyframes blink {
-    from, to { border-color: transparent }
-    50% { border-color: white }
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
     .hero-content-wrapper {
-      grid-template-columns: 1fr;
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+
+    .vendor-hero-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      min-height: 160px;
+    }
+
+  
+
+    .hero-description {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .hero-stats {
+      display: flex;
       gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .stat-item {
       text-align: center;
     }
-    
-    .vendor-hero-title {
-      font-size: 2rem;
-      min-height: auto;
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 5px;
     }
-    
-    .hero-stats {
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .btn-primary-lg {
+      background: #41afa5;
+      color: white;
+    }
+
+    .btn-primary-lg:hover {
+      background: #3a9c93;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(65, 175, 165, 0.3);
+    }
+
+    .btn-outline-light {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+
+    .btn-outline-light:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: white;
+    }
+
+    /* Hero Visual */
+    .hero-visual {
+      position: relative;
+    }
+
+    .floating-card {
+      position: absolute;
+      background: white;
+      color: #333;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      z-index: 3;
+      max-width: 250px;
+    }
+
+    .card-1 {
+      top: 20px;
+      left: -30px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .card-2 {
+      bottom: 40px;
+      right: -20px;
+      animation: float 3s ease-in-out infinite 1.5s;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .store-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
       justify-content: center;
+    }
+
+    .store-avatar i {
+      font-size: 1.2rem;
+      color: #41afa5;
+    }
+
+    .store-info h6 {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .store-info span {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .card-stats {
+      display: flex;
       gap: 20px;
     }
-    
-    .floating-card {
-      position: relative;
-      margin: 10px auto;
-      max-width: 100%;
+
+    .stat {
+      text-align: center;
     }
-    
-    .card-1, .card-2 {
-      position: relative;
-      top: auto;
-      left: auto;
-      right: auto;
-      bottom: auto;
-      margin-bottom: 20px;
+
+    .stat strong {
+      display: block;
+      font-size: 1.1rem;
+      color: #41afa5;
     }
-  }
+
+    .stat span {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .main-hero-image {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-hero-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+
+    .floating-badge {
+      position: absolute;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sales-badge {
+      top: 20px;
+      right: 20px;
+      color: #41afa5;
+    }
+
+    .orders-badge {
+      bottom: 20px;
+      left: 20px;
+      color: #198ec8;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Typing effect styles */
+    .typing-text {
+      display: inline-block;
+      font-size: 40px;
+      color: #ecc84f;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero-content-wrapper {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+      }
+
+      .vendor-hero-title {
+        font-size: 2rem;
+        min-height: auto;
+      }
+
+      .hero-stats {
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .floating-card {
+        position: relative;
+        margin: 10px auto;
+        max-width: 100%;
+      }
+
+      .card-1,
+      .card-2 {
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        margin-bottom: 20px;
+      }
+    }
   </style>
 
-<!-- Modern Hero Section -->
-<section class="modern-vendor-hero">
-  <div class="hero-background">
-    <div class="hero-shapes">
-      <div class="shape shape-1"></div>
-      <div class="shape shape-2"></div>
-      <div class="shape shape-3"></div>
-      <div class="shape shape-4"></div>
-    </div>
-  </div>
-  
-  <div class="container">
-    <div class="hero-content-wrapper">
-      <div class="hero-text-content">
-        <div class="hero-badge">
-          <span>🚀 Join 500+ Successful Students</span>
-        </div>
-        
-        <h1 class="vendor-hero-title">
-          Transform Your 
-          <span class="gradient-text">Career</span> 
-          With<br>
-          <span class="typing-text" id="tsa-typed-text"></span>
-        </h1>
-        
-        <p class="hero-description">
-          Join True Series Academy's program. Get access to quality resources,
-          build real-world projects, and launch your career with our expert-led courses and dedicated mentorship.
-        </p>
-
-        <div class="hero-stats">
-          <div class="stat-item">
-            <div class="stat-number" data-count="300">0</div>
-            <div class="stat-label">Students Trained</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number" data-count="94">0</div>
-            <div class="stat-label">% Success Rate</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number" data-count="6">0</div>
-            <div class="stat-label">Weeks Program</div>
-          </div>
-        </div>
-
-        <div class="hero-actions">
-          <a href="/auth/register" class="btn btn-primary-lg">
-            <i class="bi bi-rocket-takeoff"></i>
-            Start Learning Now
-          </a>
-          <a href="/auth/login" class="btn btn-outline-light">
-            <i class="fa fa-message"></i>
-            Join WhatsApp Community
-          </a>
-        </div>
-      </div>
-
-      <div class="hero-visual">
-        <div class="floating-card card-1">
-          <div class="card-header">
-            <div class="store-avatar">
-              <i class="bi bi-laptop"></i>
-            </div>
-            <div class="store-info">
-              <h6>Web Dev Pro</h6>
-              <span>⭐ 4.9 (124 reviews)</span>
-            </div>
-          </div>
-          <div class="card-stats">
-            <div class="stat">
-              <strong>98%</strong>
-              <span>Completion</span>
-            </div>
-            <div class="stat">
-              <strong>6 wks</strong>
-              <span>Duration</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="floating-card card-2">
-          <div class="card-header">
-            <div class="store-avatar">
-              <i class="bi bi-phone"></i>
-            </div>
-            <div class="store-info">
-              <h6>Mobile Mastery</h6>
-              <span>⭐ 4.8 (89 reviews)</span>
-            </div>
-          </div>
-          <div class="card-stats">
-            <div class="stat">
-              <strong>95%</strong>
-              <span>Completion</span>
-            </div>
-            <div class="stat">
-              <strong>6 wks</strong>
-              <span>Duration</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="main-hero-image">
-          <img src="/images/globe.png" alt="TSA Learning Experience">
-          <div class="floating-badge sales-badge">
-            <i class="bi bi-graph-up-arrow"></i>
-            <span>+94% Success</span>
-          </div>
-          <div class="floating-badge orders-badge">
-            <i class="bi bi-award"></i>
-            <span>Certified Program</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- WhatsApp Community Join Modal -->
-<div class="modal fade" id="whatsappModal" tabindex="-1" aria-labelledby="whatsappModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header border-0 pb-0">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      
-      <!-- Modal Body -->
-      <div class="modal-body text-center px-4 pb-4 pt-0">
-        <!-- Icon -->
-        <div class="whatsapp-icon mb-3">
-          <i class="fab fa-whatsapp"></i>
-        </div>
-        
-        <!-- Title -->
-        <h4 class="modal-title fw-bold mb-2" id="whatsappModalLabel">Join Our Community</h4>
-        
-        <!-- Description -->
-        <p class="text-muted mb-4">
-          Connect with fellow learners, get updates, and participate in discussions on WhatsApp
-        </p>
-        
-        <!-- Features -->
-        <div class="features mb-4">
-          <div class="feature-item d-flex align-items-center mb-2">
-            <i class="fas fa-check-circle text-success me-2"></i>
-            <span>Get instant course updates</span>
-          </div>
-          <div class="feature-item d-flex align-items-center mb-2">
-            <i class="fas fa-check-circle text-success me-2"></i>
-            <span>Connect with instructors</span>
-          </div>
-          <div class="feature-item d-flex align-items-center">
-            <i class="fas fa-check-circle text-success me-2"></i>
-            <span>Join study groups</span>
-          </div>
-        </div>
-        
-        <!-- Action Buttons -->
-        <div class="d-grid gap-2">
-          <a href="https://chat.whatsapp.com/H0MwZwvINV19K2svyqXypS?mode=ems_copy_t" class="btn btn-success btn-sm" target="_blank" id="joinWhatsappBtn">
-            <i class="fab fa-whatsapp me-2"></i>Join WhatsApp Community
-          </a>
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-            Maybe Later
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-<!-- Rest of your existing content remains the same -->
-<section id="categories" class="mt-4">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">Categories</h2>
-      <p class="text-muted">Browse through this categories.</p>
-    </div>
-    <div class="row">
-      <%- include('./partials/courses') %>
-    </div>
-  </div>
-</section>
-
-<section class="py-5 bg-white" id="about">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">About Us?</h2>
-      <p class="text-muted">We're more than just another online course platform. Here's what makes us different.</p>
-    </div>
-
-    <div class="row align-items-center">
-      <div class="col-lg-6 mb-4 mb-lg-0">
-        <img src="/images/video-call.png" alt="6-Week Online Class" class="img-fluid w-100">
-      </div>
-
-      <div class="col-lg-6">
-        <h2 class="fw-bold mb-3">Your 6-Week Web Development Journey Starts Here</h2>
-        <p class="text-muted mb-4">
-          Join our immersive 6-week online training program that runs once every year. Designed for beginners, this
-          program walks you through HTML, CSS, JavaScript, and real-world project building — all with expert guidance
-          and a supportive learning environment.
-        </p>
-        <ul class="list-unstyled">
-          <li class="mb-2"><i class="bi bi-clock-fill text-primary me-2"></i> Fixed 6-week schedule, twice a year</li>
-          <li class="mb-2"><i class="bi bi-person-video3 text-success me-2"></i> Live class links available only to
-            paid members</li>
-          <li class="mb-2"><i class="bi bi-people-fill text-warning me-2"></i> Learn in a friendly, beginner-safe
-            space</li>
-          <li class="mb-2"><i class="bi bi-award-fill text-danger me-2"></i> Earn a certificate by completing the
-            program</li>
-        </ul>
-        <a href="/auth/register" class="btn btn-success mt-3">Join Our Program</a>
+  <!-- Modern Hero Section -->
+  <section class="modern-vendor-hero">
+    <div class="hero-background">
+      <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
       </div>
     </div>
 
-    <div class="text-center mb-5 mt-5">
-      <h2 class="fw-bold">Why Learn With Us?</h2>
-      <p class="text-muted">We're more than just another online course platform. Here's what makes us different.</p>
+    <div class="container">
+      <div class="hero-content-wrapper">
+        <div class="hero-text-content">
+          <div class="hero-badge">
+            <span>🚀 Join 500+ Successful Students</span>
+          </div>
+
+          <h1 class="vendor-hero-title">
+            Learn. Connect. Evolve.
+            <span class="">With TSA</span>
+            <br>
+            <span class="typing-text" id="tsa-typed-text"></span>
+          </h1>
+
+          <p class="hero-description">
+            Join True Series Academy's program. Get access to quality resources,
+            build real-world projects, and launch your career with our expert-led courses and dedicated mentorship.
+          </p>
+
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-number" data-count="300">0</div>
+              <div class="stat-label">Students Trained</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" data-count="94">0</div>
+              <div class="stat-label">% Success Rate</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" data-count="6">0</div>
+              <div class="stat-label">Weeks Program</div>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <a href="/auth/register" class="btn btn-primary-lg">
+              <i class="bi bi-rocket-takeoff"></i>
+              Start Learning Now
+            </a>
+            <a href="/auth/login" class="btn btn-outline-light">
+              <i class="fa fa-message"></i>
+              Join WhatsApp Community
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="floating-card card-1">
+            <div class="card-header">
+              <div class="store-avatar">
+                <i class="bi bi-laptop"></i>
+              </div>
+              <div class="store-info">
+                <h6>Web Dev Pro</h6>
+                <span>⭐ 4.9 (124 reviews)</span>
+              </div>
+            </div>
+            <div class="card-stats">
+              <div class="stat">
+                <strong>98%</strong>
+                <span>Completion</span>
+              </div>
+              <div class="stat">
+                <strong>6 wks</strong>
+                <span>Duration</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="floating-card card-2">
+            <div class="card-header">
+              <div class="store-avatar">
+                <i class="bi bi-phone"></i>
+              </div>
+              <div class="store-info">
+                <h6>Mobile Mastery</h6>
+                <span>⭐ 4.8 (89 reviews)</span>
+              </div>
+            </div>
+            <div class="card-stats">
+              <div class="stat">
+                <strong>95%</strong>
+                <span>Completion</span>
+              </div>
+              <div class="stat">
+                <strong>6 wks</strong>
+                <span>Duration</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="main-hero-image">
+            <img src="/images/globe.png" alt="TSA Learning Experience">
+            <div class="floating-badge sales-badge">
+              <i class="bi bi-graph-up-arrow"></i>
+              <span>+94% Success</span>
+            </div>
+            <div class="floating-badge orders-badge">
+              <i class="bi bi-award"></i>
+              <span>Certified Program</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <div class="row g-4">
-      <div class="col-md-6 col-lg-3 text-center">
-        <div class="p-4 h-100 shadow-sm rounded bg-light">
-          <i class="bi bi-tools display-5 text-primary mb-3"></i>
-          <h5 class="fw-bold">Hands-On Projects</h5>
-          <p class="small text-muted">Build real-world applications that you can showcase in your portfolio.</p>
+
+  <!-- WhatsApp Community Join Modal -->
+  <div class="modal fade" id="whatsappModal" tabindex="-1" aria-labelledby="whatsappModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header border-0 pb-0">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-      </div>
 
-      <div class="col-md-6 col-lg-3 text-center">
-        <div class="p-4 h-100 shadow-sm rounded bg-light">
-          <i class="bi bi-chat-dots display-5 text-success mb-3"></i>
-          <h5 class="fw-bold">1-on-1 Mentorship</h5>
-          <p class="small text-muted">Get guidance from experienced developers who care about your growth.</p>
-        </div>
-      </div>
+        <!-- Modal Body -->
+        <div class="modal-body text-center px-4 pb-4 pt-0">
+          <!-- Icon -->
+          <div class="whatsapp-icon mb-3">
+            <i class="fab fa-whatsapp"></i>
+          </div>
 
-      <div class="col-md-6 col-lg-3 text-center">
-        <div class="p-4 h-100 shadow-sm rounded bg-light">
-          <i class="bi bi-briefcase display-5 text-warning mb-3"></i>
-          <h5 class="fw-bold">Career Oriented</h5>
-          <p class="small text-muted">Learn the exact skills needed to land internships and junior roles.</p>
-        </div>
-      </div>
+          <!-- Title -->
+          <h4 class="modal-title fw-bold mb-2" id="whatsappModalLabel">Join Our Community</h4>
 
-      <div class="col-md-6 col-lg-3 text-center">
-        <div class="p-4 h-100 shadow-sm rounded bg-light">
-          <i class="bi bi-infinity display-5 text-danger mb-3"></i>
-          <h5 class="fw-bold">Lifetime Access</h5>
-          <p class="small text-muted">Revisit lessons and projects anytime, at your own pace.</p>
+          <!-- Description -->
+          <p class="text-muted mb-4">
+            Connect with fellow learners, get updates, and participate in discussions on WhatsApp
+          </p>
+
+          <!-- Features -->
+          <div class="features mb-4">
+            <div class="feature-item d-flex align-items-center mb-2">
+              <i class="fas fa-check-circle text-success me-2"></i>
+              <span>Get instant course updates</span>
+            </div>
+            <div class="feature-item d-flex align-items-center mb-2">
+              <i class="fas fa-check-circle text-success me-2"></i>
+              <span>Connect with instructors</span>
+            </div>
+            <div class="feature-item d-flex align-items-center">
+              <i class="fas fa-check-circle text-success me-2"></i>
+              <span>Join study groups</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="d-grid gap-2">
+            <a href="https://chat.whatsapp.com/H0MwZwvINV19K2svyqXypS?mode=ems_copy_t" class="btn btn-success btn-sm"
+              target="_blank" id="joinWhatsappBtn">
+              <i class="fab fa-whatsapp me-2"></i>Join WhatsApp Community
+            </a>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Maybe Later
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</section>
 
-<footer class="bg-success text-white pt-5 pb-4">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-4 mb-4">
-        <h5 class="fw-bold">About Our School</h5>
-        <p class="text-white small">
-          We run a yearly 6-week online learning program designed to help beginners learn web development the right
-          way. Practical. Friendly. Life-changing.
-        </p>
+
+
+  <!-- Rest of your existing content remains the same -->
+  <section id="categories" class="mt-4">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">Categories</h2>
+        <p class="text-muted">Browse through this categories.</p>
       </div>
-
-      <div class="col-md-4 mb-4">
-        <h5 class="fw-bold">Quick Links</h5>
-        <ul class="list-unstyled text-muted small">
-          <li><a href="/#about" class="text-white text-decoration-none">About</a></li>
-          <li><a href="/affiliate" class="text-white text-decoration-none">Referral & Affiliate</a></li>
-          <li><a href="/auth/login" class="text-white text-decoration-none">Login</a></li>
-        </ul>
-      </div>
-
-      <div class="col-md-4 mb-4">
-        <h5 class="fw-bold">Get in Touch</h5>
-        <p class="small mb-1"><i class="bi bi-envelope-fill me-2"></i> trueseriesacademy@gmail.com</p>
-        <p class="small mb-1"><i class="bi bi-geo-alt-fill me-2"></i> Remote | Online-Only Program</p>
+      <div class="row">
+        <%- include('./partials/courses') %>
       </div>
     </div>
+  </section>
 
-    <div class="text-center border-top pt-3 mt-4 text-muted small">
-      © 2025 True Series Academy. All rights reserved.
+  <section class="py-5 bg-white" id="about">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">About Us?</h2>
+        <p class="text-muted">We're more than just another online course platform. Here's what makes us different.</p>
+      </div>
+
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <img src="/images/video-call.png" alt="6-Week Online Class" class="img-fluid w-100">
+        </div>
+
+        <div class="col-lg-6">
+          <h2 class="fw-bold mb-3">Your 6-Week Web Development Journey Starts Here</h2>
+          <p class="text-muted mb-4">
+            Join our immersive 6-week online training program that runs once every year. Designed for beginners, this
+            program walks you through HTML, CSS, JavaScript, and real-world project building — all with expert guidance
+            and a supportive learning environment.
+          </p>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="bi bi-clock-fill text-primary me-2"></i> Fixed 6-week schedule, twice a year</li>
+            <li class="mb-2"><i class="bi bi-person-video3 text-success me-2"></i> Live class links available only to
+              paid members</li>
+            <li class="mb-2"><i class="bi bi-people-fill text-warning me-2"></i> Learn in a friendly, beginner-safe
+              space</li>
+            <li class="mb-2"><i class="bi bi-award-fill text-danger me-2"></i> Earn a certificate by completing the
+              program</li>
+          </ul>
+          <a href="/auth/register" class="btn btn-success mt-3">Join Our Program</a>
+        </div>
+      </div>
+
+      <div class="text-center mb-5 mt-5">
+        <h2 class="fw-bold">Why Learn With Us?</h2>
+        <p class="text-muted">We're more than just another online course platform. Here's what makes us different.</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3 text-center">
+          <div class="p-4 h-100 shadow-sm rounded bg-light">
+            <i class="bi bi-tools display-5 text-primary mb-3"></i>
+            <h5 class="fw-bold">Hands-On Projects</h5>
+            <p class="small text-muted">Build real-world applications that you can showcase in your portfolio.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 text-center">
+          <div class="p-4 h-100 shadow-sm rounded bg-light">
+            <i class="bi bi-chat-dots display-5 text-success mb-3"></i>
+            <h5 class="fw-bold">1-on-1 Mentorship</h5>
+            <p class="small text-muted">Get guidance from experienced developers who care about your growth.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 text-center">
+          <div class="p-4 h-100 shadow-sm rounded bg-light">
+            <i class="bi bi-briefcase display-5 text-warning mb-3"></i>
+            <h5 class="fw-bold">Career Oriented</h5>
+            <p class="small text-muted">Learn the exact skills needed to land internships and junior roles.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 text-center">
+          <div class="p-4 h-100 shadow-sm rounded bg-light">
+            <i class="bi bi-infinity display-5 text-danger mb-3"></i>
+            <h5 class="fw-bold">Lifetime Access</h5>
+            <p class="small text-muted">Revisit lessons and projects anytime, at your own pace.</p>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</footer>
+  </section>
 
-<script>
-  // TSA-specific typing effect
-  const tsaPhrases = [
-    "Genesis Bootcamp",
-    "Real Projects",
-    "Expert Mentors"
-  ];
+  <footer class="bg-success text-white pt-5 pb-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <h5 class="fw-bold">About Our School</h5>
+          <p class="text-white small">
+            We run a yearly 6-week online learning program designed to help beginners learn web development the right
+            way. Practical. Friendly. Life-changing.
+          </p>
+        </div>
 
-  let tsaCurrentPhrase = 0;
-  let tsaCurrentLetter = 0;
-  const tsaTypedText = document.getElementById("tsa-typed-text");
+        <div class="col-md-4 mb-4">
+          <h5 class="fw-bold">Quick Links</h5>
+          <ul class="list-unstyled text-muted small">
+            <li><a href="/#about" class="text-white text-decoration-none">About</a></li>
+            <li><a href="/affiliate" class="text-white text-decoration-none">Referral & Affiliate</a></li>
+            <li><a href="/auth/login" class="text-white text-decoration-none">Login</a></li>
+          </ul>
+        </div>
 
-  function tsaType() {
-    let phrase = tsaPhrases[tsaCurrentPhrase];
-    tsaTypedText.textContent = phrase.substring(0, tsaCurrentLetter);
-    tsaCurrentLetter++;
+        <div class="col-md-4 mb-4">
+          <h5 class="fw-bold">Get in Touch</h5>
+          <p class="small mb-1"><i class="bi bi-envelope-fill me-2"></i> trueseriesacademy@gmail.com</p>
+          <p class="small mb-1"><i class="bi bi-geo-alt-fill me-2"></i> Remote | Online-Only Program</p>
+        </div>
+      </div>
 
-    if (tsaCurrentLetter > phrase.length) {
-      setTimeout(tsaErase, 2000);
-    } else {
-      setTimeout(tsaType, 100);
-    }
-  }
+      <div class="text-center border-top pt-3 mt-4 text-muted small">
+        © 2025 True Series Academy. All rights reserved.
+      </div>
+    </div>
+  </footer>
 
-  function tsaErase() {
-    let phrase = tsaPhrases[tsaCurrentPhrase];
-    tsaTypedText.textContent = phrase.substring(0, tsaCurrentLetter);
-    tsaCurrentLetter--;
+  <script>
+const tsaPhrases = [
+  "Free Learning Resources",
+  "Premium Career Tracks",
+  "Supportive Community",
+  "Expert Mentorship",
+  "Skill Development",
+  "Income Opportunities",
+  "Collaborative Projects",
+  "Networking Events"
+];
 
-    if (tsaCurrentLetter < 0) {
-      tsaCurrentPhrase = (tsaCurrentPhrase + 1) % tsaPhrases.length;
-      setTimeout(tsaType, 500);
-    } else {
-      setTimeout(tsaErase, 50);
-    }
-  }
+    let tsaCurrentPhrase = 0;
+    let tsaCurrentLetter = 0;
+    const tsaTypedText = document.getElementById("tsa-typed-text");
 
-  // Start TSA typing effect
-  tsaType();
+    function tsaType() {
+      let phrase = tsaPhrases[tsaCurrentPhrase];
+      tsaTypedText.textContent = phrase.substring(0, tsaCurrentLetter);
+      tsaCurrentLetter++;
 
-  // Counter animation for stats
-  function animateCounters() {
-    const counters = document.querySelectorAll('.stat-number');
-    const speed = 200;
-
-    counters.forEach(counter => {
-      const target = +counter.getAttribute('data-count');
-      const count = +counter.innerText;
-      const increment = target / speed;
-
-      if (count < target) {
-        counter.innerText = Math.ceil(count + increment);
-        setTimeout(() => animateCounters(), 1);
+      if (tsaCurrentLetter > phrase.length) {
+        setTimeout(tsaErase, 2000);
       } else {
-        counter.innerText = target;
+        setTimeout(tsaType, 100);
       }
-    });
-  }
+    }
 
-  // Initialize counters when page loads
-  window.addEventListener('load', animateCounters);
-</script>
+    function tsaErase() {
+      let phrase = tsaPhrases[tsaCurrentPhrase];
+      tsaTypedText.textContent = phrase.substring(0, tsaCurrentLetter);
+      tsaCurrentLetter--;
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
+      if (tsaCurrentLetter < 0) {
+        tsaCurrentPhrase = (tsaCurrentPhrase + 1) % tsaPhrases.length;
+        setTimeout(tsaType, 500);
+      } else {
+        setTimeout(tsaErase, 50);
+      }
+    }
+
+    // Start TSA typing effect
+    tsaType();
+
+    // Counter animation for stats
+    function animateCounters() {
+      const counters = document.querySelectorAll('.stat-number');
+      const speed = 200;
+
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-count');
+        const count = +counter.innerText;
+        const increment = target / speed;
+
+        if (count < target) {
+          counter.innerText = Math.ceil(count + increment);
+          setTimeout(() => animateCounters(), 1);
+        } else {
+          counter.innerText = target;
+        }
+      });
+    }
+
+    // Initialize counters when page loads
+    window.addEventListener('load', animateCounters);
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
   // Show modal if backend indicates it should be shown
   <% if (joinCommunityModal) { %>
     const whatsappModal = new bootstrap.Modal(document.getElementById('whatsappModal'));
-    whatsappModal.show();
+        whatsappModal.show();
   <% } %>
 
-  // Add click event listener to the join button
-  document.getElementById('joinWhatsappBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-    
-    // Close the WhatsApp modal immediately
-    const whatsappModal = bootstrap.Modal.getInstance(document.getElementById('whatsappModal'));
-    whatsappModal.hide();
-    
-    // Send AJAX request (fire and forget)
-    fetch('/api/update-join-status', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({})
-    }).catch(error => console.error('Error:', error));
-    
-    // Redirect to WhatsApp immediately
-    window.open('https://chat.whatsapp.com/H0MwZwvINV19K2svyqXypS?mode=ems_copy_t', '_blank');
-  });
-});
-</script>
+        // Add click event listener to the join button
+        document.getElementById('joinWhatsappBtn').addEventListener('click', function (e) {
+          e.preventDefault();
+
+          // Close the WhatsApp modal immediately
+          const whatsappModal = bootstrap.Modal.getInstance(document.getElementById('whatsappModal'));
+          whatsappModal.hide();
+
+          // Send AJAX request (fire and forget)
+          fetch('/api/update-join-status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({})
+          }).catch(error => console.error('Error:', error));
+
+          // Redirect to WhatsApp immediately
+          window.open('https://chat.whatsapp.com/H0MwZwvINV19K2svyqXypS?mode=ems_copy_t', '_blank');
+        });
+    });
+  </script>
