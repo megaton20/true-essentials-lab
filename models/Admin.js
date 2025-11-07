@@ -72,7 +72,7 @@ class Admin extends User {
 
         static async allUsers(){
           try {
-            const result = await pool.query(`SELECT * FROM users WHERE is_email_verified = $1 AND role = $2 ORDER BY created_at DESC`, [true, 'student'])
+            const result = await pool.query(`SELECT * FROM users WHERE role = $1 ORDER BY created_at DESC`, ['student'])
              return result.rows;
           } catch (error) {
             console.log(error);
