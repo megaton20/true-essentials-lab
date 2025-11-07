@@ -100,7 +100,6 @@ app.use((err, req, res, next) => {
 });
 
 
-console.log(PORT);
 if (PORT) {
   app.listen(PORT, ()=>{
     console.log(`listing...${PORT}`);

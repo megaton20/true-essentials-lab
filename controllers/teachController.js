@@ -131,7 +131,6 @@ exports.editCourse = async (req, res) => {
 
 exports.getCourseSchedule = async (req, res) => {
   const id = req.params.id
-
   const sessions = await ClassSession.listByCourse(id)
 
   res.render('./teacher/classes', {

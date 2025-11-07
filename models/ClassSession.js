@@ -102,11 +102,19 @@ class ClassSession {
 
   static async listByCourse(courseId) {
   try {
-    const {rows:result} = await pool.query(`
-      SELECT * FROM class_sessions
-      WHERE course_id = $1
-      ORDER BY scheduled_at ASC
-    `, [courseId]);
+const {rows:result} = await pool.query(`
+  SELECT 
+    cs.*,
+    u.id as teacher_user_id,
+    u.full_name as teacher_name,
+    u.email as teacher_email
+    -- add other user columns with aliases as needed
+  FROM class_sessions cs
+  JOIN courses c ON cs.course_id = c.id
+  JOIN users u ON c.teacher_id = u.id
+  WHERE cs.course_id = $1
+  ORDER BY cs.scheduled_at ASC
+`, [courseId]);
 
     return result;
   } catch (error) {

@@ -70,7 +70,7 @@ module.exports =  {
         return  next()
       }
 
-      req.flash('error_msg', "You need to pay to access this course ...")
+      req.flash('error_msg', "You need to enroll first to access this course ...")
        return res.redirect('/user')
     }
 

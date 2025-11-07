@@ -43,7 +43,6 @@ router.get('/handler', (req, res) => {
     }
 
   } else {
-    console.log("session expired");
     return res.redirect('/auth/login')
   }
 })
