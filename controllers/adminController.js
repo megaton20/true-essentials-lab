@@ -9,6 +9,7 @@ const User = require('../models/User');
 const Course = require('../models/Course');
 const Category = require('../models/Category');
 const { uploadImage, uploadVideo } = require('../utils/uploadWithCloudinary');
+const Webinar = require('../models/Webinar');
 
 exports.adminDashboard = async (req, res) => {
   const userId = req.user.id
@@ -599,6 +600,196 @@ exports.getAttendanceForSession =  async (req, res) => {
   console.log(attendance);
   
 }
+
+
+
+
+
+// webinars
+exports.getAllWebinars = async (req, res) => {
+  try {
+    // All webinars (for both upcoming and past)
+    const allWebinars = await Webinar.allWithAttendeeCount();
+    
+    res.render('./admin/webinars', {
+      allWebinars,
+      webinars: allWebinars // for template consistency
+    });
+
+  } catch (error) {
+    console.error("Error in loading webinars:", error);
+    req.flash('error', 'Failed to load webinars');
+    res.redirect('/admin/error');
+  }
+};
+
+exports.getOneWebinar = async (req, res) => {
+  try {
+    const webinar = await Webinar.findById(req.params.id);
+    
+    if (!webinar) {
+      req.flash('error', 'Webinar not found');
+      return res.redirect('/admin/webinars');
+    }
+
+    // Get presenter information (if you have a presenters table)
+    const { rows: allPresenters } = await pool.query(`
+      SELECT p.*, u.full_name, u.email, u.avatar
+      FROM presenters p
+      JOIN users u ON u.id = p.user_id;
+    `);
+
+    // Attach attendee count to webinar
+    const attendeeCount = await Webinar.countAttendees(webinar.id);
+    webinar.attendee_count = attendeeCount;
+
+    // Attach registered attendees details
+    const attendeesQuery = `
+      SELECT wr.*, u.full_name, u.email, u.company
+      FROM webinar_registrations wr
+      JOIN users u ON u.id = wr.user_id
+      WHERE wr.webinar_id = $1
+      ORDER BY wr.registered_at DESC
+    `;
+    const { rows: attendees } = await pool.query(attendeesQuery, [webinar.id]);
+    webinar.attendees = attendees;
+
+    res.render('./admin/webinar', {
+      user: req.user,
+      webinar,
+      allPresenters: allPresenters || [],
+      attendees: attendees || []
+    });
+
+  } catch (error) {
+    console.error("Error loading webinar:", error);
+    req.flash('error', 'Failed to load webinar details');
+    res.redirect('/admin/error');
+  }
+};
+
+exports.createWebinar = async (req, res) => {
+  const {
+    title,
+    description,
+    presenter_name,
+    presenter_credentials,
+    scheduled_date,
+    duration_minutes,
+    max_attendees,
+    meeting_url,
+    thumbnail_url,
+    status,
+    takeaways
+  } = req.body;
+
+  try {
+    // Convert takeaways to JSON if it's an array
+    const takeawaysJson = Array.isArray(takeaways) ? JSON.stringify(takeaways) : JSON.stringify([takeaways].filter(Boolean));
+
+    const webinarData = {
+      id: uuidv4(),
+      title,
+      description,
+      presenter_name,
+      presenter_credentials: presenter_credentials || '',
+      scheduled_date,
+      duration_minutes: parseInt(duration_minutes) || 60,
+      max_attendees: max_attendees ? parseInt(max_attendees) : null,
+      meeting_url: meeting_url || '',
+      thumbnail_url: thumbnail_url || '',
+      status: status || 'scheduled'
+    };
+
+    const result = await Webinar.create(webinarData);
+
+    // If you want to store takeaways separately (in a webinar_takeaways table)
+    if (takeaways && takeaways.length > 0) {
+      const takeawaysInsertQuery = `
+        INSERT INTO webinar_takeaways (id, webinar_id, point, display_order)
+        VALUES ($1, $2, $3, $4)
+      `;
+      
+      for (let i = 0; i < takeaways.length; i++) {
+        if (takeaways[i].trim()) {
+          await pool.query(takeawaysInsertQuery, [
+            uuidv4(),
+            result.id,
+            takeaways[i].trim(),
+            i + 1
+          ]);
+        }
+      }
+    }
+
+    req.flash('success', 'Webinar created successfully!');
+    res.redirect('/admin/webinars');
+
+  } catch (error) {
+    console.error("Error creating webinar:", error);
+    req.flash('error', 'Failed to create webinar');
+    res.redirect('/admin/webinars');
+  }
+};
+
+// Additional webinar controller methods you might need:
+
+exports.updateWebinar = async (req, res) => {
+  try {
+    const webinarId = req.params.id;
+    const updateData = req.body;
+
+    const result = await Webinar.update(webinarId, updateData);
+    
+    if (result) {
+      req.flash('success', 'Webinar updated successfully!');
+    } else {
+      req.flash('error', 'Failed to update webinar');
+    }
+    
+    res.redirect(`/admin/webinars/${webinarId}`);
+  } catch (error) {
+    console.error("Error updating webinar:", error);
+    req.flash('error', 'Failed to update webinar');
+    res.redirect('/admin/webinars');
+  }
+};
+
+exports.deleteWebinar = async (req, res) => {
+  try {
+    const webinarId = req.params.id;
+    
+    // First delete related records (takeaways, registrations)
+    await pool.query('DELETE FROM webinar_takeaways WHERE webinar_id = $1', [webinarId]);
+    await pool.query('DELETE FROM webinar_registrations WHERE webinar_id = $1', [webinarId]);
+    
+    // Then delete the webinar
+    await Webinar.delete(webinarId);
+    
+    req.flash('success', 'Webinar deleted successfully!');
+    res.redirect('/admin/webinars');
+  } catch (error) {
+    console.error("Error deleting webinar:", error);
+    req.flash('error', 'Failed to delete webinar');
+    res.redirect('/admin/webinars');
+  }
+};
+
+exports.getUpcomingWebinars = async (req, res) => {
+  try {
+    const upcomingWebinars = await Webinar.upcoming(50); // Get next 50 upcoming
+    
+    res.render('./admin/webinars', {
+      allWebinars: upcomingWebinars,
+      webinars: upcomingWebinars,
+      pageTitle: 'Upcoming Webinars'
+    });
+  } catch (error) {
+    console.error("Error loading upcoming webinars:", error);
+    req.flash('error', 'Failed to load upcoming webinars');
+    res.redirect('/admin/webinars');
+  }
+};
 
 
 

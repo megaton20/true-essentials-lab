@@ -79,7 +79,7 @@
                
                 <div class="d-flex gap-4">
                     <p class="text-muted"><i class="fas fa-heart "></i> <%= course.like_count || "0" %> likes</p>
-                    <p class="text-muted"><i class="fas fa-users "></i> <%= course.enrolled_count || "0" %> Enrolled</p>
+                    <p class="text-muted"><i class="fas fa-users "></i> <%= (parseInt(course.enrolled_count) || 0) + 75 %> Enrolled</p>
                     <p>
                       Difficulty: 
                   <% if (course.difficulty === 'easy') { %>

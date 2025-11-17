@@ -13,17 +13,17 @@ exports.getDash = async (req, res) => {
   try {
     const userId = req.user.id;
 
-            const categories = await Category.all()
-
+    
     const teacherQuery = `SELECT id FROM teachers WHERE user_id = $1`;
     const { rows: teacherRowsId } = await pool.query(teacherQuery, [userId]);
-
+    
     if (teacherRowsId.length === 0) {
       req.flash('error', 'You are not registered as a teacher.');
       return res.redirect('/handler');
     }
-
     
+    
+    const categories = await Category.all()
     const course = await Course.listAllByCreator(userId)
 
     const assignedCourse = await Teacher.getAssignedCourses(teacherRowsId[0].id)

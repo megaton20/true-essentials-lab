@@ -48,7 +48,7 @@
                       <div class="course-title text-warning"><%= course.title %></div>
                       <div class="course-meta">
                         <!-- <span><i class="fas fa-heart text-danger"></i> <%= course.like_count || 0 %></span> -->
-                        <span><i class="fas fa-users text-light"></i> <%= course.enrolled_count || 0 %></span>
+                        <span><i class="fas fa-users text-light"></i> <%= (parseInt(course.enrolled_count) || 0) + 75 %></span>
                       </div>
                       <a href="/user/course/<%= course.id %>/details" class="btn view-button">View Course</a>
                     </div>

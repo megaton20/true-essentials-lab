@@ -38,6 +38,13 @@ router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse); /
 router.post('/courses/create', ensureAdmin, adminController.createCourse);
 // router.post('/courses/video', ensureAdmin, adminController.createCourseVideo);
 
+router.get('/webinars', ensureAdmin, adminController.getAllWebinars);
+router.get('/webinar/details/:id', ensureAdmin, adminController.getOneWebinar); // to get the Webinars deatials
+router.post('/webinars/create', ensureAdmin, adminController.createWebinar);
+router.put('/webinar/:id', ensureAdmin, adminController.updateWebinar);
+router.delete('/webinar/:id', ensureAdmin, adminController.deleteWebinar);
+// router.post('/courses/video', ensureAdmin, adminController.createCourseVideo);
+
 router.put(
     '/courses/:id/video-part',
     upload.fields([

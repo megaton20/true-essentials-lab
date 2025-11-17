@@ -3,7 +3,6 @@ const pool = require('../config/db');
 const axios = require('axios');
 const { ensureVerifiedEmail } = require('../middleware/auth')
 const { ensureAuthenticated } = require("../config/auth");
-const Category = require('../models/Category');
 
 
 
@@ -11,10 +10,8 @@ const Category = require('../models/Category');
 router.get('/', async (req, res) => {
   
   const joinCommunityModal = !req.session.showJoinCommunity
-  const categories = await Category.allWithCourses(); 
 
   res.render('index', {
-    categories: categories || [],
     joinCommunityModal
   })
 });
