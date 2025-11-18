@@ -3,9 +3,9 @@ const adminController = require('../controllers/adminController');
 const affiliateController = require('../controllers/affiliateController');
 const {ensureAdmin} = require('../middleware/auth');
 const TeacherController = require('../controllers/TeacherController');
-const { updateCourseWithVideoPart } = require('../utils/uploads');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const pool = require('../config/db');
+
+
 
 router.get('/success',ensureAdmin, (req,res)=>{
     return res.render('./admin/success') 
@@ -38,21 +38,120 @@ router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse); /
 router.post('/courses/create', ensureAdmin, adminController.createCourse);
 // router.post('/courses/video', ensureAdmin, adminController.createCourseVideo);
 
-router.get('/webinars', ensureAdmin, adminController.getAllWebinars);
-router.get('/webinar/details/:id', ensureAdmin, adminController.getOneWebinar); // to get the Webinars deatials
-router.post('/webinars/create', ensureAdmin, adminController.createWebinar);
-router.put('/webinar/:id', ensureAdmin, adminController.updateWebinar);
-router.delete('/webinar/:id', ensureAdmin, adminController.deleteWebinar);
 // router.post('/courses/video', ensureAdmin, adminController.createCourseVideo);
 
-router.put(
-    '/courses/:id/video-part',
-    upload.fields([
-        { name: 'video', maxCount: 1 },
-        { name: 'thumbnail', maxCount: 1 }
-    ]),
-    updateCourseWithVideoPart
-);
+router.post('/class/video-part-save', ensureAdmin, async (req, res) => {
+  try {
+    const { title, part_number, classeId, videoUrl, thumbnailUrl, videoPublicId, thumbnailPublicId } = req.body;
+    
+    // Validate required fields
+    if (!classeId || !part_number || !videoUrl || !thumbnailUrl) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required'
+      });
+    }
+
+    // Verify class exists
+    const classCheck = await pool.query(
+      'SELECT id, title FROM class_sessions WHERE id = $1',
+      [classeId]
+    );
+
+    if (classCheck.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Class not found'
+      });
+    }
+
+    // Check for duplicate part number
+    const existingPart = await pool.query(
+      'SELECT id FROM class_videos WHERE class_id = $1 AND part_number = $2',
+      [classeId, part_number]
+    );
+
+    if (existingPart.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Part ${part_number} already exists for this class`
+      });
+    }
+
+    // Insert into database
+    const videoId = uuidv4();
+    const videoTitle = title || `Part ${part_number}`;
+
+    await pool.query(
+      `INSERT INTO class_videos (
+        id, class_id, title, video_url, video_public_id,
+        thumbnail_url, thumbnail_public_id, part_number, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
+      [
+        videoId,
+        classeId,
+        videoTitle,
+        videoUrl,
+        videoPublicId,
+        thumbnailUrl,
+        thumbnailPublicId,
+        part_number
+      ]
+    );
+
+    return res.json({
+      success: true,
+      message: 'Video uploaded successfully',
+      videoId: videoId
+    });
+
+  } catch (error) {
+    console.error('Database error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to save video information'
+    });
+  }
+});
+
+router.delete('/class/video/delete',async (req, res)=>{
+
+    const {classVideoId, video_public_id, thumbnail_public_id, class_id } = req.body
+    
+    
+  try {
+
+        const { rows } = await pool.query(
+      'SELECT video_public_id, thumbnail_public_id FROM class_videos WHERE id = $1',
+      [classVideoId]
+    );
+
+    if (rows.length === 0) {
+      req.flash('error_msg', 'Video not found');
+      return res.redirect(`/teacher/class/${class_id}`);
+    }
+
+        // Delete both from Cloudinary
+    if (video_public_id) {
+      await cloudinary.uploader.destroy(video_public_id, { resource_type: 'video' });
+    }
+
+    if (thumbnail_public_id) {
+      await cloudinary.uploader.destroy(thumbnail_public_id, { resource_type: 'image' });
+    }
+
+    await pool.query('DELETE FROM class_videos WHERE id = $1', [classVideoId]);
+
+    req.flash('success_msg', 'Video deleted');
+    res.redirect(`/teacher/class/${class_id}`);
+  } catch (err) {
+    console.error('Error deleting video:', err);
+    req.flash('error_msg', 'Failed to delete video');
+      return res.redirect(`/teacher/class/${class_id}`);
+  }
+
+
+})
 
 router.put('/courses/:id', ensureAdmin, adminController.editCourse);
 router.get('/course/class/:id', ensureAdmin, adminController.getCourseSchedule);  // to get the class schedule

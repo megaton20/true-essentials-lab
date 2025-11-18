@@ -1,23 +1,4 @@
 
- <style>
-.takeaways-container .input-group-text {
-  background-color: #f8f9fa;
-  border-right: none;
-}
-.takeaways-container .form-control {
-  border-left: none;
-}
-.modal-header {
-  border-bottom: 2px solid #dee2e6;
-}
-.modal-footer {
-  border-top: 1px solid #dee2e6;
-}
-.form-label {
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-</style>
 <%-include('./partials/topnav') %>
 
 
@@ -42,9 +23,6 @@
                 <i class="fas fa-code"></i> Generate Referral
               </button>
 
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createWebinarModal">
-              <i class="fas fa-video"></i> Create Webinar
-            </button>
 
               <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCourseModal">
                 <i class="fas fa-code"></i> Create Course
@@ -141,6 +119,11 @@
             </div>
 
             <div class="mb-3">
+              <label for="classTitle" class="form-label">Course Price</label>
+              <input type="number" class="form-control" id="price" name="price" required>
+            </div>
+
+            <div class="mb-3">
               <label class="form-label">Category</label>
               <select name="category_id" class="form-select" id="edit-category" required>
                 <% if (categories && categories.length> 0) { %>
@@ -217,139 +200,3 @@
         </form>
       </div>
     </div>
-
-
-    <div class="modal fade" id="createWebinarModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <form class="modal-content" method="POST" action="/admin/webinars/create">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title"><i class="fas fa-video me-2"></i>Schedule New Webinar</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <!-- Left Column -->
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label">Webinar Title</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-heading"></i></span>
-                <input type="text" name="title" class="form-control" placeholder="Enter webinar title" required />
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Presenter Name</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                <input type="text" name="presenter_name" class="form-control" placeholder="Presenter's full name" required />
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Presenter Credentials</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
-                <input type="text" name="presenter_credentials" class="form-control" placeholder="e.g., PhD, Certified Expert, etc." />
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Scheduled Date & Time</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                <input type="datetime-local" name="scheduled_date" class="form-control" required />
-              </div>
-            </div>
-          </div>
-
-          <!-- Right Column -->
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label">Duration (minutes)</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                <input type="number" name="duration_minutes" class="form-control" value="60" min="15" max="240" required />
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Maximum Attendees</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-users"></i></span>
-                <input type="number" name="max_attendees" class="form-control" placeholder="Leave empty for unlimited" min="1" />
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Meeting URL</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-link"></i></span>
-                <input type="url" name="meeting_url" class="form-control" placeholder="Zoom, Teams, or other meeting link" />
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Thumbnail URL</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-image"></i></span>
-                <input type="url" name="thumbnail_url" class="form-control" placeholder="Link to webinar thumbnail image" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Full Width Fields -->
-        <div class="row">
-          <div class="col-12">
-            <div class="mb-3">
-              <label class="form-label">Webinar Description</label>
-              <textarea name="description" rows="4" class="form-control" placeholder="Detailed description of the webinar content, learning objectives, and key topics..." required></textarea>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Initial Status</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
-                <select name="status" class="form-select" required>
-                  <option value="scheduled" selected>Scheduled</option>
-                  <option value="draft">Draft</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Key Takeaways Section -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">What attendees will learn</label>
-              <div class="takeaways-container">
-                <div class="input-group mb-2">
-                  <span class="input-group-text"><i class="fas fa-check text-success"></i></span>
-                  <input type="text" name="takeaways" class="form-control" placeholder="Key learning point 1" required />
-                </div>
-                <div class="input-group mb-2">
-                  <span class="input-group-text"><i class="fas fa-check text-success"></i></span>
-                  <input type="text" name="takeaways" class="form-control" placeholder="Key learning point 2" required />
-                </div>
-                <div class="input-group mb-2">
-                  <span class="input-group-text"><i class="fas fa-check text-success"></i></span>
-                  <input type="text" name="takeaways" class="form-control" placeholder="Key learning point 3" required />
-                </div>
-              </div>
-              <small class="text-muted">Add 3-5 key takeaways that attendees will gain from this webinar</small>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-          <i class="fas fa-times me-1"></i> Cancel
-        </button>
-        <button type="submit" class="btn btn-primary">
-          <i class="fas fa-calendar-plus me-1"></i> Schedule Webinar
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-

@@ -109,7 +109,7 @@
                             <div class="mb-2">
                               <h6 class="mb-1 text-truncate" title="<%= data.title %>">Title: <%= data.title %></h6>
                               <p class="text-muted small text-truncate">Desc: <%= data.description %></p>
-                              <p class="text-muted small text-truncate">Tutor: <%= data.teacher %></p>
+                              <p class="text-muted small text-truncate">Host: <%= data.teacher %></p>
                               <p class="text-muted small mb-0" style="font-size: 11px;">
                                 <%= scheduled.toLocaleString('en-US', {
                                   year: 'numeric',
@@ -134,7 +134,7 @@
                               <% } %>
                               <% } %>
                               
-                              <a href="/user/class/<%=data.id%>/course/<%=courseId%>/category/<%=categoryId%>" class="btn btn-outline-secondary">View History</a>
+                              <a href="/user/class/<%=data.id%>/course/<%=courseId%>/category/<%=categoryId%>" class="btn btn-outline-success"> <i class="fas fa-video"></i> Watch Video</a>
 
                             </div>
                           </div>
