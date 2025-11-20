@@ -19,13 +19,13 @@
           <div class="d-flex justify-content-between align-items-center mb-3">
             <a href="/teacher" class="btn btn-outline-primary btn-sm">Back</a>
               <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCourseModal">
-                  <i class="fas fa-code"></i> Create Course
+                  <i class="fas fa-code"></i> Create Program
                 </button>
           </div>
           <%- include('../partials/messages') %>
 
            <section class="mb-4">
-            <h5 class="text-primary">📘 My Courses </h5>
+            <h5 class="text-primary">📘 My Programs </h5>
             <div class="row">
               <% courses.forEach((data, index) => { %>
                 <%- include('./partials/course-card', { data, index }) %>
@@ -39,22 +39,22 @@
   </div>
 
 
-  <!-- Create Course Modal -->
+  <!-- Create Program Modal -->
 <div class="modal fade" id="createCourseModal" tabindex="-1">
   <div class="modal-dialog">
     <form class="modal-content" method="POST" action="/teacher/courses/create">
       <div class="modal-header">
-        <h5 class="modal-title">Create New Course</h5>
+        <h5 class="modal-title">Create New Program</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <div class="mb-3">
-          <label class="form-label">Course Title</label>
+          <label class="form-label">Program Title</label>
           <input type="text" name="title" class="form-control" required />
         </div>
 
             <div class="mb-3">
-              <label for="classTitle" class="form-label">Course Price</label>
+              <label for="classTitle" class="form-label">Program Price</label>
               <input type="number" class="form-control" id="price" name="price" >
             </div>
 
@@ -83,7 +83,7 @@
      
         
         <div class="mb-3">
-          <label class="form-label">Course Description</label>
+          <label class="form-label">Program Description</label>
           <textarea name="description" rows="3" class="form-control" required></textarea>
         </div>
 
@@ -98,7 +98,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Course</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Program</button>
       </div>
     </form>
   </div>

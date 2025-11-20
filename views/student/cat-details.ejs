@@ -38,26 +38,26 @@
       
 
           <div class="row">
-               <!-- Course List -->
+               <!-- Program List -->
         <% if (courses && courses.length > 0) { %>
 
-          <p class="mb-4 text-warning">Available courses</p>
+          <p class="mb-4 text-warning">Available Programs</p>
 
           <% courses.forEach(function (data) { %>
             <div class="col-md-4 mb-3">
               <div class="p-3 border rounded shadow-sm h-100 d-flex flex-column justify-content-between class-card" data-aos="fade">
 
                 <div class="d-flex align-items-start gap-3">
-                  <!-- Course Image -->
+                  <!-- Program Image -->
                   <div style="flex-shrink: 0;">
                     <img 
                       src="<%= data.image_url || '/images/thumbnail.png' %>" 
-                      alt="Course image" 
+                      alt="Program image" 
                       class="img-fluid rounded" 
                       style="width: 70px; height: 70px; object-fit: cover;">
                   </div>
 
-                  <!-- Course Info -->
+                  <!-- Program Info -->
                   <div class="flex-grow-1 text-truncate" style="min-width: 0;">
                     <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
                     <p class="mb-1 text-muted text-truncate" style="font-size: 13px;"><%= data.description %></p>
@@ -111,7 +111,7 @@
                 <!-- Action Button -->
                 <div class="mt-2 ">
                   <% if (enrolledCourseIds.includes(data.id)) { %>
-                    <!-- <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="btn btn-sm btn-success ">You own This Course</a> -->
+                    <!-- <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="btn btn-sm btn-success ">You own This Program</a> -->
                   <% } else { %>
               
                   <% } %>
@@ -121,9 +121,9 @@
             </div>
           <% }); %>
 
-            <!-- if no course listed -->
+            <!-- if no Program listed -->
                <% } else { %>
-                  <p class="mb-1">No Course Listed for this Category at the moment.</p>
+                  <p class="mb-1">No Program Listed for this Category at the moment.</p>
                 <% } %>
           </div>
         </div>

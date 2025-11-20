@@ -4,7 +4,7 @@ const affiliateController = require('../controllers/affiliateController');
 const {ensureAdmin} = require('../middleware/auth');
 const TeacherController = require('../controllers/TeacherController');
 const pool = require('../config/db');
-
+const cloudinary = require('cloudinary').v2;
 
 
 router.get('/success',ensureAdmin, (req,res)=>{
@@ -63,7 +63,7 @@ router.post('/class/video-part-save', ensureAdmin, async (req, res) => {
         success: false,
         message: 'Class not found'
       });
-    }
+    } 
 
     // Check for duplicate part number
     const existingPart = await pool.query(

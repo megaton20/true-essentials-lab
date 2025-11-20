@@ -67,13 +67,13 @@
 
 
             <div class="container mt-3 mb-5">
-                <!-- Course Banner -->
+                <!-- Program Banner -->
                 <div 
                     class="course-banner"
                     style="background-image: url('<%= course.image_url || '/images/thumbnail.png' %>')">
                 </div>
 
-                <!-- Course Info -->
+                <!-- Program Info -->
                 <h4 class="mb-1"><%= course.title %></h4>
                 <p class="text-muted mb-2" style="font-size:12px;">Created by <%= course.teacher_name || "Course Instructor" %></p>
                
@@ -120,7 +120,7 @@
               <div class="tab-content" id="courseTabsContent">
                 <!-- Description Tab -->
                 <div class="tab-pane fade show active" id="desc" role="tabpanel" aria-labelledby="desc-tab">
-                  <p class="fw-bold">Course Description</p>
+                  <p class="fw-bold">Program Description</p>
                   <div class="mb-4">
                     <p><%= course.description %></p>
                   </div>
@@ -150,45 +150,52 @@
                 <br>
                 <br>
 
-            <!-- Desktop Button -->
-            <div class="enroll-btn-desktop mb-3 mt-4">
-                <% if (isEnrolled) { %>
-                <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success btn-block">View Course Schedules</a>
-                <% } else { %>
-                <form method="POST" action="/user/course/<%= course.id %>/enroll" class="enroll-form" data-course-id="<%= course.id %>" data-price="<%= course.price %>">
-                      <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
-                      <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
-                      <input type="hidden" name="course_id" class="courseId" value="<%= course.id %>">
-                      <input type="hidden" name="amount" class="amount" value="<%= course.price %>">
-                    <% if (course.price > 0) { %>
-                    <button type="submit" class="btn btn-success btn-block">Enroll Now For ₦<%= course.price %></button>
-                <% } else { %>
-                    <button type="submit" class="btn btn-success btn-block">Enroll For Free Now</button>
-                <% } %> 
-                </form>
-                <% } %>
-            </div>
-            </div>
+                         <% if (course.isOpen) { %>
+                                    <!-- Desktop Button -->
+                              <div class="enroll-btn-desktop mb-3 mt-4">
+                                  <% if (isEnrolled) { %>
+                                  <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success btn-block">View Course Schedules</a>
+                                  <% } else { %>
+                                  <form method="POST" action="/user/course/<%= course.id %>/enroll" class="enroll-form" data-course-id="<%= course.id %>" data-price="<%= course.price %>">
+                                        <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
+                                        <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
+                                        <input type="hidden" name="course_id" class="courseId" value="<%= course.id %>">
+                                        <input type="hidden" name="amount" class="amount" value="<%= course.price %>">
+                                      <% if (course.price > 0) { %>
+                                      <button type="submit" class="btn btn-success btn-block">Enroll Now For ₦<%= course.price %></button>
+                                  <% } else { %>
+                                      <button type="submit" class="btn btn-success btn-block">Enroll For Free Now</button>
+                                  <% } %> 
+                                  </form>
+                                  <% } %>
+                              </div>
+                              </div>
 
-            <!-- Sticky Button on Mobile -->
-            <div class="sticky-enroll-btn text-center">
-            <% if (isEnrolled) { %>
-                <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success w-100">View Course Schedules </a>
-            <% } else { %>
-                <form method="POST" action="/user/course/<%= course.id %>/enroll" class="enroll-form" data-course-id="<%= course.id %>" data-price="<%= course.price %>">
-                      <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
-                      <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
-                      <input type="hidden" name="course_id" class="courseId" value="<%= course.id %>">
-                      <input type="hidden" name="amount" class="amount" value="<%= course.price %>">
-                      <% if (course.price > 0) { %>
-                        <button type="submit" class="btn btn-success w-100 money-format">Enroll Now For ₦<%= course.price %></button>
-                <% } else { %>
-                    <button type="submit" class="btn btn-success w-100">Enroll For Free Now</button>
-                <% } %> 
-                </form>
-            <% } %>
-            </div>
+                              <!-- Sticky Button on Mobile -->
+                              <div class="sticky-enroll-btn text-center">
+                              <% if (isEnrolled) { %>
+                                  <a href="/user/course/<%= course.id %>/<%= course.category_id %>" class="btn btn-success w-100">View Course Schedules </a>
+                              <% } else { %>
+                                  <form method="POST" action="/user/course/<%= course.id %>/enroll" class="enroll-form" data-course-id="<%= course.id %>" data-price="<%= course.price %>">
+                                        <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
+                                        <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
+                                        <input type="hidden" name="course_id" class="courseId" value="<%= course.id %>">
+                                        <input type="hidden" name="amount" class="amount" value="<%= course.price %>">
+                                        <% if (course.price > 0) { %>
+                                          <button type="submit" class="btn btn-success w-100 money-format">Enroll Now For ₦<%= course.price %></button>
+                                  <% } else { %>
+                                      <button type="submit" class="btn btn-success w-100">Enroll For Free Now</button>
+                                  <% } %> 
+                                  </form>
+                              <% } %>
+                              </div>
 
+                            <% } else { %>
+                              <button class="mb-1 btn btn-danger" disabled> <i class="fas fa-lock text-light"></i> Program is Closed at the mpment</button>
+                            
+                              <% } %>
+
+       
         
       </main>
     </div>

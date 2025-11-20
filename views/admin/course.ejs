@@ -32,7 +32,7 @@
           <%- include('../partials/messages') %>
 
           <div class="row">
-            <!-- Course Info Card -->
+            <!-- program Info Card -->
             <div class="col-md-8">
               <div class="mt-2 p-3 border rounded shadow-sm bg-light">
                 <h4 class="mb-2"><%= course.title %></h4>
@@ -72,7 +72,7 @@
                     <% }) %>
                   </ul>
                 <% } else { %>
-                  <p class="text-muted">No teachers assigned to this course yet.</p>
+                  <p class="text-muted">No teachers assigned to this program yet.</p>
                 <% } %>
               </div>
             </div>
@@ -115,17 +115,17 @@
       <form class="modal-content" method="post" action="/admin/courses/<%= course.id %>">
         <input type="hidden" name="_method" value="PUT">
         <div class="modal-header">
-          <h5 class="modal-title">Edit Class Details</h5>
+          <h5 class="modal-title">Edit Program Details</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
             <div class="mb-3">
-              <label for="classTitle" class="form-label">Class Title</label>
+              <label for="classTitle" class="form-label">Program Title</label>
               <input type="text" class="form-control" id="classTitle" name="title" value="<%= course.title %>" required>
             </div>
 
              <div class="mb-3">
-              <label for="classTitle" class="form-label">Course Price</label>
+              <label for="classTitle" class="form-label">Program Price</label>
               <input type="number" class="form-control" id="price" name="price" value="<%= course.price %>" required>
             </div>
 
