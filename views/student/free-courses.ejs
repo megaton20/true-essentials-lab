@@ -40,11 +40,11 @@
                 <div class="d-flex align-items-start gap-3">
                   <!-- Program Image -->
                   <div style="flex-shrink: 0;">
-                    <img 
-                      src="<%= data.image_url || '/images/thumbnail.png' %>" 
-                      alt="Program image" 
-                      class="img-fluid rounded" 
-                      style="width: 100px; height: 100px; object-fit: cover;">
+                     <% if (data.image_url == "default.jpg") { %>
+                              <img src="/images/thumbnail.png" alt="Program image" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
+                              <% } else { %>
+                                <img src="/uploads/<%= data.image_url  %>" alt="Program image" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
+                              <% } %>
                   </div>
 
                   <!-- Program Info -->

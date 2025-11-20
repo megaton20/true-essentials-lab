@@ -68,10 +68,11 @@
 
             <div class="container mt-3 mb-5">
                 <!-- Program Banner -->
-                <div 
-                    class="course-banner"
-                    style="background-image: url('<%= course.image_url || '/images/thumbnail.png' %>')">
-                </div>
+                  <% if (course.image_url == "default.jpg") { %>
+                              <div  class="course-banner" style="background-image: url('/images/thumbnail.png')"></div>
+                              <% } else { %>
+                                <div  class="course-banner" style="background-image: url('/uploads/<%= course.image_url %>)"></div>
+                              <% } %>
 
                 <!-- Program Info -->
                 <h4 class="mb-1"><%= course.title %></h4>
