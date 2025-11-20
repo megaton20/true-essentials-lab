@@ -2,8 +2,22 @@
   <div class="class-card border d-flex flex-column justify-content-between p-2 shadow-sm" data-aos="fade-up">
     
     <!-- Top: Status Badge -->
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <span class="status-badge">Active: <%= data.status %></span>
+    <div class="d-flex justify-content-between align-items-center mb-2" style="">
+      <span class="status-badge">Active: <!-- Toggle: open/close -->
+              <form action="/admin/courses/<%= data.id%>" method="POST">
+                <input type="hidden" name="_method" value="PUT">
+                <div class="form-check form-switch">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="toggleRegistration" 
+                    name="currentStatus" 
+                    onchange="this.form.submit()" 
+                    <%= data.isOpen ? 'checked' : '' %>
+                    >
+                </div>
+              </form>
+            </span>
     </div>
 
     <!-- Middle: Title and Date -->
@@ -30,7 +44,8 @@
             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-<%= data.id %>">
               <i class="fas fa-trash"></i>
             </button>
-
+ 
+ 
     </div>
 
   </div>

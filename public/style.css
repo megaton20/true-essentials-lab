@@ -326,7 +326,7 @@ body{
   max-width: 100%;
 }
 .class-card {
-  height: 150px;
+  height: 160px;
   overflow: hidden;
   display: flex;
   flex-direction: column;

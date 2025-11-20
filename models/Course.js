@@ -102,7 +102,7 @@ static async create({ id, title, description, teacherId, category_id, price,leve
     try {
       const result = await pool.query(
         `SELECT * FROM courses ORDER BY created_at DESC;`
-      );
+      );      
       return result.rows.map(row => new Course(row));
     } catch (error) {
       console.error('Error listing all courses:', error);
@@ -260,6 +260,20 @@ static async create({ id, title, description, teacherId, category_id, price,leve
       return rows;
     }
 
+
+  static async toggleCourseOpen(id, visible) {
+   try {
+     const result = await pool.query(`UPDATE courses SET "isOpen" = $1 WHERE id = $2`, [visible, id]);
+    return result.rowCount
+   } catch (error) {
+
+    console.log(error);
+    
+     console.log(`error in toggle func`);
+    return null
+    
+   }
+  }
 
 }
 

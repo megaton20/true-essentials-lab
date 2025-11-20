@@ -36,7 +36,7 @@ router.put('/referral/:id', ensureAdmin, adminController.findReferralCode);
 router.get('/courses', ensureAdmin, adminController.getAllCourse);
 router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse); // to get the course deatials
 router.post('/courses/create', ensureAdmin, adminController.createCourse);
-// router.post('/courses/video', ensureAdmin, adminController.createCourseVideo);
+router.put('/courses/:courseId', ensureAdmin, adminController.openCourseAction); // todo
 
 // router.post('/courses/video', ensureAdmin, adminController.createCourseVideo);
 

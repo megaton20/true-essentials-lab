@@ -535,6 +535,35 @@ exports.completeClass = async (req, res) => {
   }
 };
 
+exports.openCourseAction = async (req, res) => {
+  const courseId = req.params.courseId
+  const {currentStatus} = req.body
+  
+  console.log(req.body);
+  let newState = false
+  if (currentStatus == "on") {
+    newState = true
+  }
+  
+  
+  try {
+    const isToggle = await Course.toggleCourseOpen(courseId, newState);
+    
+    if (isToggle) {
+     req.flash("success_msg", "Course is open")  
+    }else{
+      req.flash("error_msg", "toggle failed")  
+
+    }
+      
+    return res.redirect(`/admin/courses`);
+  } catch (error) {
+    console.log(`error toggle course: ${error}`);
+    res.redirect('/')
+  }
+};
+
+
 
 exports.deleteClass = async (req, res) => {
   const classID = req.params.id
