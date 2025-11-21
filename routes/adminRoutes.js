@@ -21,7 +21,7 @@ router.delete('/users/delete/:id', ensureAdmin, adminController.deleteUser);
 
 router.post('/class', ensureAdmin, adminController.createClass);
 router.get('/class/:id/:course', ensureAdmin, adminController.getClassSession);
-router.put('/class/:id/edit', ensureAdmin, adminController.updateById);
+router.put('/class/:id/edit', ensureAdmin, adminController.updateClassSessionById);
 router.put('/class/:classId/:status', ensureAdmin, adminController.toggleClasssVisibility);
 router.delete('/class/:id', ensureAdmin, adminController.deleteClass);
 router.post('/class/complete/:classId', ensureAdmin, adminController.completeClass);
@@ -36,7 +36,8 @@ router.put('/referral/:id', ensureAdmin, adminController.findReferralCode);
 router.get('/courses', ensureAdmin, adminController.getAllCourse);
 router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse); // to get the course deatials
 router.post('/courses/create', ensureAdmin, adminController.createCourse);
-router.put('/courses/:courseId', ensureAdmin, adminController.openCourseAction); // todo
+router.put('/courses/:id', ensureAdmin, adminController.editCourse);
+router.put('/course/:courseId', ensureAdmin, adminController.openCourseAction); // todo
 
 // router.post('/courses/video', ensureAdmin, adminController.createCourseVideo);
 

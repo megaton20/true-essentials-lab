@@ -33,11 +33,9 @@
               <p> <%=courses.description%></p>
               <hr>
             </div>
-          </div>
-
-             <ul class="list-unstyled ps-1">
+                   <ul class="list-unstyled ps-1">
                   <% if (courses.takeaways && courses.takeaways.length > 0) { %>
-                    <p>Take away from this Program</p>
+                 
                     <% courses.takeaways.forEach(function(takeaway) { %>
                       <li class="d-flex align-items-center mb-2">
                         <span class="check-circle-icon me-2">
@@ -50,21 +48,22 @@
                     <li class="text-muted">No takeaways provided.</li>
                   <% } %>
                 </ul>
+          </div>
 
      
           <!-- Stats -->
 
-      
+      <hr>
          
-
+        <% if (!allSessionsComplete) { %>
               <div class="mb-4">
-        
-                 <h5>Class Schedules</h5>
+    
+                 <h5> Schedules</h5> <br>
                     <% if (sessions.length === 0) { %>
                       <div class="text-center my-5">
-                        <h6 class="text-muted">📚 No class sessions scheduled for this course yet.</h6>
+                        <h6 class="text-muted">📚 No class sessions scheduled for this Program yet.</h6>
                         <p class="text-muted">Please check back later.</p>
-                        <a href="/user" class="btn btn-outline-secondary">See Other courses</a>
+                        <a href="/user" class="btn btn-outline-secondary">See Other Programs</a>
                       </div>
                     <% } else { %>
                       <div class="row">                          
@@ -83,20 +82,25 @@
                           if (!data.status) {
                             statusText = 'waiting for Tutor';
                             statusClass = 'bg-warning';
+                            statusTextColor = 'text-muted';
                           } else if (data.is_joined && isToday) {
                             statusText = 'Attended';
                             statusClass = 'bg-success';
+                            statusTextColor = 'text-success';
                             showRejoin = true;
                           } else if (!data.is_joined && isToday) {
                             statusText = 'Ongoing';
                             statusClass = 'bg-success';
+                            statusTextColor = 'text-success';
                             showJoin = true;
                           } else if (!data.is_joined && isFuture) {
                             statusText = 'Upcoming';
                             statusClass = 'bg-info';
+                            statusTextColor = 'text-info';
                           } else if (isPast) {
                             statusText = 'Closed Session';
                             statusClass = 'bg-danger';
+                            statusTextColor = 'text-danger';
                           }
                         %>
 
@@ -107,7 +111,7 @@
                             </div>
 
                             <div class="mb-2">
-                              <h6 class="mb-1 text-truncate" title="<%= data.title %>">Title: <%= data.title %></h6>
+                              <h6 class="mb-1 text-truncate <%= statusTextColor %>" title="<%= data.title %>">Title: <%= data.title %></h6>
                               <p class="text-muted small text-truncate">Desc: <%= data.description %></p>
                               <p class="text-muted small text-truncate">Host: <%= data.teacher %></p>
                               <p class="text-muted small mb-0" style="font-size: 11px;">
@@ -122,7 +126,7 @@
                             </div>
 
                             <div class="d-flex gap-2">
-                                <% if (!showJoin && !showRejoin) { %>
+                                <% if (!showJoin && !showRejoin && !isPast) { %>
                                 
                                   <button class="btn btn-sm btn-outline-danger " disabled> <i class="fas fa-lock"></i> Class is Locked!</button>
                               <% } else { %>
@@ -132,6 +136,7 @@
                               <% } else if (showJoin) { %>
                                 <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Join The Class Now</a>
                               <% } %>
+                              <button class="btn btn-sm btn-success " disabled> <i class="fas fa-check"></i></button>
                               <% } %>
                               
                               <a href="/user/class/<%=data.id%>/course/<%=courseId%>/category/<%=categoryId%>" class="btn btn-outline-success"> <i class="fas fa-video"></i> Watch Video</a>
@@ -143,10 +148,19 @@
                       </div>
                     <% } %>
            
-                 
-
-            
               </div>
+
+                 <% } else { %>
+                    
+                   <div class="text-center my-5">
+                    <img src="/images/checked.png" class="img-fluid" style="height: 100px; width: 100px;" alt="">
+                        <h6 class="text-success">Program Completed</h6>
+                        <br>
+                        <p class="text-muted">Don't miss other programs</p>
+                        <a href="/user" class=" mt-3 btn btn-outline-secondary">See Other Programs</a>
+                      </div>
+
+                    <% } %>
         
         </main>
 

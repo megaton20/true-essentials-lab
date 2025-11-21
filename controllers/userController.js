@@ -218,6 +218,8 @@ exports.getCourseSchedule = async (req, res) => {
 
   let sessions = await ClassSession.listByCourse(req.params.id);
 
+const allSessionsComplete = sessions.length > 0 && sessions.every(session => session.is_complete);
+  
   const sessionIds = sessions.map(s => s.id);
   const attendance = await Attendance.getBySessionIds(req.user.id, sessionIds);
 
@@ -256,7 +258,8 @@ exports.getCourseSchedule = async (req, res) => {
     user: req.user,
     categoryId,
     courseId,
-    courses: courses || []
+    courses: courses || [],
+    allSessionsComplete
   });
 };
 

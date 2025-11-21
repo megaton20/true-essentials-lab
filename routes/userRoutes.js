@@ -15,7 +15,7 @@ router.get('/category/:id', ensureVerifiedEmail, user.getCategoryCourses);
 router.get('/profile', ensureVerifiedEmail, user.getProfile);
 router.get('/my-courses', ensureVerifiedEmail, user.getCourses);
 router.post('/profile/update', ensureVerifiedEmail, user.editProfile);
-router.get('/course/:id/details', ensureVerifiedEmail, user.getCourseDetails); // see class schedules
+router.get('/course/:id/details', ensureVerifiedEmail, user.getCourseDetails);
 router.get('/course/:id/:categoryId', ensureVerifiedEmail,ensureEnrolled, user.getCourseSchedule); // see class schedules
 router.get('/class/:id/course/:courseId/category/:categoryId', ensureVerifiedEmail, user.getClassDetails); // see class details
 router.get('/class-history/:id', ensureVerifiedEmail,ensureEnrolled, user.studentClassRecord);

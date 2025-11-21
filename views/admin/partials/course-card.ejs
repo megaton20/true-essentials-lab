@@ -1,14 +1,15 @@
+
 <div class="col-md-3 mb-3">
-  <div class="class-card border d-flex flex-column justify-content-between p-2 shadow-sm" data-aos="fade-up">
+  <div class="class-card  <%= data.is_open ? 'active-card' : 'border' %> d-flex flex-column justify-content-between p-2 shadow-sm" data-aos="fade-up">
 
     <!-- Top: Status Badge -->
     <div class="d-flex justify-content-between align-items-center mb-2">
       <span class="status-badge">Active:
-          <form action="/admin/courses/<%= data.id%>" method="POST">
+          <form action="/admin/course/<%= data.id%>" method="POST">
             <input type="hidden" name="_method" value="PUT">
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" id="toggleRegistration" name="currentStatus"
-                onchange="this.form.submit()" <%= data.isOpen ? 'checked' : '' %>
+                onchange="this.form.submit()" <%= data.is_open ? 'checked' : '' %>
               >
             </div>
           </form>
@@ -16,11 +17,11 @@
     </div>
 
     <!-- Middle: Title and Date -->
-    <div class="mb-2">
-      <p class="text-muted mb-1 text-truncate" title="<%= data.title %>">
+    <div class="mb-2 ">
+      <p class="<%= data.is_open ? 'text-success' : 'text-muted' %> mb-1 text-truncate" title="<%= data.title %>">
         <%= data.title %>
       </p>
-      <p class="text-muted mb-0" style="font-size: 11px;">
+      <p class="<%= data.is_open ? 'text-success' : 'text-muted' %> mb-0" style="font-size: 11px;">
         <%= new Date(data.created_at).toLocaleString('en-US', { year: 'numeric' , month: 'long' , day: 'numeric' ,
           hour: 'numeric' , minute: '2-digit' }) %>
       </p>
@@ -28,8 +29,8 @@
 
     <!-- Bottom: Action -->
     <div class="d-flex gap-1 flex-wrap">
-      <a href="/admin/courses/details/<%= data.id %>" class="btn btn-sm btn-outline-secondary">Details</a>
-      <a href="/admin/course/class/<%= data.id %>" class="btn btn-sm btn-outline-secondary">Scheduled</a>
+      <a href="/admin/courses/details/<%= data.id %>" class="btn btn-sm <%= data.is_open ? 'btn-outline-success' : 'btn-outline-secondary' %> ">Details</a>
+      <a href="/admin/course/class/<%= data.id %>" class="btn btn-sm <%= data.is_open ? 'btn-outline-success' : 'btn-outline-secondary' %>">Scheduled</a>
 
 
       <!-- Trigger Button -->

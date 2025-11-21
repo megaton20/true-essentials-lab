@@ -217,7 +217,7 @@ exports.getAllCourse = async (req, res) => {
     // All courses (for both current and past)
     const allCourses = await Course.listAll();
     const categories = await Category.all()
-
+    
     res.render('./admin/courses', {
       allCourses,
       categories: categories || []
@@ -450,7 +450,7 @@ exports.grantAccess = async (req, res) => {
   }
 }
 
-exports.updateById = async (req, res) => {
+exports.updateClassSessionById = async (req, res) => {
   const {title, description, scheduled_at, meet_link, courseId}= req.body
   const id = req.params.id
 
@@ -536,7 +536,6 @@ exports.openCourseAction = async (req, res) => {
   const courseId = req.params.courseId
   const {currentStatus} = req.body
   
-  console.log(req.body);
   let newState = false
   if (currentStatus == "on") {
     newState = true

@@ -12,7 +12,7 @@ class Course {
         description TEXT,
         difficulty VARCHAR DEFAULT 'easy',
         image_url VARCHAR,
-        isOpen BOOLEAN DEFAULT FALSE,
+        is_open BOOLEAN DEFAULT FALSE,
         teacher_id VARCHAR REFERENCES users(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         price NUMERIC (10,2) DEFAULT 0 NOT NULL,
@@ -100,10 +100,10 @@ static async create({ id, title, description, teacherId, category_id, price,leve
 
   static async listAll() {
     try {
-      const result = await pool.query(
+      const {rows:result} = await pool.query(
         `SELECT * FROM courses ORDER BY created_at DESC;`
       );      
-      return result.rows.map(row => new Course(row));
+      return result || []
     } catch (error) {
       console.error('Error listing all courses:', error);
       return [];
@@ -278,7 +278,7 @@ try {
 
   static async toggleCourseOpen(id, visible) {
    try {
-     const result = await pool.query(`UPDATE courses SET "isOpen" = $1 WHERE id = $2`, [visible, id]);
+     const result = await pool.query(`UPDATE courses SET is_open = $1 WHERE id = $2`, [visible, id]);
     return result.rowCount
    } catch (error) {
 
