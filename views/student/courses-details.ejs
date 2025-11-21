@@ -162,15 +162,15 @@
                                         <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
                                         <input type="hidden" name="course_id" class="courseId" value="<%= course.id %>">
                                         <input type="hidden" name="amount" class="amount" value="<%= course.price %>">
-                                      <% if (course.price > 0) { %>
-                                      <button type="submit" class="btn btn-success btn-block">Enroll Now For ₦<%= course.price %></button>
-                                  <% } else { %>
-                                      <button type="submit" class="btn btn-success btn-block">Enroll For Free Now</button>
-                                  <% } %> 
+                                          <% if (course.price > 0) { %>
+                                          <button type="submit" class="btn btn-success btn-block">Enroll Now For ₦<%= course.price %></button>
+                                            <% } else { %>
+                                                <button type="submit" class="btn btn-success btn-block">Enroll For Free Now</button>
+                                            <% } %> 
                                   </form>
                                   <% } %>
                               </div>
-                              </div>
+                            
 
                               <!-- Sticky Button on Mobile -->
                               <div class="sticky-enroll-btn text-center">
@@ -191,6 +191,7 @@
                               <% } %>
                               </div>
 
+                              <!-- is open closed -->
                             <% } else { %>
                               <button class="mb-1 btn btn-danger" disabled> <i class="fas fa-lock text-light"></i> Program is Closed at the mpment</button>
                             

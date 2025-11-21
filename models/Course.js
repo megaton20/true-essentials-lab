@@ -123,18 +123,33 @@ static async create({ id, title, description, teacherId, category_id, price,leve
 
 
   static async findById(id) {
-    try {
-      const result = await pool.query(
-        `SELECT * FROM courses WHERE id = $1;`,
-        [id]
-      );
-      if (result.rows.length === 0) return null;
-
-      return result.rows[0];
-    } catch (error) {
-      console.error('Error finding course by ID:', error);
-      return null;
-    }
+try {
+  const result = await pool.query(
+    `SELECT 
+       c.*,
+       JSON_AGG(
+         JSON_BUILD_OBJECT(
+           'user_id', u.id,
+           'user_name', u.full_name,
+           'user_email', u.email,
+           'enrolled_at', e.enrolled_at,
+           'paid', e.paid
+         )
+       ) as enrolled_users
+     FROM courses c
+     LEFT JOIN enrollment e ON c.id = e.course_id
+     LEFT JOIN users u ON e.user_id = u.id
+     WHERE c.id = $1
+     GROUP BY c.id;`,
+    [id]
+  );
+  
+  if (result.rows.length === 0) return null;
+  return result.rows[0];
+} catch (error) {
+  console.error('Error finding course with enrolled users:', error);
+  return null;
+}
   }
 
   static async findFree() {

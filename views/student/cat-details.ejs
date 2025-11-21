@@ -63,27 +63,33 @@
                     <p class="mb-1 text-muted text-truncate" style="font-size: 13px;"><%= data.description %></p>
                     
                     <div class="mt-2 d-flex gap-1" >
-                    <% if (enrolledCourseIds.includes(data.id)) { %>
+                    <% if (data.isOpen) { %>
 
-                      <% } else { %>
-                      <form method="POST" action="/user/course/<%= data.id %>/enroll" class="enroll-form" data-course-id="<%= data.id %>" data-price="<%= data.price %>">
-                      <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
-                      <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
-                      <input type="hidden" name="course_id" class="courseId" value="<%= data.id %>">
-                      <input type="hidden" name="amount" class="amount" value="<%= data.price %>">
+                        <% if (enrolledCourseIds.includes(data.id)) { %>
 
-                      <% if (data.price <= 0) { %>
-                        <button class="btn btn-sm btn-outline-success">Enroll for Free</button>
-                      <% } else { %>
-                        <button type="submit" class="btn btn-sm btn-outline-success pay-btn money-format">Pay – ₦<%= data.price %></button>
-                      <% } %>
-                    </form>
+                          <% } else { %>
+                          <form method="POST" action="/user/course/<%= data.id %>/enroll" class="enroll-form" data-course-id="<%= data.id %>" data-price="<%= data.price %>">
+                              <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
+                              <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
+                              <input type="hidden" name="course_id" class="courseId" value="<%= data.id %>">
+                              <input type="hidden" name="amount" class="amount" value="<%= data.price %>">
 
-                      <% } %>
+                              <% if (data.price <= 0) { %>
+                                <button class="btn btn-sm btn-outline-success">Enroll for Free</button>
+                              <% } else { %>
+                                <button type="submit" class="btn btn-sm btn-outline-success pay-btn money-format">Pay – ₦<%= data.price %></button>
+                              <% } %>
+                          </form>
 
-     
+                          <% } %>
 
+                               <!-- is open closed -->
+                            <% } else { %>
+                              <button class="mb-1 btn btn-danger" disabled> <i class="fas fa-lock text-light"></i> Program is Closed at the mpment</button>
+                            
+                              <% } %>
                     </div>
+
                     <!-- Progress Bar -->
                     <% if (enrolledCourseIds.includes(data.id)) { %>
                       <small class="badge bg-grad">owned</small>

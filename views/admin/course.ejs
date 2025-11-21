@@ -54,6 +54,28 @@
                 </ul>
             </div>
             </div>
+
+            <!-- enrolled users -->
+               <div class="col-md-4">
+              <div class="mt-2 p-1 mb-3 border rounded shadow-sm bg-light">
+
+                <p><strong>Enrolled Students:</strong></p>
+                <% if (course.enrolled_users && course.enrolled_users.length > 0) { %>
+                  <ul class="list-group">
+                    <% course.enrolled_users.forEach(es => { %>
+                      <li class="list-group-item">
+                        <strong><%= es.user_name %></strong><br>
+                        <small class="text-muted"><%= es.user_email %></small> <br>
+                        <small class="text-muted" style="font-size: 11px;">Enrolled: <%= new Date(es.enrolled_at).toLocaleString() %></small> <br>
+                      </li>
+                    <% }) %>
+                  </ul>
+                <% } else { %>
+                  <p class="text-muted">No student enrolled to this program yet.</p>
+                <% } %>
+              </div>
+            </div>
+
             <!-- Teachers & Sessions -->
             <div class="col-md-4">
               <div class="mt-2 p-1 mb-3 border rounded shadow-sm bg-light">
@@ -84,7 +106,7 @@
                   <label for="teacherSelect" class="form-label">Select Teacher</label>
                   <select class="form-select" id="teacherSelect" name="teacher_id" required>
                     <option disabled selected value="">-- Choose a teacher --</option>
-                    <% allAeachers.forEach(teacher => { %>
+                    <% allTeachers.forEach(teacher => { %>
                       <option value="<%= teacher.id %>">
                         <%= teacher.full_name %> (<%= teacher.email %>)
                       </option>

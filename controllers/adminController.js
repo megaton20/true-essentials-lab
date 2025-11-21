@@ -8,6 +8,7 @@ const pool = require('../config/db');
 const User = require('../models/User');
 const Course = require('../models/Course');
 const Category = require('../models/Category');
+const Teacher = require('../models/Teacher');
 
 
 exports.adminDashboard = async (req, res) => {
@@ -232,12 +233,8 @@ exports.getOneCourse = async (req, res) => {
 
   try {
       const course = await Course.findById(req.params.id);
-
-      const { rows: allAeachers } = await pool.query(`
-          SELECT t.*, u.full_name, u.email
-          FROM teachers t
-          JOIN users u ON u.id = t.user_id;
-          `);
+      
+      const allTeachers  = await Teacher.findAll()
       
 
       // 1. Attach related teachers directly to `course`
@@ -258,7 +255,7 @@ exports.getOneCourse = async (req, res) => {
     const categories = await Category.all()
 
       
-      res.render('./admin/course', {user:req.user, course, allAeachers, categories: categories || [] });
+      res.render('./admin/course', {user:req.user, course, allTeachers, categories: categories || [] });
 
   } catch (error) {
     res.redirect('/admin/error') 

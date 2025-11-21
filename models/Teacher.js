@@ -88,7 +88,10 @@ class Teacher {
   }
 
   static async findAll() {
-    const { rows } = await pool.query(`SELECT * FROM teachers ORDER BY created_at DESC`);
+    const { rows } = await pool.query(`
+      SELECT t.*, u.full_name, u.email
+          FROM teachers t
+          JOIN users u ON u.id = t.user_id ORDER BY created_at DESC`);
     return rows;
   }
 
