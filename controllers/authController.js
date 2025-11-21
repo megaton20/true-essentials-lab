@@ -116,7 +116,8 @@ exports.verifyEmailRequest = async (req, res) => {
     }
 
     // Send verification email
-    const resetLink = `${process.env.LIVE_DIRR || 'http://localhost:2000'}/auth/verify-email?token=${token}`;
+    const resetLink = `${process.env.LIVE_DIRR || `http://localhost:${process.env.PORT}`}/auth/verify-email?token=${token}`;    
+    
     const emailDone = await sendEmail(
       email, 
       "Verify your Email", 
