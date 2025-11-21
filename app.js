@@ -67,13 +67,6 @@ app.use(methodOverride((req, res) => {
 }));
 
 
-// Handle when the user clicks "Later" or visits the Black Friday page
-app.post('/dismiss-modal', (req, res) => {
-  // Set the session flag to indicate the modal has been dismissed
-  req.session.blackFridayShown = true;
-  res.redirect('/');
-});
-
 
 app.use('/', openRoutes); // open less secure routes
 app.use('/auth', authRoutes); // open less secure routes
