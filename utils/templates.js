@@ -5,7 +5,7 @@ const getBaseUrl = () => {
 const teaEmailWrapper = (subject, content) => `
   <div style="font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 40px 0;">
     <div style="max-width: 600px; margin: auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
-      <div style="background: linear-gradient(90deg,rgb(17, 88, 114),rgb(25, 142, 200)); padding: 20px; text-align: center; color: white;">
+      <div style="background: linear-gradient(90deg,rgba(17, 114, 49, 1),rgba(25, 200, 133, 1)); padding: 20px; text-align: center; color: white;">
         <h1 style="margin: 0;">True Series Academy</h1>
         <p style="margin: 0; font-size: 14px;">${subject}</p>
       </div>
@@ -83,10 +83,45 @@ const verificationEmailSentTemplate = (resetLink) => teaEmailWrapper(
   `
 );
 
+const welcomeToAppTemplate = (user) => teaEmailWrapper(
+  `Welcome to True Series Academy`,
+  `
+    <p>Dear ${user.full_name},</p>
+    
+    <p>A very warm welcome to <strong>True Series Academy</strong>! We're absolutely delighted to have you join our learning community.</p>
+    
+    <p>Your account has been successfully activated, and you now have access to all the resources and features our platform has to offer.</p>
+    
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+      <p style="margin: 10px 0;"><strong>🎯 What you can do now:</strong></p>
+      <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>Browse and enroll in courses/ programs</li>
+        <li>Access your learning dashboard</li>
+        <li>Track your progress</li>
+        <li>Connect with instructors and peers in this community </li>
+      </ul>
+    </div>
+
+    <p>We're committed to providing you with exceptional learning experiences that empower your growth and success.</p>
+        
+    <p>If you have any questions or need assistance, our support team is always here to help.</p>
+    
+    <p>Happy learning! 🎓</p>
+    
+    <p>Warm regards,<br>
+    <strong>The True Series Academy Team</strong></p>
+    
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e9ecef; color: #6c757d; font-size: 14px;">
+      <p>Need help? Contact us at support@trueseriesacademy.com</p>
+    </div>
+  `
+);
+
 module.exports = {
   paymentReminderTemplate,
   welcomeToClassTemplate,
   dayBeforeTemplate,
   resetPasswordTemplate,
-  verificationEmailSentTemplate
+  verificationEmailSentTemplate,
+  welcomeToAppTemplate
 };

@@ -6,7 +6,7 @@ const BREVO_API_KEY = process.env.BREVO_API_KEY;
 const sendEmail = async (to, subject, html) => {
   const mailData = {
     sender: {
-      name: "True Essentials Academy",
+      name: "True Series Academy",
       email: process.env.EMAIL
     },
     to: [

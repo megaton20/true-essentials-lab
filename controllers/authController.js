@@ -8,6 +8,7 @@ const pool = require('../config/db');
 const jwt = require('jsonwebtoken');
 const { generateResetToken, verifyResetToken } = require('../config/jsonWebToken');
 const sendEmail = require('../utils/mailer');
+const {welcomeToAppTemplate} = require('../utils/templates');
 
 const { verificationEmailSentTemplate } = require('../utils/templates');
 
@@ -138,7 +139,7 @@ exports.verifyEmailRequest = async (req, res) => {
   }
 };
 
-exports.verifyEmailCallBack = (req, res) => {
+exports.verifyEmailCallBack = async (req, res) => {
   const token = req.query.token;
 
   if (!token) {
@@ -146,50 +147,58 @@ exports.verifyEmailCallBack = (req, res) => {
     return res.redirect('/handler');
   }
 
-  pool.query('SELECT email, token_expires FROM users WHERE token = $1', [token], (err, results) => {
-    if (err) {
-      req.flash('error_msg', `Error: ${err.message}`);
+  try {
+    // Get user by token
+    const {rows:userResult} = await pool.query(
+      'SELECT id, email, full_name, token_expires FROM users WHERE token = $1', 
+      [token]
+    );
+
+    if (userResult.length === 0) {
+      req.flash('error_msg', `Error: Invalid or expired token`);
       return res.redirect('/handler');
     }
 
-    if (results.rows.length === 0) {
-      req.flash('error_msg', `Error: Invalid or expired token`);
-      return res.redirect('/handler'); // user profile instead
-    }
+    const user = userResult[0];
 
-    const { email, tokenExpires } = results.rows[0];
-
-    if (new Date(tokenExpires) < new Date()) {
+    if (new Date(user.token_expires) < new Date()) {
       req.flash('error_msg', `Error: Token has expired!`);
-      return res.redirect('/handler'); // user profile instead
+      return res.redirect('/handler');
     }
 
-    // Verify the token
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
-        req.flash('error_msg', `Error: Unmatched or expired token`);
-        return res.redirect('/handler'); // user profile instead
-      }
-
-      // Update user as verified
-      const updateQuery = `
-        UPDATE users
-        SET is_email_verified = true, token = NULL, token_expires = NULL WHERE email = $1
-      `;
-      pool.query(updateQuery, [email], (err, result) => {
-        if (err) {
-          console.log(err);
-          req.flash('error_msg', `Error: ${err.message}`);
-          return res.redirect('/handler'); // user profile instead
-        }
-
-        req.flash('success_msg', `Email verified successfully`);
-        return res.redirect('/handler'); // user profile instead
+    // Verify token using promise
+    const decoded = await new Promise((resolve, reject) => {
+      jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) reject(err);
+        else resolve(decoded);
       });
     });
-  });
-};
 
+    // Update user as verified
+    await pool.query(
+      `UPDATE users 
+       SET is_email_verified = true, token = NULL, token_expires = NULL 
+       WHERE email = $1`,
+      [user.email]
+    );
+
+    // Send welcome email
+    await sendEmail(
+      user.email, 
+      "Welcome to TSA",
+      welcomeToAppTemplate(user)
+    );
+    
+    
+    req.flash('success_msg', `Email verified successfully`);
+    return res.redirect('/handler');
+
+  } catch (error) {
+    console.log('Error:', error);
+    req.flash('error_msg', `Error: ${error.message}`);
+    return res.redirect('/handler');
+  }
+};
 
 exports.login = async (req, res, next) => {
 
