@@ -1,6 +1,7 @@
 const pool = require('../config/db');
 
 const createTableIfNotExists = require('../utils/createTableIfNotExists');
+const Badge = require('./Badge');
 
 class Attendance {
 
@@ -33,6 +34,13 @@ class Attendance {
         WHERE session_id = $2 AND user_id = $3
       `, [grant, classId, userId]);
 
+          // Check for badges after attendance approval
+          if (result.rowCount > 0 && grant === true) {
+            setTimeout(async () => {
+              await Badge.checkAndAwardBadges(userId);
+            }, 1000);
+          }
+          
       return result.rowCount;
 
     } catch (err) {
@@ -41,32 +49,39 @@ class Attendance {
     }
 
   }
-
-  static async markAttendance(sessionId, userId, id) {
-
-    try {
-      const insertResult = await pool.query(`
-      INSERT INTO class_attendance (session_id, user_id, id,is_joined )
+static async markAttendance(sessionId, userId, id) {
+  try {
+    const insertResult = await pool.query(`
+      INSERT INTO class_attendance (session_id, user_id, id, is_joined)
       VALUES ($1, $2, $3, $4)
       ON CONFLICT DO NOTHING
       RETURNING *
     `, [sessionId, userId, id, true]);
 
-      if (insertResult.rows.length > 0) {
-        return insertResult.rows[0]; // new attendance marked
-      } else {
-        // attendance already exists, fetch existing
-        const existing = await pool.query(`
+    if (insertResult.rows.length > 0) {
+      // New attendance marked - check for badges
+      setTimeout(async () => {
+        try {
+          await Badge.checkAndAwardBadges(userId);
+        } catch (badgeError) {
+          console.error('Error in badge check after attendance mark:', badgeError);
+        }
+      }, 1000);
+      
+      return insertResult.rows[0];
+    } else {
+      // Attendance already exists, fetch existing
+      const existing = await pool.query(`
         SELECT * FROM class_attendance WHERE session_id = $1 AND user_id = $2
       `, [sessionId, userId]);
 
-        return existing.rows[0] || null;
-      }
-    } catch (err) {
-      console.error('Attendance error:', err);
-      throw err;  // maybe throw or handle error appropriately
+      return existing.rows[0] || null;
     }
+  } catch (err) {
+    console.error('Attendance error:', err);
+    throw err;
   }
+}
 
   
 static async getBySessionIds(studentId, sessionIds = []) {

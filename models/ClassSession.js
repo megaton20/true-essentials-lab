@@ -181,6 +181,37 @@ const {rows:result} = await pool.query(`
       return result.rowCount > 0
   }
 
+
+static async listByCourseWithAttendance(courseId, userId) {
+  try {
+    const { rows: result } = await pool.query(`
+      SELECT 
+        cs.*,
+        u.id as teacher_user_id,
+        u.full_name as teacher_name,
+        u.email as teacher_email,
+        ca.is_joined as user_attended,
+        ca.status as attendance_approved,
+        ca.joined_at as attended_at,
+        COUNT(cv.id) as video_count,
+        cs.is_complete as session_completed
+      FROM class_sessions cs
+      JOIN courses c ON cs.course_id = c.id
+      JOIN users u ON c.teacher_id = u.id
+      LEFT JOIN class_attendance ca ON ca.session_id = cs.id AND ca.user_id = $2
+      LEFT JOIN class_videos cv ON cv.class_id = cs.id
+      WHERE cs.course_id = $1
+      GROUP BY cs.id, u.id, u.full_name, u.email, ca.is_joined, ca.status, ca.joined_at
+      ORDER BY cs.scheduled_at ASC
+    `, [courseId, userId]);
+
+    return result;
+  } catch (error) {
+    console.error(`Error fetching sessions for course ${courseId}:`, error);
+    return [];
+  }
+}
+
 }
 
 module.exports = ClassSession;

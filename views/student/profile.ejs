@@ -16,60 +16,292 @@
       <main>
         <%- include('../partials/messages') %>
 
-        <!-- Profile Section -->
-        <div class="bg-white shadow-sm p-3 rounded mb-4">
-          <div class="row">
-            <!-- Profile Card -->
-            <div class="col-md-6">
-              <div class="card shadow-sm border-0">
-                <div class="card-body text-center">
-                  <img src="/images/zap.png" alt="User Avatar" class="rounded-circle mb-3" width="100" height="100">
-                  <h5 class="card-title mb-1"><%= user.full_name %></h5>
-                  <p class="text-muted small mb-2"><%= user.role || 'N/A' %></p>
-                  <p class="text-muted small mb-2"><%= user.phone || 'N/A' %></p>
-                  <p class="text-muted small">📧 <%= user.email %></p>
-                  <p class="text-muted small">Location:📍 <%= user.location || 'N/A' %></p>
-                  <button class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit Profile</button>
+        <!-- Profile Header Section -->
+        <div class="bg-white shadow-sm p-4 rounded mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <div class="d-flex align-items-center">
+                <img src="/images/zap.png" alt="User Avatar" class="rounded-circle me-4" width="80" height="80">
+                <div>
+                  <h2 class="mb-1"><%= user.full_name %></h2>
+                  <p class="text-muted mb-2" style="font-size: 12px;">
+                    <%= user.email %> 
+                    <br> <%= user.phone || 'N/A' %> 
+                    <br> <%= user.location || 'N/A' %>
+                    <span class="badge bg-primary"><%= user.role || 'Student' %></span>
+                  </p>
+                  <p class="text-muted small mb-0">Joined <%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
                 </div>
               </div>
             </div>
+            <div class="col-md-4 text-end">
+              <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                <i class="fas fa-edit me-2"></i>Edit Profile
+              </button>
+            </div>
+          </div>
+        </div>
 
-            <!-- About & Bank Info -->
-            <div class="col-md-6">
-              <div class="card shadow-sm border-0 mb-3">
-                <div class="card-body">
-                  <h6 class="fw-bold">About</h6>
-                  <p class="small text-muted">
-                    <%= user.bio || 'No bio available yet.' %>
-                  </p>
-
-                  <h6 class="fw-bold mt-4">Account Status</h6>
-                  <span class="badge bg-success">Active</span>
-
-                  <h6 class="fw-bold mt-4">Joined</h6>
-                  <p class="small text-muted"><%= new Date(user.created_at).toDateString() %></p>
-                </div>
-              </div>
-
-              <% if (user.is_affiliate) { %>
-                <div class="card shadow-sm border-0">
-                  <div class="card-body">
-                    <h6 class="fw-bold">Bank Details</h6>
-                    <p class="small text-muted mb-1">Bank: <%= isAffiliate.bank_name || 'Not Set' %></p>
-                    <p class="small text-muted mb-1">Account name: <%= isAffiliate.account_name || 'Not Set' %></p>
-                    <p class="small text-muted mb-1">
-                      Account Number:
-                      <%= isAffiliate.account_number ? '****' + isAffiliate.account_number.slice(-4) : 'Not Set' %>
-                    </p>
-                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editBankModal">
-                      Edit Bank Details
-                    </button>
+        <!-- Stats Overview Cards -->
+        <div class="row mb-4">
+          <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="card-title text-muted mb-2">Courses Enrolled</h6>
+                    <h3 class="mb-0 text-primary"><%= profileStats.total_courses || 0 %></h3>
+                  </div>
+                  <div class="stat-icon">
+                    <i class="fas fa-book-open fa-2x text-primary opacity-25"></i>
                   </div>
                 </div>
-              <% } %>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="card-title text-muted mb-2">Sessions Attended</h6>
+                    <h3 class="mb-0 text-success"><%= profileStats.attended_sessions || 0 %>/<%= profileStats.total_sessions || 0 %></h3>
+                  </div>
+                  <div class="stat-icon">
+                    <i class="fas fa-calendar-check fa-2x text-success opacity-25"></i>
+                  </div>
+                </div>
+                <div class="mt-2">
+                  <small class="text-muted"><%= profileStats.attendance_rate || 0 %>% Attendance Rate</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="card-title text-muted mb-2">Badges Earned</h6>
+                    <h3 class="mb-0 text-warning"><%= profileStats.badges_earned || 0 %></h3>
+                  </div>
+                  <div class="stat-icon">
+                    <i class="fas fa-trophy fa-2x text-warning opacity-25"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="card-title text-muted mb-2">Completion Rate</h6>
+                    <h3 class="mb-0 text-info"><%= profileStats.approval_rate || 0 %>%</h3>
+                  </div>
+                  <div class="stat-icon">
+                    <i class="fas fa-chart-line fa-2x text-info opacity-25"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
+        <div class="row">
+          <!-- Left Column - Courses & Progress -->
+          <div class="col-lg-8">
+            <!-- Courses Progress Section -->
+            <div class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title mb-0">
+                  <i class="fas fa-graduation-cap me-2 text-primary"></i>
+                  My Courses & Progress
+                </h5>
+              </div>
+              <div class="card-body">
+                <% if (enrolledCourses.length > 0) { %>
+                  <div class="row">
+                    <% enrolledCourses.forEach(course => { %>
+                      <div class="col-md-6 mb-4">
+                        <div class="course-card h-100">
+                          <div class="course-header d-flex justify-content-between align-items-start mb-3">
+                            <h6 class="fw-bold mb-1 text-truncate" title="<%= course.title %>"><%= course.title %></h6>
+                            <span class="badge bg-primary badge-sm"><%= course.progress_percentage %>%</span>
+                          </div>
+                          
+                          <!-- Progress Bar -->
+                          <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: <%= course.progress_percentage %>%" 
+                                 aria-valuenow="<%= course.progress_percentage %>" 
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                          </div>
 
+                          <!-- Course Stats -->
+                          <div class="course-stats d-flex justify-content-between small text-muted mb-3">
+                            <span>
+                              <i class="fas fa-play-circle me-1"></i>
+                              <%= course.total_videos || 0 %> videos
+                            </span>
+                            <span>
+                              <i class="fas fa-users me-1"></i>
+                              <%= course.attended_sessions %>/<%= course.total_sessions %> sessions
+                            </span>
+                          </div>
 
+                          <!-- Recent Sessions -->
+                          <div class="sessions-preview">
+                            <h6 class="small fw-bold text-muted mb-2">Recent Sessions:</h6>
+                            <% if (course.sessions && course.sessions.length > 0) { %>
+                              <% course.sessions.slice(0, 3).forEach(session => { %>
+                                <div class="session-preview-item d-flex justify-content-between align-items-center py-2 border-bottom">
+                                  <div class="session-info flex-grow-1">
+                                    <div class="small fw-medium text-truncate" title="<%= session.title %>">
+                                      <%= session.title %>
+                                    </div>
+                                    <div class="text-muted extra-small">
+                                      <%= new Date(session.scheduled_at).toLocaleDateString() %>
+                                    </div>
+                                  </div>
+                                  <div class="session-status">
+                                    <% if (session.user_attended) { %>
+                                      <span class="badge bg-success badge-sm" title="Attended">
+                                        <i class="fas fa-check"></i>
+                                      </span>
+                                    <% } else { %>
+                                      <span class="badge bg-secondary badge-sm" title="Not Attended">
+                                        <i class="fas fa-times"></i>
+                                      </span>
+                                    <% } %>
+                                  </div>
+                                </div>
+                              <% }); %>
+                              <% if (course.sessions.length > 3) { %>
+                                <div class="text-center mt-2">
+                                  <small class="text-primary">
+                                    +<%= course.sessions.length - 3 %> more sessions
+                                  </small>
+                                </div>
+                              <% } %>
+                            <% } else { %>
+                              <p class="text-muted small mb-0">No sessions scheduled</p>
+                            <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    <% }); %>
+                  </div>
+                <% } else { %>
+                  <div class="text-center py-5">
+                    <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No Courses Enrolled</h5>
+                    <p class="text-muted">Start your learning journey by enrolling in courses.</p>
+                    <a href="/courses" class="btn btn-primary">Browse Courses</a>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column - Badges & Additional Info -->
+          <div class="col-lg-4">
+           <!-- Badge Progress Section -->
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-header bg-white border-0 py-3">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-trophy me-2 text-warning"></i>
+              Badge Progress
+            </h5>
+          </div>
+          <div class="card-body">
+            <% badgeProgress.forEach(badge => { %>
+              <div class="badge-progress-item mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <div class="d-flex align-items-center">
+                    <div class="badge-icon me-2" style="font-size: 1.5rem;">
+                      <%= badge.icon %>
+                    </div>
+                    <div>
+                      <h6 class="mb-0 fw-bold"><%= badge.name %></h6>
+                      <p class="small text-muted mb-0"><%= badge.description %></p>
+                    </div>
+                  </div>
+                  <% if (badge.earned) { %>
+                    <span class="badge bg-success">Earned!</span>
+                  <% } else { %>
+                    <span class="text-muted small"><%= badge.progress %>%</span>
+                  <% } %>
+                </div>
+                <% if (!badge.earned) { %>
+                  <div class="progress" style="height: 6px;">
+                    <div class="progress-bar bg-warning" role="progressbar" 
+                        style="width: <%= badge.progress %>%" 
+                        aria-valuenow="<%= badge.progress %>" 
+                        aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between mt-1">
+                    <small class="text-muted">Progress: <%= badge.current %>/<%= badge.target %></small>
+                    <small class="text-muted"><%= badge.target - badge.current %> to go</small>
+                  </div>
+                <% } %>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+
+            <!-- Additional Info Section -->
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title mb-0">
+                  <i class="fas fa-info-circle me-2 text-info"></i>
+                  Additional Information
+                </h5>
+              </div>
+              <div class="card-body">
+                <!-- Bio -->
+                <div class="mb-3">
+                  <h6 class="fw-bold small">About</h6>
+                  <p class="small text-muted mb-2">
+                    <%= user.bio || 'No bio available yet.' %>
+                  </p>
+                </div>
+
+                <!-- Account Status -->
+                <div class="mb-3">
+                  <h6 class="fw-bold small">Account Status</h6>
+                  <span class="badge bg-success">
+                    <i class="fas fa-check-circle me-1"></i>Active
+                  </span>
+                </div>
+
+                <!-- Bank Details (if affiliate) -->
+                <% if (user.is_affiliate) { %>
+                  <div class="bank-details">
+                    <h6 class="fw-bold small">Bank Details</h6>
+                    <div class="small text-muted">
+                      <div class="mb-1">
+                        <i class="fas fa-university me-1"></i>
+                        <%= isAffiliate.bank_name || 'Not Set' %>
+                      </div>
+                      <div class="mb-1">
+                        <i class="fas fa-user me-1"></i>
+                        <%= isAffiliate.account_name || 'Not Set' %>
+                      </div>
+                      <div class="mb-2">
+                        <i class="fas fa-credit-card me-1"></i>
+                        <%= isAffiliate.account_number ? '****' + isAffiliate.account_number.slice(-4) : 'Not Set' %>
+                      </div>
+                      <button class="btn btn-outline-secondary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#editBankModal">
+                        <i class="fas fa-edit me-1"></i>Edit Bank Details
+                      </button>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
             </div>
           </div>
         </div>
@@ -98,13 +330,12 @@
           </div>
           <div class="mb-3">
             <label for="userBio" class="form-label">Bio</label>
-            <textarea type="text" class="form-control" id="userBio" name="bio"><%= user.bio || "i love to learn" %> </textarea>
+            <textarea class="form-control" id="userBio" name="bio" rows="3" placeholder="Tell us about yourself..."><%= user.bio || "I love to learn" %></textarea>
           </div>
-        <!--    have text area foe bio instead  -->
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Save Changes</button>
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
         </div>
       </div>
     </form>
@@ -121,7 +352,6 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-
           <!-- Bank Dropdown -->
           <div class="mb-3">
             <label for="bank-select" class="form-label">Bank</label>
@@ -139,92 +369,151 @@
             <input type="text" class="form-control" id="accountNumber" name="account_number" value="<%= user.account_number || '' %>" maxlength="10" pattern="\d{10}" required>
           </div>
 
-       <!-- Account Name Display -->
-            <div class="mb-3">
-              <label class="form-label">Account Name</label>
-              <div id="accountNameDisplay" class="form-control bg-light" style="height:auto;">....</div>
-              <input type="hidden" id="accountName" name="account_name" value="<%= user.account_name || '' %>">
-              <div id="accountSpinner" class="text-muted small mt-1" style="display:none;">
-                <i class="fas fa-spinner fa-spin"></i> Resolving account...
-              </div>
-              <button id="retryResolveBtn" class="btn btn-sm btn-outline-danger mt-2" style="display:none;">Retry</button>
+          <!-- Account Name Display -->
+          <div class="mb-3">
+            <label class="form-label">Account Name</label>
+            <div id="accountNameDisplay" class="form-control bg-light" style="height:auto;">....</div>
+            <input type="hidden" id="accountName" name="account_name" value="<%= user.account_name || '' %>">
+            <div id="accountSpinner" class="text-muted small mt-1" style="display:none;">
+              <i class="fas fa-spinner fa-spin"></i> Resolving account...
             </div>
-
-
+            <button id="retryResolveBtn" class="btn btn-sm btn-outline-danger mt-2" style="display:none;">Retry</button>
+          </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-secondary">Save Bank Info</button>
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-secondary">Save Bank Info</button>
         </div>
       </div>
     </form>
   </div>
 </div>
 
+<style>
+.stat-card {
+  border: none;
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+  opacity: 0.7;
+}
+
+.course-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 1.25rem;
+  border-left: 4px solid #4F46E5;
+  transition: all 0.3s ease;
+}
+
+.course-card:hover {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.badge-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.badge-card:hover {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.badge-sm {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.extra-small {
+  font-size: 0.75rem;
+}
+
+.session-preview-item:last-child {
+  border-bottom: none !important;
+}
+
+.progress {
+  background-color: #e9ecef;
+  border-radius: 10px;
+}
+
+.progress-bar {
+  border-radius: 10px;
+}
+</style>
+
 <script>
-  const accountInput = document.getElementById('accountNumber');
-  const bankSelect = document.getElementById('bank-select');
-  const nameDisplay = document.getElementById('accountNameDisplay');
-  const spinner = document.getElementById('accountSpinner');
-  const retryBtn = document.getElementById('retryResolveBtn');
+// Account resolution script (same as before)
+const accountInput = document.getElementById('accountNumber');
+const bankSelect = document.getElementById('bank-select');
+const nameDisplay = document.getElementById('accountNameDisplay');
+const spinner = document.getElementById('accountSpinner');
+const retryBtn = document.getElementById('retryResolveBtn');
 
-  // Store the last tried values for retry
-  let lastBankCode = null;
-  let lastAccountNumber = null;
+let lastBankCode = null;
+let lastAccountNumber = null;
 
-  async function resolveAccount(bankCodeOverride = null) {
-    const accountNumber = accountInput.value.trim();
-    const bankCode = bankCodeOverride || bankSelect.value;
+async function resolveAccount(bankCodeOverride = null) {
+  const accountNumber = accountInput.value.trim();
+  const bankCode = bankCodeOverride || bankSelect.value;
 
-    if (accountNumber.length === 10 && bankCode) {
-      // Save last tried values
-      lastAccountNumber = accountNumber;
-      lastBankCode = bankCode;
+  if (accountNumber.length === 10 && bankCode) {
+    lastAccountNumber = accountNumber;
+    lastBankCode = bankCode;
 
-      retryBtn.style.display = 'none';
-      spinner.style.display = 'block';
-      nameDisplay.textContent = '...';
+    retryBtn.style.display = 'none';
+    spinner.style.display = 'block';
+    nameDisplay.textContent = '...';
 
-      try {
-        const res = await fetch(`/api/resolve-account?account_number=${accountNumber}&bank_code=${bankCode}`);
-        const data = await res.json();
+    try {
+      const res = await fetch(`/api/resolve-account?account_number=${accountNumber}&bank_code=${bankCode}`);
+      const data = await res.json();
 
-        if (data.success) {
-          nameDisplay.textContent = data.data.account_name;
-          document.getElementById('accountName').value = data.data.account_name;
-
-          retryBtn.style.display = 'none';
-        } else {
-          nameDisplay.textContent = 'Could not verify';
-          retryBtn.style.display = 'inline-block';
-          alert(data.message || 'Verification failed');
-        }
-      } catch (err) {
-        nameDisplay.textContent = 'Error';
+      if (data.success) {
+        nameDisplay.textContent = data.data.account_name;
+        document.getElementById('accountName').value = data.data.account_name;
+        retryBtn.style.display = 'none';
+      } else {
+        nameDisplay.textContent = 'Could not verify';
         retryBtn.style.display = 'inline-block';
-        alert('Network or server error');
-      } finally {
-        spinner.style.display = 'none';
+        alert(data.message || 'Verification failed');
       }
-    } else {
-      nameDisplay.textContent = '';
-      retryBtn.style.display = 'none';
+    } catch (err) {
+      nameDisplay.textContent = 'Error';
+      retryBtn.style.display = 'inline-block';
+      alert('Network or server error');
+    } finally {
+      spinner.style.display = 'none';
     }
+  } else {
+    nameDisplay.textContent = '';
+    retryBtn.style.display = 'none';
   }
+}
 
-  // Retry handler
-  retryBtn.addEventListener('click', async () => {
-    if (lastAccountNumber && lastBankCode) {
-      await resolveAccount(lastBankCode); // retry with same values
-    }
-  });
+retryBtn.addEventListener('click', async () => {
+  if (lastAccountNumber && lastBankCode) {
+    await resolveAccount(lastBankCode);
+  }
+});
 
-  // Event listeners
-  accountInput.addEventListener('input', () => {
-    if (bankSelect.value) {
-      resolveAccount();
-    }
-  });
+accountInput.addEventListener('input', () => {
+  if (bankSelect.value) {
+    resolveAccount();
+  }
+});
 
-  bankSelect.addEventListener('change', resolveAccount);
+bankSelect.addEventListener('change', resolveAccount);
 </script>

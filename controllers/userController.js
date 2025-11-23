@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const User = require('../models/User');
 const ReferralCode = require('../models/ReferralCode');
 const ClassSession = require('../models/ClassSession');
@@ -9,7 +10,7 @@ const axios = require('axios');
 const Affiliate = require('../models/Affiliate');
 const Category = require('../models/Category');
 const Enrollment = require('../models/Enrollment');
-const { v4: uuidv4 } = require('uuid');
+const Badge = require('../models/Badge');
 
 
 
@@ -81,47 +82,96 @@ exports.getCategoryCourses = async (req,res)=>{
 
 }
 
-
+// Updated getProfile function
 exports.getProfile = async (req, res) => {
   const userId = req.user.id;
 
-try {
-  const banksRes = await axios.get('https://api.paystack.co/bank', {
-    headers: {
-      Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
+  try {
+    const banksRes = await axios.get('https://api.paystack.co/bank', {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
+      }
+    });
+    const banks = banksRes.data.data;
+
+    // Fetch affiliate info
+    const affiliateResult = await Affiliate.getAffiliateByUserId(userId);
+    let isAffiliate = [];
+    if (affiliateResult.length > 0) {
+      isAffiliate = affiliateResult;
+      const affiliate = isAffiliate[0];
+      const matchedBank = banks.find(b => b.code === affiliate.bank_name);
+      if (matchedBank) {
+        affiliate.bank_name = matchedBank.name;
+      }
     }
-  });
-  const banks = banksRes.data.data; // Array of bank objects (code + name)
 
-  //  Fetch affiliate info (if the user is an affiliate)
-  const affiliateResult = await Affiliate.getAffiliateByUserId(userId);
+    // Get enrolled courses with progress and sessions
+    const enrolledCourses = await Enrollment.listEnrolledCoursesWithProgress(userId);
 
-  let isAffiliate = [];
-  if (affiliateResult.length > 0) {
-    isAffiliate = affiliateResult;
+    // Calculate overall progress and prepare badge data
+    const profileStats = await calculateUserProgress(userId);
 
-    //  If affiliate has bank_code saved, find and attach corresponding bank name from Paystack list
-    const affiliate = isAffiliate[0];
-    const matchedBank = banks.find(b => b.code === affiliate.bank_name);
+     // Check for new badges (optional - you might want to do this less frequently)
+    await Badge.checkAndAwardBadges(userId);
+    const earnedBadges = await Badge.getUserBadges(userId);
+    const badgeProgress = await Badge.getUserBadgeProgress(userId);
     
-    if (matchedBank) {
-      affiliate.bank_name = matchedBank.name; // Replace bank_code with human-readable name
+    // utility function
+
+    async function calculateUserProgress(userId) {
+      try {
+        const query = `
+          SELECT 
+            COUNT(DISTINCT e.course_id) as total_courses,
+            COUNT(DISTINCT cs.id) as total_sessions,
+            COUNT(DISTINCT ca.session_id) as attended_sessions,
+            COUNT(DISTINCT CASE WHEN ca.status = true THEN ca.session_id END) as approved_sessions,
+            COUNT(DISTINCT cv.id) as total_videos,
+            COUNT(DISTINCT ub.badge_id) as badges_earned,
+            MAX(e.enrolled_at) as last_enrollment
+          FROM enrollment e
+          LEFT JOIN courses c ON e.course_id = c.id
+          LEFT JOIN class_sessions cs ON cs.course_id = c.id
+          LEFT JOIN class_attendance ca ON ca.session_id = cs.id AND ca.user_id = $1 AND ca.is_joined = true
+          LEFT JOIN class_videos cv ON cv.class_id = cs.id
+          LEFT JOIN user_badges ub ON ub.user_id = $1
+          WHERE e.user_id = $1 AND e.paid = true
+        `;
+        
+        const { rows: [stats] } = await pool.query(query, [userId]);
+        
+        // Calculate completion rates
+        stats.attendance_rate = stats.total_sessions > 0 
+          ? Math.round((stats.attended_sessions / stats.total_sessions) * 100) 
+          : 0;
+          
+        stats.approval_rate = stats.attended_sessions > 0 
+          ? Math.round((stats.approved_sessions / stats.attended_sessions) * 100) 
+          : 0;
+        
+        return stats;
+      } catch (error) {
+        console.error('Error calculating user progress:', error);
+        return {};
+      }
     }
+
+    res.render('./student/profile', {
+      user: req.user,
+      banks,
+      isAffiliate: isAffiliate[0] || [],
+      enrolledCourses,
+      profileStats,
+      earnedBadges,
+      badgeProgress
+    });
+
+  } catch (err) {
+    console.error('Error loading profile:', err);
+    req.flash("error_msg", "sorry error from server")
+    res.redirect('/handler')
   }
-
-
-  // Render profile page with user + affiliate + bank data
-  res.render('./student/profile', {
-    user: req.user,
-    banks,
-    isAffiliate: isAffiliate[0] || []
-  });
-
-} catch (err) {
-  console.error('Error loading profile:', err);
-  res.status(500).send('Something went wrong. Please try again later.');
-}
-
 };
 
 
