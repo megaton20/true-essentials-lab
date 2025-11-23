@@ -26,9 +26,9 @@
           </div>
 
           <%- include('../partials/messages') %>
-         <div class="bg-grad text-center text-white rounded p-4 mb-4 shadow-sm">
+         <div class="bg-grad text-white rounded p-4 mb-4 shadow-sm">
             <div class="text-center">
-              <h2 class="mb-1">Schedules for <%=courses.title%></h2>
+              <h2 class="mb-1">Schedules for "<%=courses.title%>"</h2>
               <hr>
               <p> <%=courses.description%></p>
               <hr>
@@ -83,29 +83,40 @@
                             statusText = 'waiting for Tutor';
                             statusClass = 'bg-warning';
                             statusTextColor = 'text-muted';
+                            cardType = 'warning';
                           } else if (data.is_joined && isToday) {
                             statusText = 'Attended';
                             statusClass = 'bg-success';
                             statusTextColor = 'text-success';
+                            cardType = 'success';
                             showRejoin = true;
                           } else if (!data.is_joined && isToday) {
                             statusText = 'Ongoing';
                             statusClass = 'bg-success';
                             statusTextColor = 'text-success';
+                            cardType = 'success';
                             showJoin = true;
                           } else if (!data.is_joined && isFuture) {
                             statusText = 'Upcoming';
                             statusClass = 'bg-info';
                             statusTextColor = 'text-info';
-                          } else if (isPast) {
-                            statusText = 'Closed Session';
+                            cardType = 'info';
+                          } else if (isPast  && data.is_joined) {
+                            statusText = 'You concluded This Session';
+                            statusClass = 'bg-success';
+                            statusTextColor = 'text-success';
+                            cardType = 'success';
+                          
+                          } else if (isPast  && !data.is_joined) {
+                            statusText = 'You missed this Session';
                             statusClass = 'bg-danger';
                             statusTextColor = 'text-danger';
+                            cardType = 'danger';
                           }
                         %>
 
                         <div class="col-md-3 mb-3" >
-                          <div class="p-3 border rounded shadow-sm class-card class d-flex flex-column justify-content-between" data-aos="fade">
+                          <div class="p-3 border rounded shadow-sm class-card class card-<%= cardType %> d-flex flex-column justify-content-between" data-aos="fade">
                             <div class="d-flex justify-content-between mb-2">
                               <span class="badge <%= statusClass %> status-badge"><%= statusText %></span>
                             </div>
@@ -126,20 +137,38 @@
                             </div>
 
                             <div class="d-flex gap-2">
-                                <% if (!showJoin && !showRejoin && !isPast) { %>
+                             <% if (!showJoin && !showRejoin && !isPast) { %>
                                 
-                                  <button class="btn btn-sm btn-outline-danger " disabled> <i class="fas fa-lock"></i> Class is Locked!</button>
+                                  <button class="btn btn-sm btn-outline-danger " disabled> <i class="fas fa-lock"></i> Wait For Host!</button>
                               <% } else { %>
                                 
-                              <% if (showRejoin) { %>
-                                <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Still Active, Rejoin</a>
-                              <% } else if (showJoin) { %>
-                                <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Join The Class Now</a>
-                              <% } %>
-                              <button class="btn btn-sm btn-success " disabled> <i class="fas fa-check"></i></button>
-                              <% } %>
+                                    <% if (showRejoin) { %>
+                                      <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Still Active, Rejoin</a>
+                                    <% } else if (showJoin) { %>
+                                      <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Join The Class Now</a>
+                                    <% } %>
+
                               
-                              <a href="/user/class/<%=data.id%>/course/<%=courseId%>/category/<%=categoryId%>" class="btn btn-outline-success"> <i class="fas fa-video"></i> Watch Video</a>
+
+                              <% } %>
+
+                                  <% if (isPast && data.is_joined) { %>
+                                  <button class=" btn btn-outline-success" disabled>
+                                    <i class="fas fa-check"></i>
+                                  </button> 
+                                  <% } else { %>
+                                    
+                                    <% } %>
+                                    
+                                    <% if (isPast) { %> 
+                                      <a href="/user/class/<%=data.id%>/course/<%=courseId%>/category/<%=categoryId%>" class="btn btn-outline-success"> <i class="fas fa-video"></i> </a>
+                                      <% } else { %>
+                                        <button class=" btn btn-outline-success" disabled>
+                                          <i class="fas fa-video"></i>  Available After Session
+                                        </button> 
+
+                                   <% } %>
+                              
 
                             </div>
                           </div>

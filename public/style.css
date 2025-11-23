@@ -46,7 +46,7 @@ body{
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background-color: #28a745; /* green */
+    background-color: var(--primary-color); 
     color: #fff;
     font-size: 12px;
     flex-shrink: 0;
@@ -325,12 +325,26 @@ body{
 .class-thumbnail img{
   max-width: 100%;
 }
+
 .class-card {
   height: 160px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+ .card-success{
+  border-left:2px solid var(--primary-color) !important;
+}
+ .card-danger{
+  border-left:2px solid #ff2600 !important;
+}
+ .card-info{
+  border-left:2px solid #00b7ff !important;
+}
+ .card-warning{
+  border-left:2px solid #ffbb00 !important;
 }
 
 .class-card h6 {
