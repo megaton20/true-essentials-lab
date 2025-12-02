@@ -1,5 +1,5 @@
 const getBaseUrl = () => {
-  return process.env.LIVEDIR || process.env.NGROK || `http://localhost:${process.env.PORT}`;
+  return process.env.LIVE_DIRR || process.env.NGROK || `http://localhost:${process.env.PORT}`;
 };
 
 const teaEmailWrapper = (subject, content) => `
@@ -51,6 +51,25 @@ const dayBeforeTemplate = (user, sessions) => teaEmailWrapper(
     <h3>Class Reminder: Upcoming Sessions</h3>
     <p>Hi ${user.full_name},</p>
     <p>This is a reminder that you have the following class${sessions.length > 1 ? 'es' : ''} scheduled for tomorrow:</p>
+    <ul>
+      ${sessions.map(session => `
+        <li>
+          <strong>${session.title}</strong><br/>
+          <strong>Date:</strong> ${new Date(session.scheduled_at).toLocaleString()}<br/>
+          <p><a href="${getBaseUrl()}/user">Read more...</a></p>
+        </li>
+      `).join('')}
+    </ul>
+    <p>Please be prepared and join on time.</p>
+    <p>– True Series Academy Team</p>
+  `
+);
+const dayReminderTemplate = (user, sessions) => teaEmailWrapper(
+  `Upcoming Class${sessions.length > 1 ? 'es' : ''} Reminder`,
+  `
+    <h3>Class Reminder: Upcoming Sessions</h3>
+    <p>Hi ${user.full_name},</p>
+    <p>This is a reminder that you have the following class${sessions.length > 1 ? 'es' : ''} scheduled for today:</p>
     <ul>
       ${sessions.map(session => `
         <li>
@@ -120,6 +139,7 @@ const welcomeToAppTemplate = (user) => teaEmailWrapper(
 module.exports = {
   paymentReminderTemplate,
   welcomeToClassTemplate,
+  dayReminderTemplate,
   dayBeforeTemplate,
   resetPasswordTemplate,
   verificationEmailSentTemplate,
