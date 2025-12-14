@@ -218,6 +218,9 @@ exports.getAllCourse = async (req, res) => {
     const allCourses = await Course.listAll();
     const categories = await Category.all()
     
+   
+     
+
     res.render('./admin/courses', {
       allCourses,
       categories: categories || []

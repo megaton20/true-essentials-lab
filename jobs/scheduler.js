@@ -33,9 +33,11 @@ const todayReminder = async ()=>{
       return;
     }
 
+
     sessions.forEach(session => {
       console.log(`   - ${session.title} (${new Date(session.scheduled_at).toISOString()})`);
     });
+
 
     // Get ALL enrolled users for ALL sessions first
     const userSessions = {};
@@ -96,6 +98,7 @@ const todayReminder = async ()=>{
     console.error('Error in 7 AM day-before reminder cron:', error.message);
   }
 }
+
 const joinedNotifier = async ()=>{
      const { rows } = await pool.query(`
     SELECT u.email, u.full_name, cs.title, cs.scheduled_at, cs.meet_link, ca.session_id, ca.user_id
@@ -213,10 +216,10 @@ await allSessionForTomorrow()
 
 
 // // manual runner
-// cron.schedule('* * * * *', async () => {
-//   console.log("running 1 minu");
+cron.schedule('* * * * *', async () => {
+  console.log("running 1 minu");
   
-// //  await todayReminder()
-// });
+//  await todayReminder()
+});
 
 

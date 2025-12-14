@@ -76,9 +76,9 @@ static async create({ id, title, description, teacherId, category_id, price,leve
   static async update(id, { title, description, teacherId, category_id,price,level, takeawaysJson }) {
 
       let fee = 0.00
-   if(price){
-    fee = price
-   }
+        if(price){
+          fee = price
+        }
 
     try {
       const result = await pool.query(
@@ -103,6 +103,12 @@ static async create({ id, title, description, teacherId, category_id, price,leve
       const {rows:result} = await pool.query(
         `SELECT * FROM courses ORDER BY created_at DESC;`
       );      
+
+        result.sort((a,b) =>{
+      if(a.is_openis_open === b.is_open) return 0;
+      return a.is_open ? -1 : 1 
+     })
+
       return result || []
     } catch (error) {
       console.error('Error listing all courses:', error);
@@ -114,6 +120,11 @@ static async create({ id, title, description, teacherId, category_id, price,leve
     
     try {
       const {rows:result} = await pool.query(`SELECT * FROM courses WHERE teacher_id = $1 ORDER BY created_at DESC;`, [userId]);
+       result.sort((a,b) =>{
+      if(a.is_openis_open === b.is_open) return 0;
+      return a.is_open ? -1 : 1 
+     })
+
       return result || [];
     } catch (error) {
       console.error('Error listing all courses:', error);
@@ -173,6 +184,12 @@ try {
         WHERE c.price <= 0 LIMIT 10;
 
         `);
+
+             result.sort((a,b) =>{
+      if(a.is_openis_open === b.is_open) return 0;
+      return a.is_open ? -1 : 1 
+     })
+
       return result;
     } catch (error) {
       console.error('Error finding free course:', error);
@@ -203,6 +220,11 @@ try {
         WHERE c.price <= 0;
 
         `);
+             result.sort((a,b) =>{
+      if(a.is_openis_open === b.is_open) return 0;
+      return a.is_open ? -1 : 1 
+     })
+
       return result;
     } catch (error) {
       console.error('Error finding free course:', error);
@@ -261,6 +283,11 @@ try {
         ORDER BY created_at DESC;
       `;
       const { rows:result } = await pool.query(query, [categoryId]);
+           result.sort((a,b) =>{
+      if(a.is_openis_open === b.is_open) return 0;
+      return a.is_open ? -1 : 1 
+     })
+
       return result || [];
     }
 
@@ -272,6 +299,7 @@ try {
         ORDER BY cat.name, c.created_at DESC;
       `;
       const { rows } = await pool.query(query);
+      
       return rows;
     }
 

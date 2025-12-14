@@ -1,199 +1,617 @@
-
-  <!-- Navbar -->
-   <%-include('./partials/topnav') %>
-
-  <!-- Sidebar -->
-   <!-- Sidebar -->
-  <%-include('./partials/sidenav') %>
-  
-
-  <!-- Main Content -->
-  <div class="container-fluid mt-4">
-         
-
-    <div class="row">
-      <!-- Static Sidebar for desktop -->
-      <div class="col-lg-3 d-none d-lg-block">
-          <%-include('./partials/staticsidebar') %>
-      </div>
-
-      <!-- Main Dashboard Section -->
-      <div class="col-lg-9">
-        <main class="p-1">
-          
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="/user/category/<%=categoryId%>" class="btn btn-outline-primary btn-sm">Back</a>
-          </div>
-
-          <%- include('../partials/messages') %>
-         <div class="bg-grad text-white rounded p-4 mb-4 shadow-sm">
-            <div class="text-center">
-              <h2 class="mb-1">Schedules for "<%=courses.title%>"</h2>
-              <hr>
-              <p> <%=courses.description%></p>
-              <hr>
-            </div>
-                   <ul class="list-unstyled ps-1">
-                  <% if (courses.takeaways && courses.takeaways.length > 0) { %>
-                 
-                    <% courses.takeaways.forEach(function(takeaway) { %>
-                      <li class="d-flex align-items-center mb-2">
-                        <span class="check-circle-icon me-2">
-                          <i class="fas fa-check"></i>
-                        </span>
-                        <span><%= takeaway %></span>
-                      </li>
-                    <% }); %>
-                  <% } else { %>
-                    <li class="text-muted">No takeaways provided.</li>
-                  <% } %>
-                </ul>
-          </div>
-
-     
-          <!-- Stats -->
-
-      <hr>
-         
-        <% if (!allSessionsComplete) { %>
-              <div class="mb-4">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedules | <%= courses.title %></title>
     
-                 <h5> Schedules</h5> <br>
-                    <% if (sessions.length === 0) { %>
-                      <div class="text-center my-5">
-                        <h6 class="text-muted">📚 No class sessions scheduled for this Program yet.</h6>
-                        <p class="text-muted">Please check back later.</p>
-                        <a href="/user" class="btn btn-outline-secondary">See Other Programs</a>
-                      </div>
-                    <% } else { %>
-                      <div class="row">                          
-                        <% sessions.forEach(function(data, index) {
-                          const scheduled = new Date(data.scheduled_at);
-                          const now = new Date();
-                          const isToday = scheduled.toDateString() === now.toDateString();
-                          const isFuture = scheduled > now;
-                          const isPast = scheduled < now;
-
-                          let statusText = '';
-                          let statusClass = '';
-                          let showJoin = false;
-                          let showRejoin = false;
-
-                          if (!data.status) {
-                            statusText = 'waiting for Tutor';
-                            statusClass = 'bg-warning';
-                            statusTextColor = 'text-muted';
-                            cardType = 'warning';
-                          } else if (data.is_joined && isToday) {
-                            statusText = 'Attended';
-                            statusClass = 'bg-success';
-                            statusTextColor = 'text-success';
-                            cardType = 'success';
-                            showRejoin = true;
-                          } else if (!data.is_joined && isToday) {
-                            statusText = 'Ongoing';
-                            statusClass = 'bg-success';
-                            statusTextColor = 'text-success';
-                            cardType = 'success';
-                            showJoin = true;
-                          } else if (!data.is_joined && isFuture) {
-                            statusText = 'Upcoming';
-                            statusClass = 'bg-info';
-                            statusTextColor = 'text-info';
-                            cardType = 'info';
-                          } else if (isPast  && data.is_joined) {
-                            statusText = 'You concluded This Session';
-                            statusClass = 'bg-success';
-                            statusTextColor = 'text-success';
-                            cardType = 'success';
-                          
-                          } else if (isPast  && !data.is_joined) {
-                            statusText = 'You missed this Session';
-                            statusClass = 'bg-danger';
-                            statusTextColor = 'text-danger';
-                            cardType = 'danger';
-                          }
-                        %>
-
-                        <div class="col-md-3 mb-3" >
-                          <div class="p-3 border rounded shadow-sm class-card class card-<%= cardType %> d-flex flex-column justify-content-between" data-aos="fade">
-                            <div class="d-flex justify-content-between mb-2">
-                              <span class="badge <%= statusClass %> status-badge"><%= statusText %></span>
-                            </div>
-
-                            <div class="mb-2">
-                              <h6 class="mb-1 text-truncate <%= statusTextColor %>" title="<%= data.title %>">Title: <%= data.title %></h6>
-                              <p class="text-muted small text-truncate">Desc: <%= data.description %></p>
-                              <p class="text-muted small text-truncate">Host: <%= data.teacher %></p>
-                              <p class="text-muted small mb-0" style="font-size: 11px;">
-                                <%= scheduled.toLocaleString('en-US', {
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric',
-                                  hour: 'numeric',
-                                  minute: '2-digit'
-                                }) %>
-                              </p>
-                            </div>
-
-                            <div class="d-flex gap-2">
-                             <% if (!showJoin && !showRejoin && !isPast) { %>
-                                
-                                  <button class="btn btn-sm btn-outline-danger " disabled> <i class="fas fa-lock"></i> Wait For Host!</button>
-                              <% } else { %>
-                                
-                                    <% if (showRejoin) { %>
-                                      <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Still Active, Rejoin</a>
-                                    <% } else if (showJoin) { %>
-                                      <a href="/class/<%= data.join_code %>/<%= data.id %>" class="btn btn-sm btn-outline-success">Join The Class Now</a>
-                                    <% } %>
-
-                              
-
-                              <% } %>
-
-                                  <% if (isPast && data.is_joined && !showRejoin && !showRejoin) { %>
-                                  <button class=" btn btn-outline-success" disabled>
-                                    <i class="fas fa-check"></i>
-                                  </button> 
-                                  <% } else { %>
-                                    
-                                    <% } %>
-                                    
-                                    <% if (isPast) { %> 
-                                      <a href="/user/class/<%=data.id%>/course/<%=courseId%>/category/<%=categoryId%>" class="btn btn-outline-success"> <i class="fas fa-video"></i> </a>
-                                      <% } else { %>
-                                        <button class=" btn btn-outline-success" disabled>
-                                          <i class="fas fa-video"></i>  Available After Session
-                                        </button> 
-
-                                   <% } %>
-                              
-
-                            </div>
-                          </div>
-                        </div>
-                        <% }) %>
-                      </div>
-                    <% } %>
-           
-              </div>
-
-                 <% } else { %>
-                    
-                   <div class="text-center my-5">
-                    <img src="/images/checked.png" class="img-fluid" style="height: 100px; width: 100px;" alt="">
-                        <h6 class="text-success">Program Completed</h6>
-                        <br>
-                        <p class="text-muted">Don't miss other programs</p>
-                        <a href="/user" class=" mt-3 btn btn-outline-secondary">See Other Programs</a>
-                      </div>
-
-                    <% } %>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Bootstrap Icons (optional alternative) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary: #3bf689;
+            --secondary: #e0ec3a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+        }
         
-        </main>
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+        }
+        
+        .session-card {
+            transition: all 0.3s ease;
+            border-left-width: 4px;
+        }
+        
+        .session-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .course-header-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .takeaway-bullet {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .empty-state-icon {
+            font-size: 5rem;
+            opacity: 0.1;
+        }
+        
+        /* Custom animations */
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .pulse-subtle {
+            animation: pulse-subtle 2s infinite;
+        }
+        
+        /* Status colors */
+        .border-status-waiting { border-left-color: #f59e0b; }
+        .border-status-active { border-left-color: #10b981; }
+        .border-status-upcoming { border-left-color: #0ea5e9; }
+        .border-status-completed { border-left-color: #8b5cf6; }
+        .border-status-missed { border-left-color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <%-include('./partials/topnav') %>
 
-      </div>
+    <!-- Sidebar -->
+    <%-include('./partials/sidenav') %>
 
+    <!-- Main Content -->
+    <div class="container mx-auto px-2 py-3 mt-6">
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Static Sidebar for Desktop -->
+            <div class="hidden lg:block lg:w-1/4">
+                <%-include('./partials/staticsidebar') %>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="lg:w-3/4">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <a href="/user/category/<%=categoryId%>" 
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-arrow-left text-gray-600"></i>
+                            <span class="text-sm font-medium text-gray-700">Back</span>
+                        </a>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">Schedules</h1>
+                            <p class="text-sm text-gray-500">Manage your class sessions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <%- include('../partials/messages') %>
+
+                <!-- Course Overview Card -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <div class="flex-shrink-0">
+                                <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="flex-grow">
+                                <h2 class="text-2xl font-bold text-gray-900 mb-2"><%= courses.title %></h2>
+                                <p class="text-gray-600 mb-4"><%= courses.description %></p>
+                                
+                                <!-- Takeaways -->
+                                <div class="mt-4">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-green-500"></i>
+                                        Program Takeaways
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <% if (courses.takeaways && courses.takeaways.length > 0) { %>
+                                            <% courses.takeaways.forEach(function(takeaway, index) { %>
+                                                <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                                                    <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                                        <span class="text-xs font-bold text-blue-600"><%= index + 1 %></span>
+                                                    </div>
+                                                    <span class="text-gray-700"><%= takeaway %></span>
+                                                </div>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <div class="col-span-2 p-4 bg-gray-50 rounded-lg text-center">
+                                                <p class="text-gray-500 italic">No takeaways provided for this program.</p>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sessions Section -->
+                <% if (!allSessionsComplete) { %>
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <!-- Section Header -->
+                        <div class="border-b border-gray-200 px-3 py-4">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                        <i class="fas fa-calendar-alt text-blue-500"></i>
+                                        Class Sessions
+                                    </h2>
+                                    <p class="text-sm text-gray-500 mt-1">
+                                        <% if (sessions.length > 0) { %>
+                                            <%= sessions.length %> session(s) scheduled
+                                        <% } else { %>
+                                            No sessions scheduled yet
+                                        <% } %>
+                                    </p>
+                                </div>
+                                
+                                <!-- Status Legend -->
+                                <div class="flex flex-wrap gap-2">
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        <span class="text-xs text-gray-600">Active/Joinable</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                        <span class="text-xs text-gray-600">Upcoming</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                        <span class="text-xs text-gray-600">Missed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sessions Content -->
+                        <div class="p-6">
+                            <% if (sessions.length === 0) { %>
+                                <!-- Empty State -->
+                                <div class="text-center py-12">
+                                    <div class="mb-6">
+                                        <i class="fas fa-calendar-times empty-state-icon text-gray-400"></i>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-700 mb-2">No Sessions Scheduled</h3>
+                                    <p class="text-gray-500 mb-6 max-w-md mx-auto">
+                                        There are no class sessions scheduled for this program yet. Please check back later or contact the program administrator.
+                                    </p>
+                                    <a href="/user" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors">
+                                        <i class="fas fa-book-open"></i>
+                                        Explore Other Programs
+                                    </a>
+                                </div>
+                            <% } else { %>
+                                <!-- Sessions Grid -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <% 
+                                    // Helper function to determine session status
+                                    function getSessionStatus(data) {
+                                        const scheduled = new Date(data.scheduled_at);
+                                        const now = new Date();
+                                        const isToday = scheduled.toDateString() === now.toDateString();
+                                        const isFuture = scheduled > now;
+                                        const isPast = scheduled < now;
+                                        const timeDiff = scheduled.getTime() - now.getTime();
+                                        const hoursUntil = timeDiff / (1000 * 60 * 60);
+                                        
+                                        let status = {
+                                            type: '',
+                                            label: '',
+                                            color: 'gray',
+                                            icon: 'clock',
+                                            canJoin: false,
+                                            canRejoin: false,
+                                            canViewRecording: false,
+                                            buttonText: '',
+                                            buttonClass: 'gray'
+                                        };
+                                        
+                                        // Check if tutor hasn't started the session
+                                        if (!data.status) {
+                                            status = {
+                                                type: 'waiting',
+                                                label: 'Waiting for Tutor',
+                                                color: 'yellow',
+                                                icon: 'user-clock',
+                                                canJoin: false,
+                                                canRejoin: false,
+                                                canViewRecording: false,
+                                                buttonText: 'Awaiting Tutor',
+                                                buttonClass: 'yellow'
+                                            };
+                                        }
+                                        // Check if session is active TODAY and user has joined before
+                                        else if (data.is_joined && isToday) {
+                                            status = {
+                                                type: 'active-rejoin',
+                                                label: 'Session Active',
+                                                color: 'green',
+                                                icon: 'play-circle',
+                                                canJoin: true,
+                                                canRejoin: true,
+                                                canViewRecording: false,
+                                                buttonText: 'Rejoin Class',
+                                                buttonClass: 'green'
+                                            };
+                                        }
+                                        // Check if session is active TODAY and user hasn't joined yet
+                                        else if (!data.is_joined && isToday) {
+                                            // Check if current time is within reasonable join window (e.g., 15 minutes before to 1 hour after start)
+                                            const joinWindowStart = new Date(scheduled.getTime() - (15 * 60 * 1000)); // 15 min before
+                                            const joinWindowEnd = new Date(scheduled.getTime() + (60 * 60 * 1000)); // 1 hour after
+                                            
+                                            if (now >= joinWindowStart && now <= joinWindowEnd) {
+                                                status = {
+                                                    type: 'joinable',
+                                                    label: 'Join Now',
+                                                    color: 'green',
+                                                    icon: 'calendar-day',
+                                                    canJoin: true,
+                                                    canRejoin: false,
+                                                    canViewRecording: false,
+                                                    buttonText: 'Join Class',
+                                                    buttonClass: 'green'
+                                                };
+                                            } else if (now < joinWindowStart) {
+                                                status = {
+                                                    type: 'upcoming-today',
+                                                    label: 'Upcoming Today',
+                                                    color: 'blue',
+                                                    icon: 'clock',
+                                                    canJoin: false,
+                                                    canRejoin: false,
+                                                    canViewRecording: false,
+                                                    buttonText: `Starts in ${Math.ceil((joinWindowStart.getTime() - now.getTime()) / (1000 * 60))} min`,
+                                                    buttonClass: 'blue'
+                                                };
+                                            } else {
+                                                status = {
+                                                    type: 'missed-today',
+                                                    label: 'Session Ended',
+                                                    color: 'red',
+                                                    icon: 'times-circle',
+                                                    canJoin: false,
+                                                    canRejoin: false,
+                                                    canViewRecording: true,
+                                                    buttonText: 'View Recording',
+                                                    buttonClass: 'red'
+                                                };
+                                            }
+                                        }
+                                        // Check if session is in the future
+                                        else if (!data.is_joined && isFuture) {
+                                            status = {
+                                                type: 'upcoming',
+                                                label: 'Upcoming',
+                                                color: 'blue',
+                                                icon: 'calendar',
+                                                canJoin: false,
+                                                canRejoin: false,
+                                                canViewRecording: false,
+                                                buttonText: hoursUntil < 24 ? `Starts in ${Math.ceil(hoursUntil)}h` : 'Upcoming',
+                                                buttonClass: 'blue'
+                                            };
+                                        }
+                                        // Check if session is in the past and user attended
+                                        else if (isPast && data.is_joined) {
+                                            status = {
+                                                type: 'completed',
+                                                label: 'Completed',
+                                                color: 'purple',
+                                                icon: 'check-circle',
+                                                canJoin: false,
+                                                canRejoin: false,
+                                                canViewRecording: true,
+                                                buttonText: 'View Recording',
+                                                buttonClass: 'purple'
+                                            };
+                                        }
+                                        // Check if session is in the past and user missed it
+                                        else if (isPast && !data.is_joined) {
+                                            status = {
+                                                type: 'missed',
+                                                label: 'Missed',
+                                                color: 'red',
+                                                icon: 'times-circle',
+                                                canJoin: false,
+                                                canRejoin: false,
+                                                canViewRecording: true,
+                                                buttonText: 'View Recording',
+                                                buttonClass: 'red'
+                                            };
+                                        }
+                                        
+                                        return status;
+                                    }
+                                    
+                                    sessions.forEach(function(data, index) {
+                                        const scheduled = new Date(data.scheduled_at);
+                                        const status = getSessionStatus(data);
+                                        const statusColors = {
+                                            green: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-status-active' },
+                                            yellow: { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-status-waiting' },
+                                            blue: { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-status-upcoming' },
+                                            purple: { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-status-completed' },
+                                            red: { bg: 'bg-red-100', text: 'text-red-800', border: 'border-status-missed' },
+                                            gray: { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-300' }
+                                        };
+                                        const color = statusColors[status.color] || statusColors.gray;
+                                    %>
+                                        <div class="session-card bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden <%= color.border %>">
+                                            <div class="p-3">
+                                                <!-- Session Header -->
+                                                <div class="flex justify-between items-start mb-4">
+                                                    <div>
+                                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <%= color.bg %> <%= color.text %>">
+                                                            <i class="fas fa-<%= status.icon %> mr-1.5"></i>
+                                                            <%= status.label %>
+                                                        </span>
+                                                        <div class="mt-2 flex items-center text-sm text-gray-500">
+                                                            <i class="fas fa-chalkboard-teacher mr-2"></i>
+                                                            <span>Host: <%= data.teacher %></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <span class="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg">
+                                                            <%= index + 1 %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Session Details -->
+                                                <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= data.title %></h3>
+                                                <p class="text-gray-600 text-sm mb-4 line-clamp-2"><%= data.description %></p>
+                                                
+                                                <!-- Time Information -->
+                                                <div class="flex items-center text-sm text-gray-700 mb-4">
+                                                    <div class="flex items-center mr-4">
+                                                        <i class="fas fa-clock text-gray-400 mr-2"></i>
+                                                        <span class="font-medium">
+                                                            <%= scheduled.toLocaleDateString('en-US', { 
+                                                                weekday: 'short', 
+                                                                month: 'short', 
+                                                                day: 'numeric' 
+                                                            }) %>
+                                                        </span>
+                                                    </div>
+                                                    <div class="flex items-center">
+                                                        <i class="fas fa-hourglass-half text-gray-400 mr-2"></i>
+                                                        <span class="font-medium">
+                                                            <%= scheduled.toLocaleTimeString('en-US', { 
+                                                                hour: 'numeric', 
+                                                                minute: '2-digit',
+                                                                hour12: true 
+                                                            }) %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Time-based Join Logic -->
+                                                <%
+                                                // Determine if join button should be available based on time
+                                                const now = new Date();
+                                                const sessionTime = new Date(data.scheduled_at);
+                                                
+                                                // Define join window: 15 minutes before to 60 minutes after session start
+                                                const joinWindowStart = new Date(sessionTime.getTime() - (15 * 60 * 1000));
+                                                const joinWindowEnd = new Date(sessionTime.getTime() + (60 * 60 * 1000));
+                                                
+                                                // Check if current time is within join window
+                                                const canJoinBasedOnTime = now >= joinWindowStart && now <= joinWindowEnd;
+                                                %>
+                                                
+                                                <!-- Action Buttons -->
+                                                <div class="flex flex-col sm:flex-row gap-3">
+                                                    <!-- Join/View Button -->
+                                                    <% if (status.canJoin && canJoinBasedOnTime && data.status) { %>
+                                                        <a href="/class/<%= data.join_code %>/<%= data.id %>" 
+                                                           class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-colors">
+                                                            <i class="fas fa-sign-in-alt"></i>
+                                                            <%= status.buttonText %>
+                                                        </a>
+                                                    <% } else if (status.canViewRecording) { %>
+                                                        <a href="/user/class/<%=data.id%>/course/<%=courseId%>/category/<%=categoryId%>" 
+                                                           class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 <%= status.buttonClass === 'purple' ? 'bg-purple-500 hover:bg-purple-600' : 'bg-red-500 hover:bg-red-600' %> text-white font-medium rounded-lg transition-colors">
+                                                            <i class="fas fa-video"></i>
+                                                            <%= status.buttonText %>
+                                                        </a>
+                                                    <% } else { %>
+                                                        <button class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
+                                                                      <%= status.buttonClass === 'green' ? 'bg-gray-100 text-gray-500' : 
+                                                                         status.buttonClass === 'blue' ? 'bg-blue-100 text-blue-700' :
+                                                                         status.buttonClass === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
+                                                                         'bg-gray-100 text-gray-500' %> 
+                                                                      font-medium rounded-lg cursor-not-allowed">
+                                                            <i class="fas fa-<%= status.icon %>"></i>
+                                                            <%= status.buttonText %>
+                                                        </button>
+                                                    <% } %>
+                                                    
+                                                    <!-- Additional Info Button -->
+                                                    <!-- <button onclick="showSessionDetails('<%= data.id %>')" 
+                                                            class="px-4 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                                                        <i class="fas fa-info-circle"></i>
+                                                        <span class="hidden sm:inline"> Details</span>
+                                                    </button> -->
+                                                </div>
+                                                
+                                                <!-- Time Status Message -->
+                                                <div class="mt-3 text-xs text-gray-500">
+                                                    <% if (status.type === 'joinable' && canJoinBasedOnTime) { %>
+                                                        <i class="fas fa-unlock mr-1"></i>
+                                                        Join window open (15 min before to 1 hour after start)
+                                                    <% } else if (status.type === 'joinable' && !canJoinBasedOnTime) { %>
+                                                        <i class="fas fa-lock mr-1"></i>
+                                                        Join window: 
+                                                        <%= joinWindowStart.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %> 
+                                                        to 
+                                                        <%= joinWindowEnd.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                                                    <% } else if (status.type === 'upcoming') { %>
+                                                        <i class="fas fa-clock mr-1"></i>
+                                                        Starts 
+                                                        <%= scheduled.toLocaleDateString('en-US', { 
+                                                            weekday: 'long', 
+                                                            month: 'long', 
+                                                            day: 'numeric' 
+                                                        }) %>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <!-- Program Completed State -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="p-8 text-center">
+                            <div class="mb-6">
+                                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-green-100 to-emerald-100">
+                                    <i class="fas fa-trophy text-4xl text-green-500"></i>
+                                </div>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-3">Program Completed! 🎉</h2>
+                            <p class="text-gray-600 text-lg mb-6 max-w-2xl mx-auto">
+                                Congratulations! You've successfully completed all sessions of "<%= courses.title %>". 
+                                Your achievement certificate is now available for download.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                                <a href="/user" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors">
+                                    <i class="fas fa-book-open"></i>
+                                    Explore More Programs
+                                </a>
+                                <button class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all">
+                                    <i class="fas fa-download"></i>
+                                    Download Certificate
+                                </button>
+                            </div>
+                            <div class="mt-8 pt-6 border-t border-gray-200">
+                                <p class="text-sm text-gray-500">
+                                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                    You've unlocked a new achievement! Check your profile for details.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <!-- Session Details Modal -->
+    <div id="sessionDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-gray-900">Session Details</h3>
+                        <button onclick="closeSessionDetails()" class="text-gray-400 hover:text-gray-500">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div id="sessionDetailsContent">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <button onclick="closeSessionDetails()" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to show session details
+        function showSessionDetails(sessionId) {
+            // In a real implementation, you would fetch session details via AJAX
+            // For now, we'll show a placeholder
+            const modal = document.getElementById('sessionDetailsModal');
+            const content = document.getElementById('sessionDetailsContent');
+            
+            content.innerHTML = `
+                <div class="space-y-4">
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-semibold text-blue-800 mb-2">Session Information</h4>
+                        <p class="text-sm text-blue-700">Detailed session information would appear here.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Session ID:</h4>
+                        <p class="text-gray-600">${sessionId}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Additional Notes:</h4>
+                        <p class="text-gray-600">This modal would show complete session details, including materials, prerequisites, and special instructions.</p>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        
+        // Function to close session details modal
+        function closeSessionDetails() {
+            const modal = document.getElementById('sessionDetailsModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('sessionDetailsModal').addEventListener('click', function(e) {
+            if (e.target.id === 'sessionDetailsModal') {
+                closeSessionDetails();
+            }
+        });
+        
+        // Keyboard shortcut to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSessionDetails();
+            }
+        });
+        
+        // Update time-based status every minute
+        function updateSessionStatuses() {
+            // This function would update the UI based on current time
+            // For a full implementation, you might want to refresh the page or use AJAX
+            console.log('Updating session statuses based on current time...');
+        }
+        
+        // Update every minute
+        setInterval(updateSessionStatuses, 60000);
+        
+        // Initialize tooltips if using any
+        document.addEventListener('DOMContentLoaded', function() {
+            // Any initialization code
+            console.log('Schedules page loaded');
+        });
+    </script>
+</body>
+</html>
