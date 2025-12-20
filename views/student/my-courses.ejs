@@ -5,91 +5,393 @@
 <%-include('./partials/sidenav') %>
 
 <!-- Main Content -->
-<div class="container-fluid mt-4">
-  
+<div class="min-h-screen bg-gray-50">
+  <div class="container mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Static Sidebar for Desktop -->
+      <div class="hidden lg:block lg:w-1/4">
+        <%-include('./partials/staticsidebar') %>
+      </div>
 
-  <div class="row">
-    <!-- Static Sidebar for desktop -->
-    <div class="col-lg-3 d-none d-lg-block">
-      <%-include('./partials/staticsidebar') %>
-    </div>
-
-    <!-- Main Dashboard Section -->
-    <div class="col-lg-9">
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="/user" class="btn btn-outline-primary btn-sm">Back</a>
-          </div>
-
-      <main class="p-0">
-        <%- include('../partials/messages') %>
-
-        <div class="mb-4">
-      
-
-          <div class="row">
-               <!-- Program List -->
-        <% if (courses && courses.length > 0) { %>
-
-          <p class="mb-4">These are the following Programs</p>
-
-          <% courses.forEach(function (data) { %>
-            <div class="col-md-4 mb-3">
-              <div class="p-3 border rounded shadow-sm h-100 d-flex flex-column justify-content-between class-card" data-aos="fade">
-
-                <div class="d-flex align-items-start gap-3">
-                  <!-- Program Image -->
-                  <div style="flex-shrink: 0;">
-                     <% if (data.image_url == "default.jpg") { %>
-                            <img src="/images/thumbnail.png" alt="Program image" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
-                         <% } else { %>
-                            <img src="/uploads/<%= data.image_url  %>" alt="Program image" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
-                      <% } %>
-                  </div>
-
-                  <!-- Program Info -->
-                  <div class="flex-grow-1 text-truncate" style="min-width: 0;">
-                    <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
-                    <p class="mb-1 text-muted text-truncate" style="font-size: 13px;"><%= data.description %></p>
-                    <p class="mb-1 text-muted" style="font-size: 11px;">Total Classes: <%= data.total_sessions || 0 %></p>
-
-                    <!-- Progress Bar -->
-                
-                      <div class="progress mb-1" style="height: 8px;">
-                        <div class="progress-bar" 
-                            role="progressbar" 
-                            style="width: <%= data.progress || 0 %>%;" 
-                            aria-valuenow="<%= data.progress || 0 %>" 
-                            aria-valuemin="0" 
-                            aria-valuemax="100">
-                        </div>
-                      </div>
-                      <small class="text-muted" style="font-size: 11px;">
-                        <%= data.completed_sessions || 0 %> of <%= data.total_sessions || 0 %> Program completed
-                      </small>
-                 
-                  </div>
-                </div>
-
-                <!-- Action Button -->
-                <div class="mt-2 ">
-                    <a href="/user/course/<%= data.id %>/<%=data.category_id %>" class="btn btn-sm btn-primary">View Program</a>
-            
-                </div>
-
-              </div>
-            </div>
-          <% }); %>
-
-
-            
-            <!-- if no Program listed -->
-               <% } else { %>
-                  <p class="mb-1">No Program Listed for this Category at the moment.</p>
-                <% } %>
+      <!-- Main Content Area -->
+      <div class="lg:w-3/4">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+          <a href="/user" 
+             class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <i class="fas fa-arrow-left text-gray-600"></i>
+            <span class="text-sm font-medium text-gray-700">Back to Dashboard</span>
+          </a>
+          
+          <div class="flex items-center gap-3">
+            <span class="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
+              <%= courses.length %> Course<%= courses.length !== 1 ? 's' : '' %>
+            </span>
           </div>
         </div>
-      </main>
+
+        <%- include('../partials/messages') %>
+
+        <!-- My Courses Section -->
+        <div class="mb-8">
+          <% if (courses && courses.length > 0) { %>
+            <!-- Section Header -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h1 class="text-2xl font-bold text-gray-900 mb-2">My Learning Dashboard</h1>
+                  <p class="text-gray-600">Track your progress across all enrolled programs</p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <!-- Progress Summary -->
+                  <div class="text-center px-4 py-2 bg-blue-50 rounded-lg">
+                    <p class="text-sm text-gray-500">Overall Progress</p>
+                    <p class="text-xl font-bold text-blue-600">
+                      <%= courses.reduce((sum, course) => sum + (course.progress || 0), 0) / courses.length || 0 %>%
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+               <!-- Learning Summary -->
+            <div class="mt-8 bg-white rounded-xl shadow-lg p-6 mb-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-6">Learning Summary</h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Total Courses -->
+                <div class="text-center p-4 bg-blue-50 rounded-xl">
+                  <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 mb-3">
+                    <i class="fas fa-book text-xl text-blue-600"></i>
+                  </div>
+                  <h4 class="text-2xl font-bold text-gray-900 mb-1"><%= courses.length %></h4>
+                  <p class="text-sm text-gray-600">Total Courses</p>
+                </div>
+                
+                <!-- Average Progress -->
+                <div class="text-center p-4 bg-green-50 rounded-xl">
+                  <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-3">
+                    <i class="fas fa-chart-line text-xl text-green-600"></i>
+                  </div>
+                  <h4 class="text-2xl font-bold text-gray-900 mb-1">
+                    <%= Math.round(courses.reduce((sum, course) => sum + (course.progress || 0), 0) / courses.length) || 0 %>%
+                  </h4>
+                  <p class="text-sm text-gray-600">Average Progress</p>
+                </div>
+                
+                <!-- Total Sessions -->
+                <div class="text-center p-4 bg-purple-50 rounded-xl">
+                  <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-100 mb-3">
+                    <i class="fas fa-video text-xl text-purple-600"></i>
+                  </div>
+                  <h4 class="text-2xl font-bold text-gray-900 mb-1">
+                    <%= courses.reduce((sum, course) => sum + (course.total_sessions || 0), 0) %>
+                  </h4>
+                  <p class="text-sm text-gray-600">Total Classes</p>
+                </div>
+                
+                <!-- Completed Sessions -->
+                <div class="text-center p-4 bg-yellow-50 rounded-xl">
+                  <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 mb-3">
+                    <i class="fas fa-check-circle text-xl text-yellow-600"></i>
+                  </div>
+                  <h4 class="text-2xl font-bold text-gray-900 mb-1">
+                    <%= courses.reduce((sum, course) => sum + (course.completed_sessions || 0), 0) %>
+                  </h4>
+                  <p class="text-sm text-gray-600">Completed Classes</p>
+                </div>
+              </div>
+              
+              <!-- Continue Learning CTA -->
+              <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h4 class="font-semibold text-gray-900 mb-1">Ready to continue learning?</h4>
+                    <p class="text-gray-600 text-sm">Pick up where you left off or explore new topics</p>
+                  </div>
+                  <div class="flex gap-3">
+                    <% if (courses.length > 0) { 
+                      // Find course with highest progress
+                      const highestProgressCourse = courses.reduce((prev, current) => 
+                        (prev.progress || 0) > (current.progress || 0) ? prev : current
+                      );
+                    %>
+                      <a href="/user/course/<%= highestProgressCourse.id %>/<%= highestProgressCourse.category_id %>" 
+                         class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">
+                        <i class="fas fa-play"></i>
+                        Continue Learning
+                      </a>
+                    <% } %>
+                    <a href="/user" 
+                       class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                      <i class="fas fa-plus"></i>
+                      Explore More
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Courses Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% courses.forEach(function (data) { %>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300">
+                  <!-- Course Image -->
+                  <div class="relative h-48 overflow-hidden">
+                    <% if (data.image_url == "default.jpg") { %>
+                      <img src="/images/thumbnail.png" 
+                           alt="Program image" 
+                           class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                    <% } else { %>
+                      <img src="/uploads/<%= data.image_url %>" 
+                           alt="Program image" 
+                           class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                    <% } %>
+                    
+                    <!-- Progress Badge -->
+                    <% if (data.progress && data.progress > 0) { %>
+                      <div class="absolute top-4 right-4">
+                        <span class="px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow">
+                          <%= data.progress %>% Complete
+                        </span>
+                      </div>
+                    <% } %>
+                    
+                    <!-- Category Badge -->
+                    <div class="absolute bottom-4 left-4">
+                      <span class="px-3 py-1 bg-black bg-opacity-50 text-white text-xs rounded-full backdrop-blur-sm">
+                        <i class="fas fa-folder mr-1"></i>
+                        <%= data.category_name || 'General' %>
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Course Content -->
+                  <div class="p-5">
+                    <!-- Course Title & Description -->
+                    <h3 class="font-bold text-gray-900 mb-2 line-clamp-1" title="<%= data.title %>">
+                      <%= data.title %>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2" title="<%= data.description %>">
+                      <%= data.description %>
+                    </p>
+
+                    <!-- Course Stats -->
+                    <div class="space-y-4">
+                      <!-- Sessions Progress -->
+                      <div>
+                        <div class="flex justify-between items-center mb-2">
+                          <span class="text-xs font-medium text-gray-700">Classes Progress</span>
+                          <span class="text-xs font-bold text-blue-600">
+                            <%= data.completed_sessions || 0 %>/<%= data.total_sessions || 0 %>
+                          </span>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                          <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300"
+                               style="width: <%= data.progress || 0 %>%"></div>
+                        </div>
+                      </div>
+
+                      <!-- Quick Stats -->
+                      <div class="grid grid-cols-2 gap-3">
+                        <!-- Total Classes -->
+                        <div class="text-center p-2 bg-gray-50 rounded-lg">
+                          <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-1">
+                            <i class="fas fa-video text-blue-500 text-sm"></i>
+                          </div>
+                          <p class="text-xs text-gray-500">Classes</p>
+                          <p class="text-sm font-bold text-gray-900"><%= data.total_sessions || 0 %></p>
+                        </div>
+                        
+                        <!-- Completed -->
+                        <div class="text-center p-2 bg-gray-50 rounded-lg">
+                          <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-1">
+                            <i class="fas fa-check-circle text-green-500 text-sm"></i>
+                          </div>
+                          <p class="text-xs text-gray-500">Completed</p>
+                          <p class="text-sm font-bold text-gray-900"><%= data.completed_sessions || 0 %></p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 pt-4 border-t border-gray-100">
+                      <div class="flex gap-3">
+                        <!-- Primary Action -->
+                        <a href="/user/course/<%= data.id %>/<%= data.category_id %>" 
+                           class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">
+                          <i class="fas fa-play-circle"></i>
+                          <% if (data.progress && data.progress > 0) { %>
+                            Continue
+                          <% } else { %>
+                            Start Learning
+                          <% } %>
+                        </a>
+                        
+                        <!-- Quick Actions -->
+                        <div class="flex gap-2">
+                          
+                          <!-- Details Button -->
+                          <a href="/user/course/<%= data.id %>/details" 
+                             class="inline-flex items-center justify-center w-10 h-10 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                             title="Course Details">
+                            <i class="fas fa-info-circle"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+
+         
+          <% } else { %>
+            <!-- Empty State -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div class="text-center py-12">
+                <div class="mb-6">
+                  <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-50">
+                    <i class="fas fa-book-open text-4xl text-blue-400"></i>
+                  </div>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">No Enrolled Programs</h3>
+                <p class="text-gray-600 mb-6 max-w-md mx-auto">
+                  You haven't enrolled in any programs yet. Start your learning journey by exploring our available programs.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                  <a href="/user" 
+                     class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors">
+                    <i class="fas fa-search"></i>
+                    Browse Programs
+                  </a>
+                  <a href="/user/course/free" 
+                     class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                    <i class="fas fa-gift"></i>
+                    View Free Programs
+                  </a>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<style>
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Progress bar animation */
+  @keyframes progressFill {
+    from {
+      width: 0%;
+    }
+  }
+  
+  .progress-bar-animated {
+    animation: progressFill 1s ease-out;
+  }
+</style>
+
+<script>
+  // Add hover effects and animations
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to course cards
+    const courseCards = document.querySelectorAll('.bg-white.rounded-xl');
+    courseCards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.classList.add('hover-lift');
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.classList.remove('hover-lift');
+      });
+      
+      // Add progress bar animation
+      const progressBar = card.querySelector('.bg-gradient-to-r.from-blue-500');
+      if (progressBar) {
+        progressBar.classList.add('progress-bar-animated');
+      }
+    });
+    
+    // Animate summary numbers
+    const summaryNumbers = document.querySelectorAll('.text-2xl.font-bold');
+    summaryNumbers.forEach(number => {
+      const target = parseInt(number.textContent.replace('%', ''));
+      if (!isNaN(target)) {
+        animateValue(number, 0, target, 1000);
+      }
+    });
+  });
+
+  // Number animation function
+  function animateValue(element, start, end, duration) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const value = Math.floor(progress * (end - start) + start);
+      element.textContent = element.textContent.includes('%') ? value + '%' : value;
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  // Add CSS for animations
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes progressFill {
+      from {
+        width: 0%;
+      }
+    }
+    
+    .progress-bar-animated {
+      animation: progressFill 1s ease-out;
+    }
+  `;
+  document.head.appendChild(style);
+</script>

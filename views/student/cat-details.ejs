@@ -5,141 +5,277 @@
 <%-include('./partials/sidenav') %>
 
 <!-- Main Content -->
-<div class="container-fluid mt-4">
-  
+<div class="min-h-screen bg-gray-50">
+  <div class="container mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Static Sidebar for Desktop -->
+      <div class="hidden lg:block lg:w-1/4">
+        <%-include('./partials/staticsidebar') %>
+      </div>
 
-  <div class="row">
-    <!-- Static Sidebar for desktop -->
-    <div class="col-lg-3 d-none d-lg-block">
-      <%-include('./partials/staticsidebar') %>
-    </div>
+      <!-- Main Content Area -->
+      <div class="lg:w-3/4">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+          <a href="/user" 
+             class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <i class="fas fa-arrow-left text-gray-600"></i>
+            <span class="text-sm font-medium text-gray-700">Back</span>
+          </a>
+        </div>
 
-    <!-- Main Dashboard Section -->
-    <div class="col-lg-9">
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="/user" class="btn btn-outline-primary btn-sm">Back</a>
-          </div>
-
-             <!-- Welcome Banner -->
-          <div class="bg-grad text-center text-white rounded p-4 mb-4 shadow-sm">
-            <div class="text-center">
-                <h3 class="text-uppercase"><%= category.name %></h3>
-                <p style="font-size: 12px;"><%= courses.length %> Course(s)</p>
-                  <hr>
-              <p class="mb-0"><%= category.details %></p>
-            </div>
-          </div>
-
-      <main class="p-0">
-        <%- include('../partials/messages') %>
-
-        <div class="mb-4">
-      
-
-          <div class="row">
-               <!-- Program List -->
-        <% if (courses && courses.length > 0) { %>
-
-          <p class="mb-4 text-warning">Available Programs</p>
-
-          <% courses.forEach(function (data) { %>
-            <div class="col-md-4 mb-3">
-              <div class="p-3 border rounded shadow-sm h-100 d-flex flex-column justify-content-between class-card" data-aos="fade">
-
-                <div class="d-flex align-items-start gap-3">
-                  <!-- Program Image -->
-                  <div style="flex-shrink: 0;">
-                     <% if (data.image_url == "default.jpg") { %>
-                              <img src="/images/thumbnail.png" alt="Program image" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
-                              <% } else { %>
-                                <img src="/uploads/<%= data.image_url  %>" alt="Program image" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
-                              <% } %>
-                  </div>
-
-                  <!-- Program Info -->
-                  <div class="flex-grow-1 text-truncate" style="min-width: 0;">
-                    <h6 class="mb-1 text-truncate" title="<%= data.title %>"><%= data.title %></h6>
-                    <p class="mb-1 text-muted text-truncate" style="font-size: 13px;"><%= data.description %></p>
-                    
-                    <div class="mt-2 d-flex gap-1" >
-                    <% if (data.is_open) { %>
-
-                        <% if (enrolledCourseIds.includes(data.id)) { %>
-
-                          <% } else { %>
-                          <form method="POST" action="/user/course/<%= data.id %>/enroll" class="enroll-form" data-course-id="<%= data.id %>" data-price="<%= data.price %>">
-                              <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
-                              <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
-                              <input type="hidden" name="course_id" class="courseId" value="<%= data.id %>">
-                              <input type="hidden" name="amount" class="amount" value="<%= data.price %>">
-
-                              <% if (data.price <= 0) { %>
-                                <button class="btn btn-sm btn-outline-success">Enroll for Free</button>
-                              <% } else { %>
-                                <button type="submit" class="btn btn-sm btn-outline-success pay-btn money-format">Pay – ₦<%= data.price %></button>
-                              <% } %>
-                          </form>
-
-                          <% } %>
-
-                               <!-- is open closed -->
-                            <% } else { %>
-                              <button class="mb-1 btn btn-danger" disabled> <i class="fas fa-lock text-light"></i></button>
-                            
-                              <% } %>
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <% if (enrolledCourseIds.includes(data.id)) { %>
-                      <small class="badge bg-grad">owned</small>
-                      <p class="mb-1 text-muted" style="font-size: 11px;">Total Classes: <%= data.total_sessions || 0 %></p>
-                      
-                      <div class="progress mb-1" style="height: 8px;">
-                        <div class="progress-bar" 
-                            role="progressbar" 
-                            style="width: <%= data.progress || 0 %>%;" 
-                            aria-valuenow="<%= data.progress || 0 %>" 
-                            aria-valuemin="0" 
-                            aria-valuemax="100">
-                        </div>
-                      </div>
-                      <small class="text-muted" style="font-size: 11px;">
-                        <%= data.completed_sessions || 0 %> of <%= data.total_sessions || 0 %> completed
-                      </small>
-
-                 
-                    <% } %>
-                  </div>
-                  <a href="/user/course/<%= data.id %>/details" class="btn btn-success btn-block "><i class="fas fa-chevron-right "></i></a>
-                </div>
-
-                <!-- Action Button -->
-                <div class="mt-2 ">
-                  <% if (enrolledCourseIds.includes(data.id)) { %>
-                    <!-- <a href="/user/course/<%= data.id %>/<%=categoryId%>" class="btn btn-sm btn-success ">You own This Program</a> -->
-                  <% } else { %>
-              
-                  <% } %>
-                </div>
-
-              </div>
-            </div>
-          <% }); %>
-
-            <!-- if no Program listed -->
-               <% } else { %>
-                  <p class="mb-1">No Program Listed for this Category at the moment.</p>
-                <% } %>
+        <!-- Category Banner -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 mb-6 shadow-lg">
+          <div class="text-center">
+            <h1 class="text-2xl font-bold text-white uppercase mb-2"><%= category.name %></h1>
+            <p class="text-blue-100 text-sm mb-3">
+              <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                <%= courses.length %> Course<%= courses.length !== 1 ? 's' : '' %>
+              </span>
+            </p>
+            <div class="w-24 h-1 bg-white bg-opacity-30 mx-auto mb-4 rounded-full"></div>
+            <p class="text-white text-opacity-90 max-w-2xl mx-auto"><%= category.details %></p>
           </div>
         </div>
-      </main>
+
+        <%- include('../partials/messages') %>
+
+        <!-- Courses Section -->
+        <div class="mb-8">
+          <% if (courses && courses.length > 0) { %>
+            <!-- Section Header -->
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-xl font-bold text-gray-900">Available Programs</h2>
+                <p class="text-gray-500 text-sm">Browse and enroll in our featured programs</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-3 py-1 bg-yellow-50 text-yellow-700 text-sm font-medium rounded-full">
+                  <%= courses.length %> Programs
+                </span>
+              </div>
+            </div>
+
+            <!-- Courses Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% courses.forEach(function (data) { %>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300">
+                  <!-- Course Image -->
+                  <div class="relative h-48 overflow-hidden">
+                    <% if (data.image_url == "default.jpg") { %>
+                      <img src="/images/thumbnail.png" 
+                           alt="Program image" 
+                           class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                    <% } else { %>
+                      <img src="/uploads/<%= data.image_url %>" 
+                           alt="Program image" 
+                           class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                    <% } %>
+                    
+                    <!-- Status Badge -->
+                    <div class="absolute top-4 left-4">
+                      <% if (enrolledCourseIds.includes(data.id)) { %>
+                        <span class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                          <i class="fas fa-check-circle mr-1"></i>Enrolled
+                        </span>
+                      <% } else if (!data.is_open) { %>
+                        <span class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                          <i class="fas fa-lock mr-1"></i>Coming Soon
+                        </span>
+                      <% } else if (data.price <= 0) { %>
+                        <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">
+                          <i class="fas fa-gift mr-1"></i>Free
+                        </span>
+                      <% } %>
+                    </div>
+                    
+                    <!-- Price Badge -->
+                    <% if (data.price > 0 && data.is_open) { %>
+                      <div class="absolute top-4 right-4">
+                        <span class="px-3 py-1 bg-white text-gray-900 font-bold rounded-lg shadow">
+                          ₦<%= data.price.toLocaleString() %>
+                        </span>
+                      </div>
+                    <% } %>
+                  </div>
+
+                  <!-- Course Content -->
+                  <div class="p-5">
+                    <!-- Course Title & Description -->
+                    <h3 class="font-bold text-gray-900 mb-2 line-clamp-1" title="<%= data.title %>">
+                      <%= data.title %>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2" title="<%= data.description %>">
+                      <%= data.description %>
+                    </p>
+
+                    <!-- Progress Section (if enrolled) -->
+                    <% if (enrolledCourseIds.includes(data.id)) { %>
+                      <div class="mb-4">
+                        <!-- Progress Info -->
+                        <div class="flex justify-between items-center mb-2">
+                          <span class="text-xs font-medium text-gray-700">Your Progress</span>
+                          <span class="text-xs font-bold text-blue-600"><%= data.progress || 0 %>%</span>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                          <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300"
+                               style="width: <%= data.progress || 0 %>%"></div>
+                        </div>
+                        
+                        <!-- Sessions Info -->
+                        <div class="flex justify-between text-xs text-gray-500">
+                          <span>
+                            <i class="fas fa-video mr-1"></i>
+                            <%= data.completed_sessions || 0 %>/<%= data.total_sessions || 0 %> classes
+                          </span>
+                          <span class="font-medium">
+                            <%= Math.round((data.completed_sessions || 0) / (data.total_sessions || 1) * 100) %>%
+                          </span>
+                        </div>
+                      </div>
+                    <% } else { %>
+                      <!-- Session Count for non-enrolled -->
+                      <% if (data.total_sessions > 0) { %>
+                        <div class="mb-4">
+                          <div class="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full">
+                            <i class="fas fa-video text-gray-600 text-xs"></i>
+                            <span class="text-xs text-gray-700"><%= data.total_sessions %> sessions</span>
+                          </div>
+                        </div>
+                      <% } %>
+                    <% } %>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                      <% if (enrolledCourseIds.includes(data.id)) { %>
+                        <!-- View Course Button -->
+                        <a href="/user/course/<%= data.id %>/details" 
+                           class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all">
+                          <i class="fas fa-play-circle"></i>
+                          Continue Learning
+                        </a>
+                      <% } else if (data.is_open) { %>
+                        <!-- Enroll/Pay Button -->
+                        <form method="POST" 
+                              action="/user/course/<%= data.id %>/enroll" 
+                              class="enroll-form flex-1" 
+                              data-course-id="<%= data.id %>" 
+                              data-price="<%= data.price %>">
+                          <input type="hidden" name="email" class="user-email" value="<%= user.email %>">
+                          <input type="hidden" name="user-id" class="user-id" value="<%= user.id %>">
+                          <input type="hidden" name="course_id" class="courseId" value="<%= data.id %>">
+                          <input type="hidden" name="amount" class="amount" value="<%= data.price %>">
+
+                          <% if (data.price <= 0) { %>
+                            <button type="submit" 
+                                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">
+                              <i class="fas fa-graduation-cap"></i>
+                              Enroll for Free
+                            </button>
+                          <% } else { %>
+                            <button type="submit" 
+                                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all">
+                              <i class="fas fa-credit-card"></i>
+                              Enroll Now – ₦<%= data.price.toLocaleString() %>
+                            </button>
+                          <% } %>
+                        </form>
+                      <% } else { %>
+                        <!-- Coming Soon Button -->
+                        <button class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-200 text-gray-500 font-medium rounded-lg cursor-not-allowed" disabled>
+                          <i class="fas fa-lock"></i>
+                          Coming Soon
+                        </button>
+                      <% } %>
+                      
+                      <!-- Details Button (if not enrolled) -->
+                      <% if (!enrolledCourseIds.includes(data.id)) { %>
+                        <a href="/user/course/<%= data.id %>/details" 
+                           class="ml-3 inline-flex items-center justify-center w-10 h-10 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                          <i class="fas fa-chevron-right"></i>
+                        </a>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+
+          <% } else { %>
+            <!-- Empty State -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div class="text-center py-12">
+                <div class="mb-6">
+                  <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gray-100">
+                    <i class="fas fa-book-open text-4xl text-gray-400"></i>
+                  </div>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">No Programs Available</h3>
+                <p class="text-gray-600 mb-6 max-w-md mx-auto">
+                  There are no programs listed for this category at the moment. Please check back later.
+                </p>
+                <a href="/user" 
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                  <i class="fas fa-arrow-left"></i>
+                  Back to Dashboard
+                </a>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
+<style>
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+</style>
 
 <script>
+  // Handle enrollment forms
   document.querySelectorAll('.enroll-form').forEach(form => {
     form.addEventListener('submit', async function (e) {
       const price = parseFloat(form.dataset.price);
@@ -151,7 +287,13 @@
       const courseId = form.querySelector('.courseId').value;
       const userId = form.querySelector('.user-id').value;
       const amount = form.querySelector('.amount').value;
-      const payFor = 'course'
+      const payFor = 'course';
+
+      // Show loading state
+      const button = form.querySelector('button[type="submit"]');
+      const originalText = button.innerHTML;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+      button.disabled = true;
 
       try {
         const response = await fetch(`/user/course/${courseId}/enroll`, {
@@ -165,13 +307,85 @@
         if (data.status) {
           window.location.href = data.data.authorization_url;
         } else {
-          alert(data.message || 'Payment failed.');
+          // Show error message
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-slideIn';
+          errorDiv.innerHTML = `
+            <i class="fas fa-exclamation-circle"></i>
+            <span>${data.message || 'Payment failed.'}</span>
+            <button class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.remove()">
+              <i class="fas fa-times"></i>
+            </button>
+          `;
+          document.body.appendChild(errorDiv);
+          
+          // Auto remove after 5 seconds
+          setTimeout(() => {
+            if (errorDiv.parentNode) {
+              errorDiv.remove();
+            }
+          }, 5000);
         }
       } catch (err) {
         console.error(err);
-        alert('Error processing payment.');
+        
+        // Show error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50';
+        errorDiv.innerHTML = `
+          <i class="fas fa-exclamation-circle"></i>
+          <span>Error processing payment. Please try again.</span>
+          <button class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+        document.body.appendChild(errorDiv);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+          if (errorDiv.parentNode) {
+            errorDiv.remove();
+          }
+        }, 5000);
+      } finally {
+        // Restore button state
+        button.innerHTML = originalText;
+        button.disabled = false;
       }
     });
   });
-</script>
 
+  // Add hover effects to course cards
+  document.addEventListener('DOMContentLoaded', function() {
+    const courseCards = document.querySelectorAll('.bg-white.rounded-xl');
+    courseCards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.classList.add('hover-lift');
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.classList.remove('hover-lift');
+      });
+    });
+  });
+
+  // Add animation for error messages
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .animate-slideIn {
+      animation: slideIn 0.3s ease-out;
+    }
+  `;
+  document.head.appendChild(style);
+</script>

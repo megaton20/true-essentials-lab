@@ -4,299 +4,396 @@
 <%- include('./partials/sidenav') %>
 
 <!-- Main Content -->
-<div class="container-fluid mt-4">
-  <div class="row">
-    <!-- Static Sidebar for desktop -->
-    <div class="col-lg-3 d-none d-lg-block">
-      <%- include('./partials/staticsidebar') %>
-    </div>
+<div class="min-h-screen bg-gray-50">
+  <div class="container mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Static Sidebar for Desktop -->
+      <div class="hidden lg:block lg:w-1/4">
+        <%- include('./partials/staticsidebar') %>
+      </div>
 
-    <!-- Main Dashboard Section -->
-    <div class="col-lg-9">
-      <main>
+      <!-- Main Dashboard Section -->
+      <div class="lg:w-3/4">
         <%- include('../partials/messages') %>
 
         <!-- Profile Header Section -->
-        <div class="bg-white shadow-sm p-4 rounded mb-4">
-          <div class="row align-items-center">
-            <div class="col-md-8">
-              <div class="d-flex align-items-center">
-                <img src="/images/zap.png" alt="User Avatar" class="rounded-circle me-4" width="80" height="80">
-                <div>
-                  <h2 class="mb-1"><%= user.full_name %></h2>
-                  <p class="text-muted mb-2" style="font-size: 12px;">
-                    <%= user.email %> 
-                    <br> <%= user.phone || 'N/A' %> 
-                    <br> <%= user.location || 'N/A' %>
-                    <span class="badge bg-primary"><%= user.role || 'Student' %></span>
-                  </p>
-                  <p class="text-muted small mb-0">Joined <%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+            <!-- Avatar -->
+            <div class="flex-shrink-0">
+              <div class="relative">
+                <img src="/images/zap.png" alt="User Avatar" class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
+                <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                  <i class="fas fa-camera text-white text-sm"></i>
                 </div>
               </div>
             </div>
-            <div class="col-md-4 text-end">
-              <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
-                <i class="fas fa-edit me-2"></i>Edit Profile
-              </button>
+            
+            <!-- User Info -->
+            <div class="flex-grow">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <h1 class="text-2xl font-bold text-gray-900 mb-1"><%= user.full_name %></h1>
+                  <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="inline-flex items-center gap-1 text-gray-600">
+                      <i class="fas fa-envelope text-sm"></i>
+                      <span class="text-sm"><%= user.email %></span>
+                    </span>
+                    <span class="inline-flex items-center gap-1 text-gray-600">
+                      <i class="fas fa-phone text-sm"></i>
+                      <span class="text-sm"><%= user.phone || 'N/A' %></span>
+                    </span>
+                    <span class="inline-flex items-center gap-1 text-gray-600">
+                      <i class="fas fa-map-marker-alt text-sm"></i>
+                      <span class="text-sm"><%= user.location || 'N/A' %></span>
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
+                      <i class="fas fa-user-tag mr-1"></i>
+                      <%= user.role || 'Student' %>
+                    </span>
+                    <span class="text-sm text-gray-500">
+                      <i class="far fa-calendar-alt mr-1"></i>
+                      Joined <%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                    </span>
+                  </div>
+                </div>
+                <button onclick="document.getElementById('editUserModal').classList.remove('hidden')"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                  <i class="fas fa-edit"></i>
+                  Edit Profile
+                </button>
+              </div>
+              
+              <!-- Bio -->
+              <% if (user.bio) { %>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                  <p class="text-gray-600"><%= user.bio %></p>
+                </div>
+              <% } %>
             </div>
           </div>
         </div>
 
         <!-- Stats Overview Cards -->
-        <div class="row mb-4">
-          <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card stat-card h-100">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="card-title text-muted mb-2">Courses Enrolled</h6>
-                    <h3 class="mb-0 text-primary"><%= profileStats.total_courses || 0 %></h3>
-                  </div>
-                  <div class="stat-icon">
-                    <i class="fas fa-book-open fa-2x text-primary opacity-25"></i>
-                  </div>
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <!-- Courses Enrolled -->
+          <div class="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-500 mb-1">Courses Enrolled</p>
+                <h3 class="text-2xl font-bold text-blue-600"><%= profileStats.total_courses || 0 %></h3>
+              </div>
+              <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+                <i class="fas fa-book-open text-xl text-blue-500"></i>
               </div>
             </div>
           </div>
-          <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card stat-card h-100">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="card-title text-muted mb-2">Sessions Attended</h6>
-                    <h3 class="mb-0 text-success"><%= profileStats.attended_sessions || 0 %>/<%= profileStats.total_sessions || 0 %></h3>
-                  </div>
-                  <div class="stat-icon">
-                    <i class="fas fa-calendar-check fa-2x text-success opacity-25"></i>
-                  </div>
-                </div>
-                <div class="mt-2">
-                  <small class="text-muted"><%= profileStats.attendance_rate || 0 %>% Attendance Rate</small>
-                </div>
+          
+          <!-- Sessions Attended -->
+          <div class="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-500 mb-1">Sessions Attended</p>
+                <h3 class="text-2xl font-bold text-green-600">
+                  <%= profileStats.attended_sessions || 0 %>/<%= profileStats.total_sessions || 0 %>
+                </h3>
+                <p class="text-xs text-gray-500 mt-1">
+                  <i class="fas fa-chart-line mr-1"></i>
+                  <%= profileStats.attendance_rate || 0 %>% Attendance Rate
+                </p>
+              </div>
+              <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
+                <i class="fas fa-calendar-check text-xl text-green-500"></i>
               </div>
             </div>
           </div>
-          <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card stat-card h-100">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="card-title text-muted mb-2">Badges Earned</h6>
-                    <h3 class="mb-0 text-warning"><%= profileStats.badges_earned || 0 %></h3>
-                  </div>
-                  <div class="stat-icon">
-                    <i class="fas fa-trophy fa-2x text-warning opacity-25"></i>
-                  </div>
-                </div>
+          
+          <!-- Badges Earned -->
+          <div class="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-500 mb-1">Badges Earned</p>
+                <h3 class="text-2xl font-bold text-yellow-600"><%= profileStats.badges_earned || 0 %></h3>
+              </div>
+              <div class="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center">
+                <i class="fas fa-trophy text-xl text-yellow-500"></i>
               </div>
             </div>
           </div>
-          <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card stat-card h-100">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 class="card-title text-muted mb-2">Completion Rate</h6>
-                    <h3 class="mb-0 text-info"><%= profileStats.approval_rate || 0 %>%</h3>
-                  </div>
-                  <div class="stat-icon">
-                    <i class="fas fa-chart-line fa-2x text-info opacity-25"></i>
-                  </div>
-                </div>
+          
+          <!-- Completion Rate -->
+          <div class="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-500 mb-1">Completion Rate</p>
+                <h3 class="text-2xl font-bold text-purple-600"><%= profileStats.approval_rate || 0 %>%</h3>
+              </div>
+              <div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center">
+                <i class="fas fa-chart-line text-xl text-purple-500"></i>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="row">
-          <!-- Left Column - Courses & Progress -->
-          <div class="col-lg-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left Column - Courses Progress -->
+          <div class="lg:col-span-2">
             <!-- Courses Progress Section -->
-            <div class="card shadow-sm border-0 mb-4">
-              <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0">
-                  <i class="fas fa-graduation-cap me-2 text-primary"></i>
+            <div class="bg-white rounded-xl shadow-lg mb-6">
+              <div class="p-6 border-b border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <i class="fas fa-graduation-cap text-blue-500"></i>
                   My Courses & Progress
-                </h5>
+                </h3>
               </div>
-              <div class="card-body">
+              
+              <div class="p-6">
                 <% if (enrolledCourses.length > 0) { %>
-                  <div class="row">
+                  <div class="space-y-6">
                     <% enrolledCourses.forEach(course => { %>
-                      <div class="col-md-6 mb-4">
-                        <div class="course-card h-100">
-                          <div class="course-header d-flex justify-content-between align-items-start mb-3">
-                            <h6 class="fw-bold mb-1 text-truncate" title="<%= course.title %>"><%= course.title %></h6>
-                            <span class="badge bg-primary badge-sm"><%= course.progress_percentage %>%</span>
+                      <div class="course-card p-4 border border-gray-200 rounded-xl hover:border-blue-300 transition-colors">
+                        <!-- Course Header -->
+                        <div class="flex justify-between items-start mb-4">
+                          <h4 class="font-semibold text-gray-900 line-clamp-1" title="<%= course.title %>">
+                            <%= course.title %>
+                          </h4>
+                          <span class="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
+                            <%= course.progress_percentage %>%
+                          </span>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                          <div class="flex justify-between text-sm text-gray-500 mb-1">
+                            <span>Progress</span>
+                            <span><%= course.progress_percentage %>%</span>
                           </div>
-                          
-                          <!-- Progress Bar -->
-                          <div class="progress mb-3" style="height: 6px;">
-                            <div class="progress-bar bg-success" role="progressbar" 
-                                 style="width: <%= course.progress_percentage %>%" 
-                                 aria-valuenow="<%= course.progress_percentage %>" 
-                                 aria-valuemin="0" aria-valuemax="100">
+                          <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300"
+                                 style="width: <%= course.progress_percentage %>%"></div>
+                          </div>
+                        </div>
+                        
+                        <!-- Course Stats -->
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                              <i class="fas fa-video text-blue-500"></i>
+                            </div>
+                            <div>
+                              <p class="text-sm text-gray-500">Videos</p>
+                              <p class="font-bold text-gray-900"><%= course.total_videos || 0 %></p>
                             </div>
                           </div>
-
-                          <!-- Course Stats -->
-                          <div class="course-stats d-flex justify-content-between small text-muted mb-3">
-                            <span>
-                              <i class="fas fa-play-circle me-1"></i>
-                              <%= course.total_videos || 0 %> videos
-                            </span>
-                            <span>
-                              <i class="fas fa-users me-1"></i>
-                              <%= course.attended_sessions %>/<%= course.total_sessions %> sessions
-                            </span>
+                          
+                          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                              <i class="fas fa-calendar-check text-green-500"></i>
+                            </div>
+                            <div>
+                              <p class="text-sm text-gray-500">Sessions</p>
+                              <p class="font-bold text-gray-900"><%= course.attended_sessions %>/<%= course.total_sessions %></p>
+                            </div>
                           </div>
-
-                          <!-- Recent Sessions -->
-                          <div class="sessions-preview">
-                            <h6 class="small fw-bold text-muted mb-2">Recent Sessions:</h6>
-                            <% if (course.sessions && course.sessions.length > 0) { %>
+                        </div>
+                        
+                        <!-- Recent Sessions -->
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                          <h5 class="text-sm font-medium text-gray-700 mb-3">Recent Sessions</h5>
+                          <% if (course.sessions && course.sessions.length > 0) { %>
+                            <div class="space-y-2">
                               <% course.sessions.slice(0, 3).forEach(session => { %>
-                                <div class="session-preview-item d-flex justify-content-between align-items-center py-2 border-bottom">
-                                  <div class="session-info flex-grow-1">
-                                    <div class="small fw-medium text-truncate" title="<%= session.title %>">
+                                <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                                  <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate" title="<%= session.title %>">
                                       <%= session.title %>
-                                    </div>
-                                    <div class="text-muted extra-small">
+                                    </p>
+                                    <p class="text-xs text-gray-500">
                                       <%= new Date(session.scheduled_at).toLocaleDateString() %>
-                                    </div>
+                                    </p>
                                   </div>
-                                  <div class="session-status">
+                                  <span class="ml-2">
                                     <% if (session.user_attended) { %>
-                                      <span class="badge bg-success badge-sm" title="Attended">
-                                        <i class="fas fa-check"></i>
+                                      <span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                                        <i class="fas fa-check mr-1"></i>
+                                        Attended
                                       </span>
                                     <% } else { %>
-                                      <span class="badge bg-secondary badge-sm" title="Not Attended">
-                                        <i class="fas fa-times"></i>
+                                      <span class="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                                        <i class="fas fa-times mr-1"></i>
+                                        Missed
                                       </span>
                                     <% } %>
-                                  </div>
+                                  </span>
                                 </div>
                               <% }); %>
+                              
                               <% if (course.sessions.length > 3) { %>
-                                <div class="text-center mt-2">
-                                  <small class="text-primary">
+                                <div class="text-center pt-2">
+                                  <button class="text-sm text-blue-600 hover:text-blue-700">
                                     +<%= course.sessions.length - 3 %> more sessions
-                                  </small>
+                                  </button>
                                 </div>
                               <% } %>
-                            <% } else { %>
-                              <p class="text-muted small mb-0">No sessions scheduled</p>
-                            <% } %>
-                          </div>
+                            </div>
+                          <% } else { %>
+                            <p class="text-sm text-gray-500 italic">No sessions scheduled yet</p>
+                          <% } %>
                         </div>
                       </div>
                     <% }); %>
                   </div>
                 <% } else { %>
-                  <div class="text-center py-5">
-                    <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No Courses Enrolled</h5>
-                    <p class="text-muted">Start your learning journey by enrolling in courses.</p>
-                    <a href="/courses" class="btn btn-primary">Browse Courses</a>
+                  <!-- Empty State -->
+                  <div class="text-center py-8">
+                    <div class="mb-4">
+                      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100">
+                        <i class="fas fa-book-open text-2xl text-gray-400"></i>
+                      </div>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">No Courses Enrolled</h4>
+                    <p class="text-gray-600 mb-4">Start your learning journey by enrolling in courses.</p>
+                    <a href="/courses" 
+                       class="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                      <i class="fas fa-search"></i>
+                      Browse Courses
+                    </a>
                   </div>
                 <% } %>
               </div>
             </div>
           </div>
 
-          <!-- Right Column - Badges & Additional Info -->
-          <div class="col-lg-4">
-           <!-- Badge Progress Section -->
-        <div class="card shadow-sm border-0 mb-4">
-          <div class="card-header bg-white border-0 py-3">
-            <h5 class="card-title mb-0">
-              <i class="fas fa-trophy me-2 text-warning"></i>
-              Badge Progress
-            </h5>
-          </div>
-          <div class="card-body">
-            <% badgeProgress.forEach(badge => { %>
-              <div class="badge-progress-item mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <div class="d-flex align-items-center">
-                    <div class="badge-icon me-2" style="font-size: 1.5rem;">
-                      <%= badge.icon %>
-                    </div>
-                    <div>
-                      <h6 class="mb-0 fw-bold"><%= badge.name %></h6>
-                      <p class="small text-muted mb-0"><%= badge.description %></p>
-                    </div>
-                  </div>
-                  <% if (badge.earned) { %>
-                    <span class="badge bg-success">Earned!</span>
-                  <% } else { %>
-                    <span class="text-muted small"><%= badge.progress %>%</span>
-                  <% } %>
-                </div>
-                <% if (!badge.earned) { %>
-                  <div class="progress" style="height: 6px;">
-                    <div class="progress-bar bg-warning" role="progressbar" 
-                        style="width: <%= badge.progress %>%" 
-                        aria-valuenow="<%= badge.progress %>" 
-                        aria-valuemin="0" aria-valuemax="100">
-                    </div>
-                  </div>
-                  <div class="d-flex justify-content-between mt-1">
-                    <small class="text-muted">Progress: <%= badge.current %>/<%= badge.target %></small>
-                    <small class="text-muted"><%= badge.target - badge.current %> to go</small>
-                  </div>
-                <% } %>
+          <!-- Right Column - Badges & Info -->
+          <div class="space-y-6">
+            <!-- Badge Progress -->
+            <div class="bg-white rounded-xl shadow-lg">
+              <div class="p-6 border-b border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <i class="fas fa-trophy text-yellow-500"></i>
+                  Badge Progress
+                </h3>
               </div>
-            <% }); %>
-          </div>
-        </div>
-
-            <!-- Additional Info Section -->
-            <div class="card shadow-sm border-0">
-              <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0">
-                  <i class="fas fa-info-circle me-2 text-info"></i>
-                  Additional Information
-                </h5>
-              </div>
-              <div class="card-body">
-                <!-- Bio -->
-                <div class="mb-3">
-                  <h6 class="fw-bold small">About</h6>
-                  <p class="small text-muted mb-2">
-                    <%= user.bio || 'No bio available yet.' %>
-                  </p>
+              
+              <div class="p-6">
+                <div class="space-y-4">
+                  <% badgeProgress.forEach(badge => { %>
+                    <div class="p-4 border border-gray-200 rounded-xl hover:border-yellow-300 transition-colors">
+                      <div class="flex items-start gap-3 mb-3">
+                        <div class="flex-shrink-0 text-2xl">
+                          <%= badge.icon %>
+                        </div>
+                        <div class="flex-grow">
+                          <h4 class="font-semibold text-gray-900 mb-1"><%= badge.name %></h4>
+                          <p class="text-sm text-gray-600"><%= badge.description %></p>
+                        </div>
+                        <% if (badge.earned) { %>
+                          <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                            Earned!
+                          </span>
+                        <% } else { %>
+                          <span class="text-sm text-gray-500">
+                            <%= badge.progress %>%
+                          </span>
+                        <% } %>
+                      </div>
+                      
+                      <% if (!badge.earned) { %>
+                        <div class="mt-3">
+                          <div class="flex justify-between text-sm text-gray-500 mb-1">
+                            <span>Progress</span>
+                            <span><%= badge.progress %>%</span>
+                          </div>
+                          <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full"
+                                 style="width: <%= badge.progress %>%"></div>
+                          </div>
+                          <div class="flex justify-between mt-2">
+                            <span class="text-xs text-gray-500">
+                              <%= badge.current %>/<%= badge.target %>
+                            </span>
+                            <span class="text-xs text-gray-500">
+                              <%= badge.target - badge.current %> to go
+                            </span>
+                          </div>
+                        </div>
+                      <% } %>
+                    </div>
+                  <% }); %>
                 </div>
+              </div>
+            </div>
 
+            <!-- Additional Info -->
+            <div class="bg-white rounded-xl shadow-lg">
+              <div class="p-6 border-b border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <i class="fas fa-info-circle text-blue-500"></i>
+                  Account Information
+                </h3>
+              </div>
+              
+              <div class="p-6">
                 <!-- Account Status -->
-                <div class="mb-3">
-                  <h6 class="fw-bold small">Account Status</h6>
-                  <span class="badge bg-success">
-                    <i class="fas fa-check-circle me-1"></i>Active
+                <div class="mb-6">
+                  <h4 class="font-medium text-gray-900 mb-2">Account Status</h4>
+                  <span class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Active
                   </span>
                 </div>
-
-                <!-- Bank Details (if affiliate) -->
-                <% if (user.is_affiliate) { %>
-                  <div class="bank-details">
-                    <h6 class="fw-bold small">Bank Details</h6>
-                    <div class="small text-muted">
-                      <div class="mb-1">
-                        <i class="fas fa-university me-1"></i>
-                        <%= isAffiliate.bank_name || 'Not Set' %>
+                
+                <!-- Bio -->
+                <% if (user.bio) { %>
+                  <div class="mb-6">
+                    <h4 class="font-medium text-gray-900 mb-2">About</h4>
+                    <p class="text-gray-600 text-sm"><%= user.bio %></p>
+                  </div>
+                <% } %>
+                
+                <!-- Bank Details -->
+                <% if (user.is_affiliate && isAffiliate) { %>
+                  <div class="pt-6 border-t border-gray-100">
+                    <h4 class="font-medium text-gray-900 mb-3">Bank Details</h4>
+                    <div class="space-y-3">
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                          <i class="fas fa-university text-blue-500"></i>
+                        </div>
+                        <div>
+                          <p class="text-sm text-gray-500">Bank Name</p>
+                          <p class="font-medium text-gray-900"><%= isAffiliate.bank_name || 'Not Set' %></p>
+                        </div>
                       </div>
-                      <div class="mb-1">
-                        <i class="fas fa-user me-1"></i>
-                        <%= isAffiliate.account_name || 'Not Set' %>
+                      
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+                          <i class="fas fa-user text-green-500"></i>
+                        </div>
+                        <div>
+                          <p class="text-sm text-gray-500">Account Name</p>
+                          <p class="font-medium text-gray-900"><%= isAffiliate.account_name || 'Not Set' %></p>
+                        </div>
                       </div>
-                      <div class="mb-2">
-                        <i class="fas fa-credit-card me-1"></i>
-                        <%= isAffiliate.account_number ? '****' + isAffiliate.account_number.slice(-4) : 'Not Set' %>
+                      
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center">
+                          <i class="fas fa-credit-card text-purple-500"></i>
+                        </div>
+                        <div>
+                          <p class="text-sm text-gray-500">Account Number</p>
+                          <p class="font-medium text-gray-900">
+                            <%= isAffiliate.account_number ? '****' + isAffiliate.account_number.slice(-4) : 'Not Set' %>
+                          </p>
+                        </div>
                       </div>
-                      <button class="btn btn-outline-secondary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#editBankModal">
-                        <i class="fas fa-edit me-1"></i>Edit Bank Details
+                      
+                      <button onclick="document.getElementById('editBankModal').classList.remove('hidden')"
+                              class="w-full mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-edit"></i>
+                        Edit Bank Details
                       </button>
                     </div>
                   </div>
@@ -305,215 +402,282 @@
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Edit User Info Modal -->
-<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form action="/user/profile/update" method="POST">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editUserModalLabel">Edit Profile</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="userName" class="form-label">Full Name</label>
-            <input type="text" class="form-control" id="userName" name="fullName" value="<%= user.full_name %>">
+<!-- Edit User Modal -->
+<div id="editUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+      <form action="/user/profile/update" method="POST">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-900">Edit Profile</h3>
+            <button type="button" onclick="closeModal('editUserModal')" 
+                    class="text-gray-400 hover:text-gray-500">
+              <i class="fas fa-times text-xl"></i>
+            </button>
           </div>
-          <div class="mb-3">
-            <label for="userPhone" class="form-label">Phone</label>
-            <input type="text" class="form-control" id="userPhone" name="phone" value="<%= user.phone %>">
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+              <input type="text" name="fullName" value="<%= user.full_name %>"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+              <input type="text" name="phone" value="<%= user.phone %>"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+              <textarea name="bio" rows="3" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Tell us about yourself..."><%= user.bio || '' %></textarea>
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="userBio" class="form-label">Bio</label>
-            <textarea class="form-control" id="userBio" name="bio" rows="3" placeholder="Tell us about yourself..."><%= user.bio || "I love to learn" %></textarea>
+          
+          <div class="flex justify-end gap-3 mt-6">
+            <button type="button" onclick="closeModal('editUserModal')"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
+              Cancel
+            </button>
+            <button type="submit" 
+                    class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+              Save Changes
+            </button>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
 
-<!-- Edit Bank Detail Modal -->
-<div class="modal fade" id="editBankModal" tabindex="-1" aria-labelledby="editBankModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form action="/affiliate/update-bank" method="POST">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editBankModalLabel">Edit Bank Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <!-- Bank Dropdown -->
-          <div class="mb-3">
-            <label for="bank-select" class="form-label">Bank</label>
-            <select class="form-select" id="bank-select" name="bank_code">
-              <option value="">-- Choose a Bank --</option>
-              <% banks.forEach(bank => { %>
-                <option value="<%= bank.code %>" <%= user.bank_code === bank.code ? 'selected' : '' %>><%= bank.name %></option>
-              <% }) %>
-            </select>
+<!-- Edit Bank Modal -->
+<div id="editBankModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+      <form action="/affiliate/update-bank" method="POST">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-900">Edit Bank Details</h3>
+            <button type="button" onclick="closeModal('editBankModal')" 
+                    class="text-gray-400 hover:text-gray-500">
+              <i class="fas fa-times text-xl"></i>
+            </button>
           </div>
-
-          <!-- Account Number Input -->
-          <div class="mb-3">
-            <label for="accountNumber" class="form-label">Account Number</label>
-            <input type="text" class="form-control" id="accountNumber" name="account_number" value="<%= user.account_number || '' %>" maxlength="10" pattern="\d{10}" required>
-          </div>
-
-          <!-- Account Name Display -->
-          <div class="mb-3">
-            <label class="form-label">Account Name</label>
-            <div id="accountNameDisplay" class="form-control bg-light" style="height:auto;">....</div>
-            <input type="hidden" id="accountName" name="account_name" value="<%= user.account_name || '' %>">
-            <div id="accountSpinner" class="text-muted small mt-1" style="display:none;">
-              <i class="fas fa-spinner fa-spin"></i> Resolving account...
+          
+          <div class="space-y-4">
+            <!-- Bank Select -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Bank</label>
+              <select name="bank_code" 
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">-- Choose a Bank --</option>
+                <% banks.forEach(bank => { %>
+                  <option value="<%= bank.code %>" <%= user.bank_code === bank.code ? 'selected' : '' %>>
+                    <%= bank.name %>
+                  </option>
+                <% }) %>
+              </select>
             </div>
-            <button id="retryResolveBtn" class="btn btn-sm btn-outline-danger mt-2" style="display:none;">Retry</button>
+            
+            <!-- Account Number -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
+              <input type="text" name="account_number" value="<%= user.account_number || '' %>"
+                     maxlength="10" pattern="\d{10}" required
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <!-- Account Name -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Account Name</label>
+              <div id="accountNameDisplay" class="px-4 py-2 bg-gray-50 rounded-lg text-gray-700">
+                ....
+              </div>
+              <input type="hidden" id="accountName" name="account_name" value="<%= user.account_name || '' %>">
+              <div id="accountSpinner" class="text-sm text-gray-500 mt-1 hidden">
+                <i class="fas fa-spinner fa-spin mr-2"></i> Resolving account...
+              </div>
+              <button id="retryResolveBtn" class="mt-2 text-sm text-red-600 hover:text-red-700 hidden">
+                Retry
+              </button>
+            </div>
+          </div>
+          
+          <div class="flex justify-end gap-3 mt-6">
+            <button type="button" onclick="closeModal('editBankModal')"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
+              Cancel
+            </button>
+            <button type="submit" 
+                    class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+              Save Bank Info
+            </button>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-secondary">Save Bank Info</button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
 
 <style>
-.stat-card {
-  border: none;
-  border-radius: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.stat-icon {
-  opacity: 0.7;
-}
-
-.course-card {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 1.25rem;
-  border-left: 4px solid #4F46E5;
-  transition: all 0.3s ease;
-}
-
-.course-card:hover {
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transform: translateY(-2px);
-}
-
-.badge-card {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.badge-card:hover {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.badge-sm {
-  font-size: 0.7rem;
-  padding: 0.25rem 0.5rem;
-}
-
-.extra-small {
-  font-size: 0.75rem;
-}
-
-.session-preview-item:last-child {
-  border-bottom: none !important;
-}
-
-.progress {
-  background-color: #e9ecef;
-  border-radius: 10px;
-}
-
-.progress-bar {
-  border-radius: 10px;
-}
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .course-card {
+    transition: all 0.3s ease;
+  }
+  
+  .course-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .progress-bar-animated {
+    transition: width 1s ease-in-out;
+  }
 </style>
 
 <script>
-// Account resolution script (same as before)
-const accountInput = document.getElementById('accountNumber');
-const bankSelect = document.getElementById('bank-select');
-const nameDisplay = document.getElementById('accountNameDisplay');
-const spinner = document.getElementById('accountSpinner');
-const retryBtn = document.getElementById('retryResolveBtn');
-
-let lastBankCode = null;
-let lastAccountNumber = null;
-
-async function resolveAccount(bankCodeOverride = null) {
-  const accountNumber = accountInput.value.trim();
-  const bankCode = bankCodeOverride || bankSelect.value;
-
-  if (accountNumber.length === 10 && bankCode) {
-    lastAccountNumber = accountNumber;
-    lastBankCode = bankCode;
-
-    retryBtn.style.display = 'none';
-    spinner.style.display = 'block';
-    nameDisplay.textContent = '...';
-
-    try {
-      const res = await fetch(`/api/resolve-account?account_number=${accountNumber}&bank_code=${bankCode}`);
-      const data = await res.json();
-
-      if (data.success) {
-        nameDisplay.textContent = data.data.account_name;
-        document.getElementById('accountName').value = data.data.account_name;
-        retryBtn.style.display = 'none';
-      } else {
-        nameDisplay.textContent = 'Could not verify';
-        retryBtn.style.display = 'inline-block';
-        alert(data.message || 'Verification failed');
+  // Modal functions
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+  }
+  
+  // Close modals when clicking outside
+  document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target.id === modal.id) {
+        closeModal(modal.id);
       }
-    } catch (err) {
-      nameDisplay.textContent = 'Error';
-      retryBtn.style.display = 'inline-block';
-      alert('Network or server error');
-    } finally {
-      spinner.style.display = 'none';
+    });
+  });
+  
+  // Close modals with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+        if (!modal.classList.contains('hidden')) {
+          closeModal(modal.id);
+        }
+      });
     }
-  } else {
-    nameDisplay.textContent = '';
-    retryBtn.style.display = 'none';
+  });
+  
+  // Account resolution script
+  const accountInput = document.getElementById('editBankModal').querySelector('input[name="account_number"]');
+  const bankSelect = document.getElementById('editBankModal').querySelector('select[name="bank_code"]');
+  const nameDisplay = document.getElementById('accountNameDisplay');
+  const spinner = document.getElementById('accountSpinner');
+  const retryBtn = document.getElementById('retryResolveBtn');
+  const accountNameInput = document.getElementById('accountName');
+  
+  let lastBankCode = null;
+  let lastAccountNumber = null;
+  
+  async function resolveAccount(bankCodeOverride = null) {
+    const accountNumber = accountInput.value.trim();
+    const bankCode = bankCodeOverride || bankSelect.value;
+    
+    if (accountNumber.length === 10 && bankCode) {
+      lastAccountNumber = accountNumber;
+      lastBankCode = bankCode;
+      
+      retryBtn.classList.add('hidden');
+      spinner.classList.remove('hidden');
+      nameDisplay.textContent = '...';
+      
+      try {
+        const res = await fetch(`/api/resolve-account?account_number=${accountNumber}&bank_code=${bankCode}`);
+        const data = await res.json();
+        
+        if (data.success) {
+          nameDisplay.textContent = data.data.account_name;
+          accountNameInput.value = data.data.account_name;
+          retryBtn.classList.add('hidden');
+        } else {
+          nameDisplay.textContent = 'Could not verify';
+          retryBtn.classList.remove('hidden');
+          showNotification(data.message || 'Verification failed', 'error');
+        }
+      } catch (err) {
+        nameDisplay.textContent = 'Error';
+        retryBtn.classList.remove('hidden');
+        showNotification('Network or server error', 'error');
+      } finally {
+        spinner.classList.add('hidden');
+      }
+    } else {
+      nameDisplay.textContent = '';
+      retryBtn.classList.add('hidden');
+    }
   }
-}
-
-retryBtn.addEventListener('click', async () => {
-  if (lastAccountNumber && lastBankCode) {
-    await resolveAccount(lastBankCode);
+  
+  // Event listeners
+  retryBtn.addEventListener('click', async () => {
+    if (lastAccountNumber && lastBankCode) {
+      await resolveAccount(lastBankCode);
+    }
+  });
+  
+  accountInput.addEventListener('input', () => {
+    if (bankSelect.value) {
+      resolveAccount();
+    }
+  });
+  
+  bankSelect.addEventListener('change', resolveAccount);
+  
+  // Notification function
+  function showNotification(message, type = 'error') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 ${
+      type === 'error' ? 'bg-red-500' : 'bg-green-500'
+    } text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-slideIn`;
+    notification.innerHTML = `
+      <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+      <span>${message}</span>
+      <button class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.remove()">
+        <i class="fas fa-times"></i>
+      </button>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 5000);
   }
-});
-
-accountInput.addEventListener('input', () => {
-  if (bankSelect.value) {
-    resolveAccount();
-  }
-});
-
-bankSelect.addEventListener('change', resolveAccount);
+  
+  // Add animation for notifications
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .animate-slideIn {
+      animation: slideIn 0.3s ease-out;
+    }
+  `;
+  document.head.appendChild(style);
 </script>

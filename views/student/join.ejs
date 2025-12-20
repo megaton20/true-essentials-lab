@@ -1,91 +1,550 @@
+<!-- Navbar -->
+<%-include('./partials/topnav') %>
 
-  <!-- Navbar -->
-  <%-include('./partials/topnav') %>
-  
-  <!-- Sidebar -->
-  <%-include('./partials/sidenav') %>
-  
+<!-- Sidebar -->
+<%-include('./partials/sidenav') %>
 
-  <!-- Main Content -->
-      <div class="container-fluid mt-4">
-        <div class="row">
-          <!-- Static Sidebar for desktop -->
-          <div class="col-lg-3 d-none d-lg-block">
-            <%-include('./partials/staticsidebar') %>
-            <!-- Sidebar -->
-            </div>
-
-          <!-- Main Dashboard Section -->
-          <div class="col-lg-9">
-
-            <main class="">
-            
-              <%- include('../partials/messages') %>
-              <!-- Stats -->         
-
-                  <div class="bg-white shadow-sm p-1 rounded mb-4">
-                      <div class="row justify-content-center mt-2">
-                             <div class="row">
-                        <div class="col-md-6">
-                          <div class="join-card text-center p-4 border rounded">
-
-                            <!-- Join Prompt -->
-                            <i class="fas fa-chalkboard-teacher fa-2x text-success mb-3"></i>
-                            <h1>Class Started 20 Minutes Ago</h1>
-                            <h2 class="text-muted fs-5">You're just in time! Click below to join your session.</h2>
-
-                            <a class="btn btn-success btn-lg mt-3" href="<%= link %>" target="_blank">Join Now</a>
-
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="join-card text-center p-4 border rounded">
-                            <!-- Class Details -->
-                            <div class="text-start">
-                              <h4 class="fw-bold">Class Details</h4>
-                              <p><strong>Title:</strong> <%= session.title %></p>
-                              <p><strong>Instructor:</strong> <%= session.instructor_name || 'Hidden' %></p>
-                              <p><strong>Time:</strong> 
-                                <%= new Date(session.scheduled_at).toLocaleString('en-US', {
-                                  weekday: 'long',
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric',
-                                  hour: 'numeric',
-                                  minute: '2-digit'
-                                }) %>
-                              </p>
-                              <p><strong>Duration:</strong> <%= session.duration || '60'%> mins</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="col-md-6">
-                          <div class="join-card text-center p-4 border rounded">
-                              <!-- Instructions -->
-                              <div class="text-start mt-4">
-                                <h4 class="fw-bold">Joining Instructions</h4>
-                                <ul class="small text-muted">
-                                  <li>Ensure you’re in a quiet environment with a stable internet connection.</li>
-                                  <li>Click the <strong>“Join Now”</strong> button above to open the session in a new tab.</li>
-                                  <li>Allow microphone and camera access when prompted.</li>
-                                  <li>Wait at the door for Host to allow you in after confirmation.</li>
-                                  <li>If you get disconnected, return to this page to rejoin.</li>
-                                  <li>Need help? <a href="/support" class="text-decoration-underline">Contact support</a>.</li>
-                                </ul>
-                              </div>
-                          </div>
-                        </div>
-                      </div>
-                      </div>
-                  </div>
-            
-            </main>
-
-          </div>
-
-        </div>
+<!-- Main Content -->
+<div class="min-h-screen bg-gray-50">
+  <div class="container mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Static Sidebar for Desktop -->
+      <div class="hidden lg:block lg:w-1/4">
+        <%-include('./partials/staticsidebar') %>
       </div>
 
+      <!-- Main Content Area -->
+      <div class="lg:w-3/4">
+        <main>
+          <%- include('../partials/messages') %>
+          
+          <!-- Join Session Section -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h1 class="text-2xl font-bold text-white mb-2">Class Session</h1>
+                  <p class="text-green-100">You're about to join an active learning session</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span id="timeAgoBadge" class="px-3 py-1 bg-white bg-opacity-20 text-green-700 rounded-full text-sm">
+                    <i class="fas fa-clock mr-1"></i>
+                    Calculating...
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="p-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Join Prompt Card -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                  <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 mb-4">
+                      <i class="fas fa-chalkboard-teacher text-3xl text-green-600"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900 mb-2" id="joinMessage">
+                      Calculating session status...
+                    </h2>
+                    <p class="text-gray-600 mb-6" id="joinSubtitle">Please wait...</p>
+                    
+                    <a href="<%= link %>" target="_blank" id="joinButton"
+                       class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg text-lg w-full">
+                      <i class="fas fa-sign-in-alt"></i>
+                      <span id="joinButtonText">Join Class</span>
+                    </a>
+                    
+                    <div class="mt-4">
+                      <p class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Opens in a new tab
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Class Details Card -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-blue-500"></i>
+                    Class Details
+                  </h3>
+                  
+                  <div class="space-y-4">
+                    <div class="flex items-start gap-3">
+                      <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-book text-blue-500"></i>
+                      </div>
+                      <div class="flex-grow">
+                        <p class="text-sm text-gray-500">Title</p>
+                        <p class="font-medium text-gray-900"><%= session.title %></p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3">
+                      <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user-graduate text-purple-500"></i>
+                      </div>
+                      <div class="flex-grow">
+                        <p class="text-sm text-gray-500">Instructor</p>
+                        <p class="font-medium text-gray-900"><%= session.instructor_name || 'Hidden' %></p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3">
+                      <div class="w-10 h-10 rounded-full bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-calendar-alt text-yellow-500"></i>
+                      </div>
+                      <div class="flex-grow">
+                        <p class="text-sm text-gray-500">Scheduled Time</p>
+                        <p class="font-medium text-gray-900" id="scheduledTime">
+                          <%= new Date(session.scheduled_at).toLocaleString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit'
+                          }) %>
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3">
+                      <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-hourglass-half text-red-500"></i>
+                      </div>
+                      <div class="flex-grow">
+                        <p class="text-sm text-gray-500">Duration</p>
+                        <p class="font-medium text-gray-900"><%= session.duration || '60' %> minutes</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Session Status -->
+                  <div class="mt-6 pt-6 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm font-medium text-gray-700">Session Status</span>
+                      <span id="sessionStatusBadge" class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                        <i class="fas fa-play-circle mr-1"></i>
+                        Active
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Instructions Card -->
+                <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-6 mt-4">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-list-check text-orange-500"></i>
+                    Joining Instructions
+                  </h3>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
+                      <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-wifi text-blue-500"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium text-gray-900 mb-1">Stable Connection</h4>
+                        <p class="text-sm text-gray-600">Ensure you're in a quiet environment with stable internet</p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
+                      <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-video text-green-500"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium text-gray-900 mb-1">Permissions</h4>
+                        <p class="text-sm text-gray-600">Allow microphone and camera access when prompted</p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-4 bg-purple-50 rounded-lg">
+                      <div class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                        <i class="fas fa-door-open text-purple-500"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium text-gray-900 mb-1">Entry Process</h4>
+                        <p class="text-sm text-gray-600">Wait at the door for host to allow you in after confirmation</p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-4 bg-yellow-50 rounded-lg">
+                      <div class="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                        <i class="fas fa-redo text-yellow-500"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium text-gray-900 mb-1">Reconnection</h4>
+                        <p class="text-sm text-gray-600">If disconnected, return here to rejoin the session</p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-4 bg-red-50 rounded-lg">
+                      <div class="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                        <i class="fas fa-headset text-red-500"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium text-gray-900 mb-1">Support</h4>
+                        <p class="text-sm text-gray-600">Need help? <a href="/support" class="text-blue-600 hover:text-blue-700">Contact support</a></p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-4 bg-indigo-50 rounded-lg">
+                      <div class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                        <i class="fas fa-lightbulb text-indigo-500"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium text-gray-900 mb-1">Tips</h4>
+                        <p class="text-sm text-gray-600">Close unnecessary apps for better performance</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Quick Tips -->
+                  <div class="mt-6 pt-6 border-t border-gray-200">
+                    <h4 class="font-medium text-gray-900 mb-3">Quick Tips</h4>
+                    <div class="flex flex-wrap gap-3">
+                      <span class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                        <i class="fas fa-volume-up mr-1"></i>
+                        Test audio before joining
+                      </span>
+                      <span class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                        <i class="fas fa-bolt mr-1"></i>
+                        Use Chrome/Edge for best experience
+                      </span>
+                      <span class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                        <i class="fas fa-plug mr-1"></i>
+                        Ethernet connection recommended
+                      </span>
+                      <span class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                        <i class="fas fa-lightbulb mr-1"></i>
+                        Good lighting for video
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Additional Actions -->
+              <div class="mt-8 pt-8 border-t border-gray-200">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h4 class="font-medium text-gray-900 mb-1">Ready to start learning?</h4>
+                    <p class="text-sm text-gray-600">Click the join button above to begin your session</p>
+                  </div>
+                  <div class="flex gap-3">
+                    <button onclick="window.open('<%= link %>', '_blank')" 
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all">
+                      <i class="fas fa-sign-in-alt"></i>
+                      Join Session
+                    </button>
+                    <button onclick="window.location.href='/user'" 
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                      <i class="fas fa-arrow-left"></i>
+                      Back to Dashboard
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Countdown Timer -->
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900">Session Timer</h3>
+                <p class="text-sm text-gray-600" id="timerStatus">Calculating session status...</p>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-gray-900" id="sessionTimer">
+                  Loading...
+                </div>
+                <p class="text-sm text-gray-500">Session duration: <%= session.duration || '60' %> minutes</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-500 h-2 rounded-full" id="sessionProgress" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</div>
 
+<style>
+  /* Custom styles for better visuals */
+  .shadow-hover {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  .shadow-hover:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+  }
+  
+  /* Gradient text animation */
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 2s infinite;
+  }
+</style>
 
+<script>
+  // Session timer functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const sessionStartTime = new Date('<%= session.scheduled_at %>');
+    const durationMinutes = <%= session.duration || 60 %>;
+    const now = new Date();
+    
+    // Calculate elapsed time
+    const elapsedMilliseconds = now - sessionStartTime;
+    const elapsedMinutes = Math.floor(elapsedMilliseconds / (1000 * 60));
+    const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+    
+    // Format time ago string
+    function formatTimeAgo(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+      
+      if (days > 0) {
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+      } else if (hours > 0) {
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+      } else if (minutes > 0) {
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+      } else {
+        return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
+      }
+    }
+    
+    // Format time remaining string
+    function formatTimeRemaining(minutes) {
+      if (minutes <= 0) return 'Session ended';
+      
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      
+      if (hours > 0) {
+        return `${hours}h ${mins}m remaining`;
+      } else {
+        return `${mins}m remaining`;
+      }
+    }
+    
+    // Update all time displays
+    function updateAllTimeDisplays() {
+      const now = new Date();
+      const elapsedMilliseconds = now - sessionStartTime;
+      const elapsedMinutes = Math.floor(elapsedMilliseconds / (1000 * 60));
+      const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+      const remainingMinutes = durationMinutes - elapsedMinutes;
+      
+      // Update "X minutes ago" badge
+      const timeAgoBadge = document.getElementById('timeAgoBadge');
+      if (timeAgoBadge) {
+        const timeAgo = formatTimeAgo(elapsedSeconds);
+        timeAgoBadge.innerHTML = `<i class="fas fa-clock mr-1"></i>${timeAgo}`;
+      }
+      
+      // Update join message based on time
+      const joinMessage = document.getElementById('joinMessage');
+      const joinSubtitle = document.getElementById('joinSubtitle');
+      const joinButtonText = document.getElementById('joinButtonText');
+      const joinButton = document.getElementById('joinButton');
+      const sessionStatusBadge = document.getElementById('sessionStatusBadge');
+      
+      if (remainingMinutes <= 0) {
+        // Session has ended
+        joinMessage.textContent = 'Session Has Ended';
+        joinSubtitle.textContent = 'This session has already finished.';
+        joinButtonText.textContent = 'View Recording';
+        joinButton.href = '#';
+        joinButton.classList.remove('from-green-500', 'to-emerald-600', 'hover:from-green-600', 'hover:to-emerald-700');
+        joinButton.classList.add('from-gray-400', 'to-gray-500', 'hover:from-gray-500', 'hover:to-gray-600');
+        joinButton.onclick = function() { return false; };
+        
+        sessionStatusBadge.innerHTML = '<i class="fas fa-times-circle mr-1"></i>Ended';
+        sessionStatusBadge.className = 'px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full';
+      } else if (elapsedMinutes < 0) {
+        // Session hasn't started yet
+        const minutesUntil = Math.abs(elapsedMinutes);
+        joinMessage.textContent = `Session Starts in ${minutesUntil} Minutes`;
+        joinSubtitle.textContent = 'The class has not started yet. Please wait.';
+        joinButtonText.textContent = 'Waiting...';
+        joinButton.href = '#';
+        joinButton.classList.remove('from-green-500', 'to-emerald-600', 'hover:from-green-600', 'hover:to-emerald-700');
+        joinButton.classList.add('from-blue-400', 'to-blue-500', 'hover:from-blue-500', 'hover:to-blue-600');
+        joinButton.onclick = function() { return false; };
+        
+        sessionStatusBadge.innerHTML = '<i class="fas fa-clock mr-1"></i>Upcoming';
+        sessionStatusBadge.className = 'px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full';
+      } else {
+        // Session is active
+        joinMessage.textContent = `Class Started ${elapsedMinutes} Minute${elapsedMinutes !== 1 ? 's' : ''} Ago`;
+        joinSubtitle.textContent = remainingMinutes > 30 
+          ? "You're just in time! Click below to join your session." 
+          : "Hurry! The session is ongoing. Click below to join.";
+        joinButtonText.textContent = 'Join Class Now';
+        joinButton.href = '<%= link %>';
+        joinButton.classList.remove('from-gray-400', 'to-gray-500', 'hover:from-gray-500', 'hover:to-gray-600', 'from-blue-400', 'to-blue-500', 'hover:from-blue-500', 'hover:to-blue-600');
+        joinButton.classList.add('from-green-500', 'to-emerald-600', 'hover:from-green-600', 'hover:to-emerald-700');
+        joinButton.onclick = null;
+        joinButton.target = '_blank';
+        
+        sessionStatusBadge.innerHTML = '<i class="fas fa-play-circle mr-1"></i>Active';
+        sessionStatusBadge.className = 'px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full';
+      }
+      
+      // Update timer display
+      const timerElement = document.getElementById('sessionTimer');
+      const timerStatus = document.getElementById('timerStatus');
+      const progressElement = document.getElementById('sessionProgress');
+      
+      if (remainingMinutes > 0) {
+        const hours = Math.floor(remainingMinutes / 60);
+        const minutes = remainingMinutes % 60;
+        
+        if (hours > 0) {
+          timerElement.textContent = `${hours}h ${minutes}m`;
+        } else {
+          timerElement.textContent = `${minutes}m`;
+        }
+        
+        timerStatus.textContent = elapsedMinutes < 0 
+          ? `Starts in ${Math.abs(elapsedMinutes)} minutes` 
+          : `${elapsedMinutes} minutes elapsed`;
+        
+        // Update progress bar
+        const progressPercent = (elapsedMinutes / durationMinutes) * 100;
+        progressElement.style.width = Math.min(Math.max(progressPercent, 0), 100) + '%';
+        
+        // Change color based on time remaining
+        if (remainingMinutes < 10) {
+          progressElement.className = 'bg-red-500 h-2 rounded-full';
+        } else if (remainingMinutes < 30) {
+          progressElement.className = 'bg-yellow-500 h-2 rounded-full';
+        } else {
+          progressElement.className = 'bg-green-500 h-2 rounded-full';
+        }
+      } else {
+        timerElement.textContent = '00:00';
+        timerStatus.textContent = 'Session has ended';
+        progressElement.style.width = '100%';
+        progressElement.className = 'bg-gray-500 h-2 rounded-full';
+      }
+    }
+    
+    // Initial update
+    updateAllTimeDisplays();
+    
+    // Update every second for real-time accuracy
+    setInterval(updateAllTimeDisplays, 1000);
+    
+    // Auto-refresh for session updates
+    setInterval(() => {
+      console.log('Checking session status...');
+    }, 300000); // Every 5 minutes
+    
+    // Add visual feedback for join button
+    const joinButton = document.querySelector('a[href^="<%= link %>"], button[onclick*="<%= link %>"]');
+    if (joinButton) {
+      joinButton.addEventListener('mouseenter', function() {
+        this.classList.add('animate-pulse-slow');
+      });
+      
+      joinButton.addEventListener('mouseleave', function() {
+        this.classList.remove('animate-pulse-slow');
+      });
+    }
+    
+    // Keyboard shortcut for joining
+    document.addEventListener('keydown', function(e) {
+      // Ctrl/Cmd + Enter to join (only if session is active)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        const now = new Date();
+        const elapsedMilliseconds = now - sessionStartTime;
+        const elapsedMinutes = Math.floor(elapsedMilliseconds / (1000 * 60));
+        const remainingMinutes = durationMinutes - elapsedMinutes;
+        
+        if (remainingMinutes > 0 && elapsedMinutes >= 0) {
+          window.open('<%= link %>', '_blank');
+        }
+      }
+      
+      // Escape to go back
+      if (e.key === 'Escape') {
+        window.location.href = '/user';
+      }
+    });
+    
+    // Add hover effects to cards
+    document.querySelectorAll('.bg-white.rounded-xl, .bg-gradient-to-br').forEach(card => {
+      card.classList.add('shadow-hover');
+    });
+    
+    // Show a reminder if user stays on page too long and session is active
+    setTimeout(() => {
+      const now = new Date();
+      const elapsedMilliseconds = now - sessionStartTime;
+      const elapsedMinutes = Math.floor(elapsedMilliseconds / (1000 * 60));
+      const remainingMinutes = durationMinutes - elapsedMinutes;
+      
+      if (remainingMinutes > 0 && elapsedMinutes >= 0) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-slideIn';
+        notification.innerHTML = `
+          <i class="fas fa-clock"></i>
+          <span>Ready to join? The session is waiting for you!</span>
+          <button class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.remove();
+          }
+        }, 10000);
+      }
+    }, 30000); // Show after 30 seconds
+  });
+  
+  // Add animation for notifications
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .animate-slideIn {
+      animation: slideIn 0.3s ease-out;
+    }
+  `;
+  document.head.appendChild(style);
+</script>

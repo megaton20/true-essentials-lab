@@ -5,115 +5,235 @@
 <%-include('./partials/sidenav') %>
 
 <!-- Main Content -->
-<div class="container-fluid mt-4">
-  <div class="row">
-    <!-- Static Sidebar for desktop -->
-    <div class="col-lg-3 d-none d-lg-block">
-      <%-include('./partials/staticsidebar') %>
-    </div>
-
-    <!-- Main Dashboard Section -->
-    <div class="col-lg-9">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="/user/course/<%=courseId%>/<%=categoryId%>" class="btn btn-outline-primary btn-sm">
-          <i class="fas fa-arrow-left me-1"></i> Back to Programs
-        </a>
+<div class="min-h-screen bg-gray-50">
+  <div class="container mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Static Sidebar for desktop -->
+      <div class="hidden lg:block lg:w-1/4">
+        <%-include('./partials/staticsidebar') %>
       </div>
 
-      <main class="p-1">
+      <!-- Main Dashboard Section -->
+      <div class="lg:w-3/4">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div class="flex items-center gap-3">
+            <a href="/user/course/<%=courseId%>/<%=categoryId%>" 
+               class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <i class="fas fa-arrow-left text-gray-600"></i>
+              <span class="text-sm font-medium text-gray-700">Back to Programs</span>
+            </a>
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900">Course Videos</h1>
+              <p class="text-sm text-gray-500">Watch and learn at your own pace</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
+              <%= courseVideos?.length || 0 %> Videos
+            </span>
+          </div>
+        </div>
+
         <%- include('../partials/messages') %>
 
         <!-- Videos Section -->
-        <div class="mt-4">
+        <div class="mt-6">
           <% if (courseVideos && courseVideos.length > 0) { %>
-            <div class="row">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <!-- Main Video Section -->
-              <div class="col-lg-9 col-md-12 mb-4">
-                <div class="card border-0 shadow-sm">
-                  <div class="card-body p-0">
-                    <div class="video-container bg-dark rounded-top">
-                      <video
-                        id="mainVideo"
-                        class="w-100"
-                        style="height: 400px; object-fit: contain;"
-                        controls
-                        controlsList="nodownload"
-                        poster="<%= courseVideos[0]?.thumbnail_url %>"
-                        preload="metadata"
-                      >
-                        <source src="<%= courseVideos[0]?.video_url %>" type="video/mp4">
-                        <source src="<%= courseVideos[0]?.video_url %>" type="video/webm">
-                        <source src="<%= courseVideos[0]?.video_url %>" type="video/ogg">
-                        Your browser does not support the video tag.
-                        <track kind="captions" src="#" srclang="en" label="English">
-                      </video>
+              <div class="lg:col-span-2">
+                <!-- Video Player Card -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                  <!-- Video Container -->
+                  <div class="relative bg-black rounded-t-xl overflow-hidden">
+                    <video
+                      id="mainVideo"
+                      class="w-full"
+                      style="height: 500px; object-fit: contain;"
+                      controls
+                      controlsList="nodownload"
+                      poster="<%= courseVideos[0]?.thumbnail_url %>"
+                      preload="metadata"
+                    >
+                      <source src="<%= courseVideos[0]?.video_url %>" type="video/mp4">
+                      <source src="<%= courseVideos[0]?.video_url %>" type="video/webm">
+                      <source src="<%= courseVideos[0]?.video_url %>" type="video/ogg">
+                      Your browser does not support the video tag.
+                    </video>
+                    
+                    <!-- Custom Controls Overlay -->
+                    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                         onclick="togglePlayPause()">
+                      <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
+                        <i class="fas fa-play text-white text-4xl" id="overlayPlayIcon"></i>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Video Info -->
+                  <div class="p-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                      <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-2" id="currentVideoTitle">
+                          <%= courseVideos[0].title || 'Part 1' %>
+                        </h2>
+                        <div class="flex flex-wrap gap-2">
+                          <span class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
+                            <i class="fas fa-film mr-1.5"></i>
+                            Part <span id="currentPartNumber"><%= courseVideos[0].part_number %></span>
+                          </span>
+                          <span class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-full">
+                            <i class="fas fa-clock mr-1.5"></i>
+                            <span id="videoDuration">--:--</span>
+                          </span>
+                        </div>
+                      </div>
+                      <button onclick="toggleFullscreen()" 
+                              class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-expand-alt"></i>
+                        <span class="text-sm font-medium">Fullscreen</span>
+                      </button>
                     </div>
                     
-                    <div class="p-4">
-                      <h3 class="text-dark mb-2" id="currentVideoTitle"><%= courseVideos[0].title || 'Part 1' %></h3>
-                      <div class="d-flex align-items-center text-muted mb-3">
-                        <span class="badge bg-primary me-2">
-                          <i class="fas fa-film me-1"></i>
-                          Part <span id="currentPartNumber"><%= courseVideos[0].part_number %></span>
-                        </span>
-                        <span class="badge bg-secondary">
-                          <i class="fas fa-clock me-1"></i>
-                          <span id="videoDuration">--:--</span>
-                        </span>
+                    <!-- Video Progress -->
+                    <div class="mb-4">
+                      <div class="flex justify-between text-sm text-gray-500 mb-1">
+                        <span id="currentTime">0:00</span>
+                        <span id="totalTime">--:--</span>
+                      </div>
+                      <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-100" 
+                             id="videoProgress" style="width: 0%"></div>
+                      </div>
+                    </div>
+                    
+                    <!-- Video Controls -->
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-3">
+                        <button onclick="togglePlayPause()" 
+                                class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors">
+                          <i class="fas fa-play" id="playPauseIcon"></i>
+                        </button>
+                        
+                        <div class="flex items-center gap-2">
+                          <button onclick="toggleMute()" 
+                                  class="w-8 h-8 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                            <i class="fas fa-volume-up" id="volumeIcon"></i>
+                          </button>
+                          <input type="range" min="0" max="1" step="0.1" value="1" 
+                                 class="w-24 accent-blue-600" 
+                                 id="volumeSlider" 
+                                 oninput="changeVolume(this.value)">
+                        </div>
                       </div>
                       
-                      <!-- Video Controls -->
-                      <div class="d-flex gap-2 mb-3">
-                        <button class="btn btn-outline-primary btn-sm" onclick="togglePlayPause()">
-                          <i class="fas fa-play" id="playPauseIcon"></i>
-                          <span id="playPauseText">Play</span>
+                      <div class="flex items-center gap-2">
+                        <button onclick="playPreviousVideo()" 
+                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                          <i class="fas fa-backward mr-2"></i>
+                          Previous
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="toggleMute()">
-                          <i class="fas fa-volume-up" id="volumeIcon"></i>
-                        </button>
-                        <button class="btn btn-outline-info btn-sm" onclick="toggleFullscreen()">
-                          <i class="fas fa-expand"></i> Fullscreen
+                        <button onclick="playNextVideo()" 
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                          Next
+                          <i class="fas fa-forward ml-2"></i>
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
 
-            
+                <!-- Video Description -->
+                <div class="mt-6 bg-white rounded-xl shadow-lg p-6">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-blue-600"></i>
+                    About This Video
+                  </h3>
+                  <p class="text-gray-600" id="videoDescription">
+                    Select a video from the playlist to see its description here.
+                  </p>
+                </div>
               </div>
 
               <!-- Playlist Sidebar -->
-              <div class="col-lg-3 col-md-12">
-                <div class="card border-0 shadow-sm">
-                  <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">
-                      <i class="fas fa-list me-2"></i>Video Playlist
-                    </h5>
+              <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden h-full">
+                  <!-- Playlist Header -->
+                  <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4">
+                    <div class="flex justify-between items-center">
+                      <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fas fa-list-ol"></i>
+                        Video Playlist
+                      </h3>
+                      <span class="px-3 py-1 bg-white bg-opacity-20 text-white text-sm font-medium rounded-full">
+                        <%= courseVideos.length %> videos
+                      </span>
+                    </div>
                   </div>
-                  <div class="card-body">
-                    <div class="playlist-container" style="max-height: 600px; overflow-y: auto;">
-                      <% courseVideos.forEach((video, index) => { %>
-                        <div class="video-playlist-item <%= index === 0 ? 'active' : '' %> mb-3 p-3 rounded border cursor-pointer"
-                             onclick="loadVideo('<%= video.video_url %>', '<%= video.thumbnail_url %>', '<%= video.title %>', <%= video.part_number %>, this)">
-                          <div class="d-flex align-items-center">
-                            <div class="position-relative me-3">
-                              <img src="<%= video.thumbnail_url %>" alt="Thumbnail" class="rounded" style="width: 80px; height: 60px; object-fit: cover;">
-                              <div class="position-absolute top-0 start-0 bg-primary text-white px-1 rounded-end">
-                                <small><%= video.part_number %></small>
-                              </div>
-                              <div class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 text-white px-1 rounded-start">
-                                <small>--:--</small>
-                              </div>
+                  
+                  <!-- Playlist Items -->
+                  <div class="p-1 max-h-[600px] overflow-y-auto">
+                    <% courseVideos.forEach((video, index) => { %>
+                      <div class="video-playlist-item <%= index === 0 ? 'active' : '' %> 
+                                  p-4 m-2 rounded-lg border border-gray-200 cursor-pointer transition-all duration-200 hover:border-blue-300 hover:bg-blue-50"
+                           onclick="loadVideo('<%= video.video_url %>', 
+                                             '<%= video.thumbnail_url %>', 
+                                             '<%= video.title || `Part ${video.part_number}` %>', 
+                                             <%= video.part_number %>, 
+                                             '<%= video.description || 'No description available' %>', 
+                                             this)">
+                        <div class="flex items-start gap-3">
+                          <!-- Thumbnail -->
+                          <div class="relative flex-shrink-0">
+                            <img src="<%= video.thumbnail_url %>" 
+                                 alt="Thumbnail" 
+                                 class="w-24 h-16 rounded object-cover">
+                            <div class="absolute top-0 left-0 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-br">
+                              <%= video.part_number %>
                             </div>
-                            <div class="flex-grow-1">
-                              <h6 class="mb-1 text-truncate" style="max-width: 180px;">
-                                <%= video.title || `Part ${video.part_number}` %>
-                              </h6>
-                              <small class="text-muted">Part <%= video.part_number %></small>
+                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs px-2 py-1">
+                              <span class="duration-placeholder">--:--</span>
+                            </div>
+                            <% if (index === 0) { %>
+                              <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                                <i class="fas fa-play-circle text-white text-2xl"></i>
+                              </div>
+                            <% } %>
+                          </div>
+                          
+                          <!-- Video Info -->
+                          <div class="flex-grow min-w-0">
+                            <h4 class="font-medium text-gray-900 mb-1 truncate">
+                              <%= video.title || `Part ${video.part_number}` %>
+                            </h4>
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                              <span class="inline-flex items-center">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span class="duration-placeholder">--:--</span>
+                              </span>
+                              <span class="inline-flex items-center px-2 py-0.5 bg-gray-100 rounded">
+                                <i class="fas fa-play-circle mr-1"></i>
+                                Video <%= video.part_number %>
+                              </span>
                             </div>
                           </div>
                         </div>
-                      <% }) %>
+                      </div>
+                    <% }) %>
+                  </div>
+                  
+                  <!-- Playlist Footer -->
+                  <div class="border-t border-gray-200 p-4 bg-gray-50">
+                    <div class="flex justify-between items-center">
+                      <div class="text-sm text-gray-500">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Click any video to play
+                      </div>
+                      <div class="text-sm text-gray-500">
+                        <span id="currentPlaying">1</span> of <%= courseVideos.length %>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -121,95 +241,117 @@
             </div>
 
           <% } else { %>
-            <!-- No videos fallback -->
-            <div class="card border-0 shadow-sm text-center py-5">
-              <div class="card-body">
-                <i class="fas fa-video-slash fa-4x text-muted mb-4"></i>
-                <h3 class="text-muted">No Videos Available</h3>
-                <p class="text-muted mb-4">The course videos haven't been uploaded yet. Please check back later.</p>
-                <div class="d-flex justify-content-center gap-2">
-                  <a href="/user/course/<%=courseId%>/<%=categoryId%>" class="btn btn-primary">
-                    <i class="fas fa-arrow-left me-2"></i> Back to Events
+            <!-- No Videos State -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div class="text-center py-12">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gray-100 mb-6">
+                  <i class="fas fa-video-slash text-4xl text-gray-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">No Videos Available</h3>
+                <p class="text-gray-600 mb-6 max-w-md mx-auto">
+                  The course videos haven't been uploaded yet. Please check back later or contact your instructor.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center p-3">
+                  <a href="/user/course/<%=courseId%>/<%=categoryId%>" 
+                     class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Programs
                   </a>
-                  <button class="btn btn-outline-secondary" onclick="location.reload()">
-                    <i class="fas fa-redo me-2"></i>Refresh
+                  <button onclick="location.reload()" 
+                          class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                    <i class="fas fa-redo"></i>
+                    Refresh Page
                   </button>
                 </div>
               </div>
             </div>
           <% } %>
         </div>
-      </main>
+      </div>
     </div>
   </div>
 </div>
 
 <style>
-.video-container {
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-}
-
 .video-playlist-item {
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .video-playlist-item:hover {
-  border-color: #4361ee;
-  transform: translateX(5px);
+  transform: translateX(4px);
 }
 
 .video-playlist-item.active {
-  border-color: #4361ee;
-  background: rgba(67, 97, 238, 0.05);
+  border-left-width: 4px;
+  border-left-color: #3b82f6;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
-
-.playlist-container::-webkit-scrollbar {
+/* Custom scrollbar for playlist */
+.max-h-\[600px\]::-webkit-scrollbar {
   width: 6px;
 }
 
-.playlist-container::-webkit-scrollbar-track {
+.max-h-\[600px\]::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
 }
 
-.playlist-container::-webkit-scrollbar-thumb {
+.max-h-\[600px\]::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 3px;
 }
 
-.playlist-container::-webkit-scrollbar-thumb:hover {
+.max-h-\[600px\]::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
 
-.nav-tabs .nav-link {
-  border: none;
-  color: #6c757d;
-  font-weight: 500;
-  padding: 0.75rem 1.5rem;
-}
-
-.nav-tabs .nav-link.active {
-  color: #4361ee;
-  border-bottom: 3px solid #4361ee;
+/* Custom range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
   background: transparent;
+  cursor: pointer;
 }
 
-.list-group-item {
-  border: none;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  border-radius: 8px !important;
+input[type="range"]::-webkit-slider-track {
+  background: #e5e7eb;
+  height: 4px;
+  border-radius: 2px;
 }
 
-.list-group-item:hover {
-  background: #f8f9fa;
+input[type="range"]::-moz-range-track {
+  background: #e5e7eb;
+  height: 4px;
+  border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+  width: 16px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-top: -6px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 </style>
 
@@ -217,9 +359,14 @@
 // Video player functionality
 let currentVideo = document.getElementById('mainVideo');
 let isPlaying = false;
+let currentVideoIndex = 0;
+let videoElements = [];
 
-function loadVideo(url, poster, title, partNumber, element) {
+function loadVideo(url, poster, title, partNumber, description, element) {
   try {
+    // Pause current video
+    currentVideo.pause();
+    
     // Update video source
     currentVideo.src = url;
     currentVideo.poster = poster;
@@ -227,6 +374,7 @@ function loadVideo(url, poster, title, partNumber, element) {
     // Update UI
     document.getElementById('currentVideoTitle').textContent = title;
     document.getElementById('currentPartNumber').textContent = partNumber;
+    document.getElementById('videoDescription').textContent = description;
     
     // Update active state in playlist
     document.querySelectorAll('.video-playlist-item').forEach(item => {
@@ -234,23 +382,16 @@ function loadVideo(url, poster, title, partNumber, element) {
     });
     element.classList.add('active');
     
-    // Load and play video
+    // Update current index
+    videoElements = Array.from(document.querySelectorAll('.video-playlist-item'));
+    currentVideoIndex = videoElements.indexOf(element);
+    document.getElementById('currentPlaying').textContent = currentVideoIndex + 1;
+    
+    // Load video
     currentVideo.load();
     
-    // Attempt to play video
-    const playPromise = currentVideo.play();
-    
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        console.log('Video started playing successfully');
-        updatePlayPauseButton(true);
-      }).catch(error => {
-        console.log('Video play was prevented:', error);
-        updatePlayPauseButton(false);
-        // Show play button to user
-        showPlayButton();
-      });
-    }
+    // Update play button
+    updatePlayPauseButton(false);
     
   } catch (error) {
     console.error('Error loading video:', error);
@@ -276,11 +417,20 @@ function toggleMute() {
   currentVideo.muted = !currentVideo.muted;
   const volumeIcon = document.getElementById('volumeIcon');
   volumeIcon.className = currentVideo.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+  document.getElementById('volumeSlider').value = currentVideo.muted ? 0 : currentVideo.volume;
+}
+
+function changeVolume(value) {
+  currentVideo.volume = value;
+  currentVideo.muted = value == 0;
+  const volumeIcon = document.getElementById('volumeIcon');
+  volumeIcon.className = value == 0 ? 'fas fa-volume-mute' : 'fas fa-volume-up';
 }
 
 function toggleFullscreen() {
+  const videoContainer = document.querySelector('.bg-black');
   if (!document.fullscreenElement) {
-    currentVideo.requestFullscreen().catch(err => {
+    videoContainer.requestFullscreen().catch(err => {
       console.error('Error attempting to enable fullscreen:', err);
     });
   } else {
@@ -288,44 +438,92 @@ function toggleFullscreen() {
   }
 }
 
+function playNextVideo() {
+  if (videoElements.length > 0) {
+    const nextIndex = (currentVideoIndex + 1) % videoElements.length;
+    videoElements[nextIndex].click();
+  }
+}
+
+function playPreviousVideo() {
+  if (videoElements.length > 0) {
+    const prevIndex = (currentVideoIndex - 1 + videoElements.length) % videoElements.length;
+    videoElements[prevIndex].click();
+  }
+}
+
 function updatePlayPauseButton(playing) {
   const icon = document.getElementById('playPauseIcon');
-  const text = document.getElementById('playPauseText');
+  const overlayIcon = document.getElementById('overlayPlayIcon');
   
   if (playing) {
     icon.className = 'fas fa-pause';
-    text.textContent = 'Pause';
+    overlayIcon.className = 'fas fa-pause text-white text-4xl';
   } else {
     icon.className = 'fas fa-play';
-    text.textContent = 'Play';
+    overlayIcon.className = 'fas fa-play text-white text-4xl';
   }
   
   isPlaying = playing;
 }
 
-function showPlayButton() {
-  // Ensure play button is visible when video needs user interaction
-  updatePlayPauseButton(false);
+function showError(message) {
+  // Create toast notification
+  const toast = document.createElement('div');
+  toast.className = 'fixed bottom-4 right-4 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-slideIn';
+  toast.innerHTML = `
+    <i class="fas fa-exclamation-circle"></i>
+    <span>${message}</span>
+    <button class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.remove()">
+      <i class="fas fa-times"></i>
+    </button>
+  `;
+  document.body.appendChild(toast);
+  
+  // Auto remove after 5 seconds
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.remove();
+    }
+  }, 5000);
 }
 
-function showError(message) {
-  // Simple error notification
-  alert(message);
+// Format time helper
+function formatTime(seconds) {
+  if (isNaN(seconds)) return '--:--';
+  
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
 // Video event listeners
 currentVideo.addEventListener('loadedmetadata', function() {
-  // Update duration display when metadata is loaded
+  // Update duration display
   const duration = formatTime(currentVideo.duration);
   document.getElementById('videoDuration').textContent = duration;
+  document.getElementById('totalTime').textContent = duration;
+  
+  // Update duration in active playlist item
+  const activeItem = document.querySelector('.video-playlist-item.active .duration-placeholder');
+  if (activeItem) {
+    activeItem.textContent = duration;
+  }
 });
 
 currentVideo.addEventListener('timeupdate', function() {
-  // Update progress if you add a progress bar later
+  // Update progress bar
+  const progress = (currentVideo.currentTime / currentVideo.duration) * 100;
+  document.getElementById('videoProgress').style.width = progress + '%';
+  
+  // Update current time
+  document.getElementById('currentTime').textContent = formatTime(currentVideo.currentTime);
 });
 
 currentVideo.addEventListener('ended', function() {
   updatePlayPauseButton(false);
+  // Auto-play next video after 2 seconds
+  setTimeout(playNextVideo, 2000);
 });
 
 currentVideo.addEventListener('play', function() {
@@ -336,52 +534,69 @@ currentVideo.addEventListener('pause', function() {
   updatePlayPauseButton(false);
 });
 
-// Utility function to format time
-function formatTime(seconds) {
-  if (isNaN(seconds)) return '--:--';
-  
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-  // Space bar to play/pause
-  if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-    e.preventDefault();
-    togglePlayPause();
-  }
-  
-  // 'M' key to mute/unmute
-  if (e.code === 'KeyM' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-    e.preventDefault();
-    toggleMute();
-  }
-  
-  // 'F' key for fullscreen
-  if (e.code === 'KeyF' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-    e.preventDefault();
-    toggleFullscreen();
-  }
-});
-
-// Initialize the first video
+// Initialize
 document.addEventListener('DOMContentLoaded', function() {
-  // Auto-play the first video if available
+  // Get all video elements
+  videoElements = Array.from(document.querySelectorAll('.video-playlist-item'));
+  
+  // Preload video durations
+  videoElements.forEach((item, index) => {
+    const videoUrl = item.getAttribute('onclick').match(/'([^']+)'/)[1];
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.onloadedmetadata = function() {
+      const durationElements = item.querySelectorAll('.duration-placeholder');
+      durationElements.forEach(el => {
+        el.textContent = formatTime(video.duration);
+      });
+    };
+    video.src = videoUrl;
+  });
+  
+  // Initialize first video
   if (courseVideos && courseVideos.length > 0) {
     const firstVideo = courseVideos[0];
     const firstPlaylistItem = document.querySelector('.video-playlist-item');
-    loadVideo(firstVideo.video_url, firstVideo.thumbnail_url, firstVideo.title, firstVideo.part_number, firstPlaylistItem);
+    loadVideo(
+      firstVideo.video_url, 
+      firstVideo.thumbnail_url, 
+      firstVideo.title || `Part ${firstVideo.part_number}`, 
+      firstVideo.part_number, 
+      firstVideo.description || 'No description available', 
+      firstPlaylistItem
+    );
   }
   
-  // Add loading state to video
-  currentVideo.addEventListener('waiting', function() {
-    console.log('Video is buffering...');
-  });
-  
-  currentVideo.addEventListener('canplay', function() {
-    console.log('Video can start playing');
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    // Space bar to play/pause
+    if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      togglePlayPause();
+    }
+    
+    // 'M' key to mute/unmute
+    if (e.code === 'KeyM' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      toggleMute();
+    }
+    
+    // 'F' key for fullscreen
+    if (e.code === 'KeyF' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+    
+    // Arrow keys for navigation
+    if (e.code === 'ArrowRight' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      playNextVideo();
+    }
+    
+    if (e.code === 'ArrowLeft' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      playPreviousVideo();
+    }
   });
 });
 
@@ -408,4 +623,24 @@ currentVideo.addEventListener('error', function(e) {
   
   showError(message);
 });
+
+// Add animation for toast
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+  }
+`;
+document.head.appendChild(style);
 </script>
