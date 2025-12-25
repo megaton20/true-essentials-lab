@@ -1,202 +1,496 @@
+<style>
+    :root {
+        --primary: #3bf689;
+        --secondary: #e0ec3a;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #0ea5e9;
+    }
+    
+    .admin-card {
+        transition: all 0.2s ease;
+    }
+    
+    .admin-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .stats-minimal {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+</style>
 
-<%-include('./partials/topnav') %>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <%-include('./partials/topnav') %>
 
-
-  <!-- Sidebar -->
-  <%-include('./partials/sidenav') %>
+    <!-- Sidebar -->
+    <%-include('./partials/sidenav') %>
 
     <!-- Main Content -->
-    <div class="container-fluid mt-4">
-      <div class="row">
-        <!-- Static Sidebar for desktop -->
-        <div class="col-lg-3 d-none d-lg-block">
-          <%-include('./partials/staticsidebar') %>
-        </div>
-
-        <!-- Main Dashboard Section -->
-        <div class="col-lg-9">
-
-          <main class="p-1">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-
-              <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#referralModal">
-                <i class="fas fa-code"></i> Generate Referral
-              </button>
-
-
-              <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCourseModal">
-                <i class="fas fa-code"></i> Create Program
-              </button>
+    <div class="container mx-auto px-2 py-4 mt-4">
+        <div class="flex flex-col lg:flex-row gap-4">
+            <!-- Static Sidebar for Desktop -->
+            <div class="hidden lg:block lg:w-1/4">
+                <%-include('./partials/staticsidebar') %>
             </div>
-            <%- include('../partials/messages') %>
-              <!-- Stats -->
-              <div class="row g-3 mb-2">
-                <div class="col-md-3">
-                  <div class="bg-white p-3 rounded shadow-sm">
-                    <h6>Users</h6>
-                    <a href="/admin/users">
-                      <%= stats.totalStudents %>
-                    </a>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="bg-white p-3 rounded shadow-sm">
-                    <h6>Pending Verification</h6>
-                    <a href="/admin/users">
-                      <%= stats.pendingVerifications %>
-                    </a>
-                  </div>
-                </div>
 
-
-                <div class="col-md-3">
-                  <div class="bg-white p-3 rounded shadow-sm">
-                    <h6>Total classes</h6>
-                    <%= stats.totalClasses %>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="bg-white p-3 rounded shadow-sm">
-                    <h6>Active Codes</h6>
-                    <a href="/admin/referral">
-                      <%= stats.activeCodes %>
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-
-
-              <div class="bg-white shadow-sm p-3 rounded mb-4">
-                <h5>Courses overview</h5>
-                <div class="row">
-                  <% myCourse.forEach(function(data, index) { %>
-                    <div class="col-md-6 col-lg-3 mb-3 ">
-                      <div class="border p-3 rounded h-100 d-flex flex-column justify-content-between <%= data.is_open ? 'active-card' : 'border' %>" data-aos="fade">
-
-                        <!-- Middle Section: Title and Date -->
-                        <div class="mb-2">
-                          <p class="<%= data.is_open ? 'text-success' : 'text-muted' %> mb-1 text-truncate" title="<%= data.title %>">
-                            <%= data.title %>
-                          </p>
-                          <p class="text-muted mb-0" style="font-size: 11px;">
-                            <%= data.created_at.toLocaleString('en-US', { year: 'numeric' , month: 'long' ,
-                              day: 'numeric' , hour: 'numeric' , minute: '2-digit' }) %>
-                          </p>
-                        </div>
-
-                        <!-- Bottom Section: Action -->
+            <!-- Main Content Area -->
+            <div class="lg:w-3/4">
+                <!-- Header -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center">
                         <div>
-                          <a href="/admin/courses/details/<%= data.id %>" class="btn btn-sm btn-outline-secondary">View
-                            Details</a>
-                          <a href="/admin/course/class/<%= data.id %>"
-                            class="btn btn-sm btn-outline-secondary">Scheduled</a>
+                            <h1 class="text-xl font-semibold text-gray-900">Dashboard</h1>
+                            <p class="text-sm text-gray-500 mt-1">System overview</p>
                         </div>
-                      </div>
+                        <div class="flex gap-2">
+                            <button onclick="openReferralModal()" 
+                                    class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                                <i class="fas fa-code text-green-500"></i>
+                                Referral
+                            </button>
+                            <button onclick="openCreateProgramModal()" 
+                                    class="inline-flex items-center gap-2 px-3 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors text-sm">
+                                <i class="fas fa-plus"></i>
+                                New Program
+                            </button>
+                        </div>
                     </div>
-                    <% }) %>
                 </div>
-              </div>
 
-          </main>
+                <%- include('../partials/messages') %>
 
-        </div>
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                    <!-- Total Users Card -->
+                    <a href="/admin/users" 
+                       class="admin-card bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="p-2 rounded-md bg-blue-50">
+                                <i class="fas fa-users text-blue-500 text-sm"></i>
+                            </div>
+                            <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                View
+                            </span>
+                        </div>
+                        <div class="text-lg font-semibold text-gray-900"><%= stats.totalStudents %></div>
+                        <p class="text-xs text-gray-500">Users</p>
+                    </a>
 
-      </div>
-    </div>
-    <!-- Create Program Modal -->
-    <div class="modal fade" id="createCourseModal" tabindex="-1">
-      <div class="modal-dialog">
-        <form class="modal-content" method="POST" action="/admin/courses/create">
-          <div class="modal-header">
-            <h5 class="modal-title">Create New Program</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Program Title</label>
-              <input type="text" name="title" class="form-control" required />
-            </div>
+                    <!-- Pending Verifications -->
+                    <a href="/admin/users" 
+                       class="admin-card bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="p-2 rounded-md bg-amber-50">
+                                <i class="fas fa-user-clock text-amber-500 text-sm"></i>
+                            </div>
+                            <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded">
+                                Pending
+                            </span>
+                        </div>
+                        <div class="text-lg font-semibold text-gray-900"><%= stats.pendingVerifications %></div>
+                        <p class="text-xs text-gray-500">Verifications</p>
+                    </a>
 
-            <div class="mb-3">
-              <label for="classTitle" class="form-label">Program Price</label>
-              <input type="number" class="form-control" id="price" name="price" required>
-            </div>
+                    <!-- Total Classes -->
+                    <div class="admin-card bg-white rounded-lg border border-gray-200 p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="p-2 rounded-md bg-purple-50">
+                                <i class="fas fa-chalkboard text-purple-500 text-sm"></i>
+                            </div>
+                            <span class="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded">
+                                Total
+                            </span>
+                        </div>
+                        <div class="text-lg font-semibold text-gray-900"><%= stats.totalClasses %></div>
+                        <p class="text-xs text-gray-500">Classes</p>
+                    </div>
 
-            <div class="mb-3">
-              <label class="form-label">Category</label>
-              <select name="category_id" class="form-select" id="edit-category" required>
-                <% if (categories && categories.length> 0) { %>
-                  <% categories.forEach(cat=> { %>
-                    <option value="<%= cat.id %>">
-                      <%= cat.name %>
-                    </option>
-                    <% }) %>
-                      <% } else { %>
-                        <option value="uncategorized">Uncategorized</option>
+                    <!-- Active Referral Codes -->
+                    <a href="/admin/referral" 
+                       class="admin-card bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="p-2 rounded-md bg-green-50">
+                                <i class="fas fa-ticket-alt text-green-500 text-sm"></i>
+                            </div>
+                            <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+                                Active
+                            </span>
+                        </div>
+                        <div class="text-lg font-semibold text-gray-900"><%= stats.activeCodes %></div>
+                        <p class="text-xs text-gray-500">Referrals</p>
+                    </a>
+                </div>
+
+                <!-- Programs Section -->
+                <div class="bg-white rounded-lg border border-gray-200">
+                    <!-- Section Header -->
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-base font-semibold text-gray-900 flex items-center gap-2">
+                                <i class="fas fa-graduation-cap text-blue-500 text-sm"></i>
+                                Programs (<%= myCourse.length %>)
+                            </h2>
+                            <div class="flex items-center gap-1 text-xs text-gray-500">
+                                <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                <span>Active</span>
+                                <div class="w-2 h-2 rounded-full bg-gray-300 ml-2"></div>
+                                <span>Inactive</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Programs List -->
+                    <div class="p-4">
+                        <% if (myCourse.length === 0) { %>
+                            <!-- Empty State -->
+                            <div class="text-center py-8">
+                                <div class="mb-4">
+                                    <i class="fas fa-book-open text-gray-300 text-3xl"></i>
+                                </div>
+                                <h3 class="text-sm font-medium text-gray-700 mb-2">No programs yet</h3>
+                                <p class="text-xs text-gray-500 mb-4">Create your first program to get started</p>
+                                <button onclick="openCreateProgramModal()" 
+                                        class="inline-flex items-center gap-1 px-3 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors">
+                                    <i class="fas fa-plus text-xs"></i>
+                                    Create Program
+                                </button>
+                            </div>
+                        <% } else { %>
+                            <div class="space-y-3">
+                                <% myCourse.forEach(function(data, index) { %>
+                                    <div class="admin-card border border-gray-200 rounded-lg p-4 hover:bg-gray-50 <%= data.is_open ? 'border-l-2 border-l-green-500' : 'border-l-2 border-l-gray-300' %>">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <%= data.is_open ? 'bg-green-50 text-green-700' : 'bg-gray-50 text-gray-600' %>">
+                                                        <i class="fas <%= data.is_open ? 'fa-play' : 'fa-pause' %> text-xs mr-1"></i>
+                                                        <%= data.is_open ? 'Active' : 'Inactive' %>
+                                                    </span>
+                                                    <span class="text-xs text-gray-500">
+                                                        <%= data.created_at.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
+                                                    </span>
+                                                </div>
+                                                <h3 class="text-sm font-medium text-gray-900 truncate mb-2" title="<%= data.title %>">
+                                                    <%= data.title %>
+                                                </h3>
+                                                <div class="flex gap-2">
+                                                    <a href="/admin/courses/details/<%= data.id %>" 
+                                                       class="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded hover:bg-gray-200 transition-colors">
+                                                        <i class="fas fa-eye text-xs"></i>
+                                                        Details
+                                                    </a>
+                                                    <a href="/admin/course/class/<%= data.id %>" 
+                                                       class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded hover:bg-blue-100 transition-colors">
+                                                        <i class="fas fa-calendar text-xs"></i>
+                                                        Schedule
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="text-xs text-gray-400 ml-2">
+                                                #<%= index + 1 %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
                         <% } %>
-              </select>
+                    </div>
+                </div>
 
+                <!-- Quick Links -->
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <a href="/admin/users" 
+                       class="admin-card bg-white border border-gray-200 rounded-lg p-4 hover:bg-blue-50 transition-colors group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-md bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                <i class="fas fa-user-cog text-blue-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-900">User Management</h4>
+                                <p class="text-xs text-gray-500">Manage all users</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="/admin/referral" 
+                       class="admin-card bg-white border border-gray-200 rounded-lg p-4 hover:bg-green-50 transition-colors group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                <i class="fas fa-ticket-alt text-green-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-900">Referral System</h4>
+                                <p class="text-xs text-gray-500">Manage codes</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="/admin/analytics" 
+                       class="admin-card bg-white border border-gray-200 rounded-lg p-4 hover:bg-purple-50 transition-colors group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-md bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                                <i class="fas fa-chart-bar text-purple-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-900">Analytics</h4>
+                                <p class="text-xs text-gray-500">View reports</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
-
-            <div class="mb-3">
-              <label class="form-label">Level</label>
-              <select name="level" class="form-select" id="edit-category" required>
-                <option value="easy">easy</option>
-                <option value="medium">medium</option>
-                <option value="hard">Hard</option>
-              </select>
-
-            </div>
-
-
-            <div class="mb-3">
-              <label class="form-label">Program Description</label>
-              <textarea name="description" rows="3" class="form-control" required></textarea>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Take away</label>
-              <input type="text" name="takeaways" class="form-control" placeholder="Enter takeaway 1" required />
-              <input type="text" name="takeaways" class="form-control mt-2" placeholder="Enter takeaway 2" required />
-              <input type="text" name="takeaways" class="form-control mt-2" placeholder="Enter takeaway 3" required />
-            </div>
-
-
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Program</button>
-          </div>
-        </form>
-      </div>
+        </div>
     </div>
 
+    <!-- Create Program Modal -->
+    <div id="createProgramModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
+                <div class="p-5">
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg font-semibold text-gray-900">Create Program</h3>
+                        <button onclick="closeCreateProgramModal()" class="text-gray-400 hover:text-gray-500">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <form method="POST" action="/admin/courses/create">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                <input type="text" 
+                                       name="title" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                       placeholder="Program title"
+                                       required />
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                                    <input type="number" 
+                                           name="price" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                           placeholder="0.00"
+                                           step="0.01"
+                                           required />
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                    <select name="category_id" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                            required>
+                                        <% if (categories && categories.length > 0) { %>
+                                            <% categories.forEach(cat => { %>
+                                                <option value="<%= cat.id %>"><%= cat.name %></option>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <option value="uncategorized">Uncategorized</option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Level</label>
+                                <select name="level" 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                        required>
+                                    <option value="easy">Easy</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea name="description" 
+                                          rows="2"
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                          placeholder="Brief description..."
+                                          required></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Takeaways</label>
+                                <div class="space-y-2">
+                                    <input type="text" 
+                                           name="takeaways" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                           placeholder="Takeaway 1"
+                                           required />
+                                    <input type="text" 
+                                           name="takeaways" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                           placeholder="Takeaway 2"
+                                           required />
+                                    <input type="text" 
+                                           name="takeaways" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                           placeholder="Takeaway 3"
+                                           required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-2 mt-6 pt-5 border-t border-gray-200">
+                            <button type="button" 
+                                    onclick="closeCreateProgramModal()"
+                                    class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 flex items-center gap-1">
+                                <i class="fas fa-plus text-xs"></i>
+                                Create
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Referral Modal -->
-    <div class="modal fade" id="referralModal" tabindex="-1">
-      <div class="modal-dialog">
-        <form class="modal-content" method="post" action="/admin/referral">
-          <div class="modal-header">
-            <h5 class="modal-title">Generate Referral Code</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3"><label class="form-label">Referral Code</label><input type="text" name="code"
-                class="form-control" required /></div>
-            <div class="mb-3"><label class="form-label">Location</label><input type="text" name="location"
-                class="form-control" required /></div>
-            <div class="mb-3"><label class="form-label">Discount (%)</label><input type="number" name="discount"
-                class="form-control" /></div>
-            <div class="mb-3"><label class="form-label">Max Users</label><input type="number" name="maxUses"
-                class="form-control" /></div>
-            <div class="mb-3"><label class="form-label">Expiry Date</label><input type="date" name="expire"
-                class="form-control" /></div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-success"><i class="fas fa-magic"></i> Generate</button>
-          </div>
-        </form>
-      </div>
+    <div id="referralModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
+                <div class="p-5">
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg font-semibold text-gray-900">Create Referral</h3>
+                        <button onclick="closeReferralModal()" class="text-gray-400 hover:text-gray-500">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <form method="post" action="/admin/referral">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Code</label>
+                                <input type="text" 
+                                       name="code" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                                       placeholder="e.g., WELCOME25"
+                                       required />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                                <input type="text" 
+                                       name="location" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                                       placeholder="Country/Region"
+                                       required />
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
+                                    <input type="number" 
+                                           name="discount" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                                           placeholder="0"
+                                           min="0"
+                                           max="100" />
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Max Uses</label>
+                                    <input type="number" 
+                                           name="maxUses" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                                           placeholder="Unlimited"
+                                           min="1" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                                <input type="date" 
+                                       name="expire" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm" />
+                                <p class="text-xs text-gray-500 mt-1">Optional</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-2 mt-6 pt-5 border-t border-gray-200">
+                            <button type="button" 
+                                    onclick="closeReferralModal()"
+                                    class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 flex items-center gap-1">
+                                <i class="fas fa-magic text-xs"></i>
+                                Generate
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script>
+        // Modal functions
+        function openCreateProgramModal() {
+            document.getElementById('createProgramModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCreateProgramModal() {
+            document.getElementById('createProgramModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openReferralModal() {
+            document.getElementById('referralModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeReferralModal() {
+            document.getElementById('referralModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modals on outside click
+        document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    const modalId = this.id;
+                    if (modalId === 'createProgramModal') closeCreateProgramModal();
+                    if (modalId === 'referralModal') closeReferralModal();
+                }
+            });
+        });
+
+        // Escape key to close modals
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCreateProgramModal();
+                closeReferralModal();
+            }
+        });
+
+        // Auto-focus first input when modal opens
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalTriggers = document.querySelectorAll('[onclick*="Modal"]');
+            modalTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function() {
+                    setTimeout(() => {
+                        const modal = document.querySelector('[id$="Modal"]:not(.hidden)');
+                        if (modal) {
+                            const firstInput = modal.querySelector('input, select, textarea');
+                            if (firstInput) firstInput.focus();
+                        }
+                    }, 100);
+                });
+            });
+        });
+    </script>
+</body>

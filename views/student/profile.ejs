@@ -354,7 +354,7 @@
                 <% } %>
                 
                 <!-- Bank Details -->
-                <% if (user.is_affiliate && isAffiliate) { %>
+                <% if (user.is_affiliate && affiliate) { %>
                   <div class="pt-6 border-t border-gray-100">
                     <h4 class="font-medium text-gray-900 mb-3">Bank Details</h4>
                     <div class="space-y-3">
@@ -364,7 +364,7 @@
                         </div>
                         <div>
                           <p class="text-sm text-gray-500">Bank Name</p>
-                          <p class="font-medium text-gray-900"><%= isAffiliate.bank_name || 'Not Set' %></p>
+                          <p class="font-medium text-gray-900"><%= affiliate.bank_name || 'Not Set' %></p>
                         </div>
                       </div>
                       
@@ -374,7 +374,7 @@
                         </div>
                         <div>
                           <p class="text-sm text-gray-500">Account Name</p>
-                          <p class="font-medium text-gray-900"><%= isAffiliate.account_name || 'Not Set' %></p>
+                          <p class="font-medium text-gray-900"><%= affiliate.account_name || 'Not Set' %></p>
                         </div>
                       </div>
                       
@@ -385,7 +385,7 @@
                         <div>
                           <p class="text-sm text-gray-500">Account Number</p>
                           <p class="font-medium text-gray-900">
-                            <%= isAffiliate.account_number ? '****' + isAffiliate.account_number.slice(-4) : 'Not Set' %>
+                            <%= affiliate.account_number ? '****' + affiliate.account_number.slice(-4) : 'Not Set' %>
                           </p>
                         </div>
                       </div>

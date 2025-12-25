@@ -117,7 +117,7 @@ router.post('/class/video-part-save', ensureAdmin, async (req, res) => {
 
 router.delete('/class/video/delete',async (req, res)=>{
 
-    const {classVideoId, video_public_id, thumbnail_public_id, class_id } = req.body
+    const {classVideoId, video_public_id, thumbnail_public_id, class_id, backUrl } = req.body
     
     
   try {
@@ -129,7 +129,7 @@ router.delete('/class/video/delete',async (req, res)=>{
 
     if (rows.length === 0) {
       req.flash('error_msg', 'Video not found');
-      return res.redirect(`/teacher/class/${class_id}`);
+      return res.redirect(`/${backUrl}`);
     }
 
         // Delete both from Cloudinary
@@ -144,11 +144,11 @@ router.delete('/class/video/delete',async (req, res)=>{
     await pool.query('DELETE FROM class_videos WHERE id = $1', [classVideoId]);
 
     req.flash('success_msg', 'Video deleted');
-    res.redirect(`/teacher/class/${class_id}`);
+    res.redirect(`/${backUrl}`);
   } catch (err) {
     console.error('Error deleting video:', err);
     req.flash('error_msg', 'Failed to delete video');
-      return res.redirect(`/teacher/class/${class_id}`);
+      return res.redirect(`/${backUrl}`);
   }
 
 
@@ -165,12 +165,6 @@ router.get('/affiliate/applications/:id',  affiliateController.viewAnApplication
 router.put('/affiliate/applications/:id/:status',  affiliateController.approveAffiliate); 
 router.post('/affiliate/mark-paid/:userId',  affiliateController.markReferredUserAsPaid); 
 router.post('/affiliate/mark-paid/:userId',  affiliateController.markReferredUserAsPaid); 
-
-
-// View settings page
-router.get('/setting', ensureAdmin, adminController.Setting);
-// Toggle setting
-router.put('/setting/toggle/:column',ensureAdmin, adminController.toggleSetting);
 
 
 // router.get('/attendance', ensureAdmin, adminController.);

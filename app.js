@@ -66,15 +66,28 @@ app.use(methodOverride((req, res) => {
   }
 }));
 
+// Routers
+const web = require('./router/web');
+const api = require('./router/api');
 
 
-app.use('/', openRoutes); // open less secure routes
-app.use('/auth', authRoutes); // open less secure routes
-app.use('/user',ensureAuthenticated, userRoutes); //  secure routes
-app.use('/class',ensureAuthenticated, classRoutes); //  secure routes
-app.use('/admin',ensureAuthenticated, adminRoutes); // secure routes
-app.use('/teacher',ensureAuthenticated, teacherRoutes); // secure routes
-app.use('/affiliate', affiliateRoutes); // open less secure routes
+app.use((req, res, next)=>{
+ req.isAPI = req.originalUrl.startsWith("/api")
+  next()
+
+})
+
+//  Routes
+app.use('/', web); 
+app.use('/api', api); 
+
+// app.use('/', openRoutes); // open less secure routes
+// app.use('/auth', authRoutes); // open less secure routes
+// app.use('/user',ensureAuthenticated, userRoutes); //  secure routes
+// app.use('/class',ensureAuthenticated, classRoutes); //  secure routes
+// app.use('/admin',ensureAuthenticated, adminRoutes); // secure routes
+// app.use('/teacher',ensureAuthenticated, teacherRoutes); // secure routes
+// app.use('/affiliate', affiliateRoutes); // open less secure routes
 
 
 app.post('/api/update-join-status', (req, res) => {

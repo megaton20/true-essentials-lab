@@ -1,5 +1,4 @@
 const ReferralCode = require('../models/ReferralCode');
-const Setting = require('../models/Settings');
 const Admin = require('../models/Admin');
 const ClassSession = require('../models/ClassSession');
 const { v4: uuidv4 } = require('uuid');
@@ -615,28 +614,7 @@ exports.updateReferral = async (req, res) => {
 };
 
 
-// settings section
-exports.Setting = async (req, res) => {
-  
-  const settings = await Setting.getAll()
-  // const {rows:settings} = await pool.query('SELECT * FROM settings');
-  res.render('./admin/settings', { settings:settings[0] });
 
-};
-
-exports.toggleSetting = async (req, res) => {
-  const { column } = req.params;
-
-  try {
-    const message = await Setting.toggleColumn(column);
-    req.flash('success_msg', message);
-  } catch (err) {
-    console.error(err);
-    req.flash('error_msg', err.message || 'Failed to update setting.');
-  }
-
-  res.redirect('/admin/setting');
-};
 
 // attendance section
 exports.getAttendanceForSession =  async (req, res) => {

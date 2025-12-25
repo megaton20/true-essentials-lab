@@ -6,11 +6,17 @@ const {
     dayBeforeTemplate,
     welcomeToClassTemplate,
     paymentReminderTemplate,
-    dayReminderTemplate
+    dayReminderTemplate,
+    christmasBreakAnnouncementTemplate,
+    christmasWishesTemplate,
+    newYearResumptionTemplate,
+    easterWishesTemplate,
+    worldTeachersDayTemplate
 } = require('../utils/templates');
+const User = require('../models/User');
 
 
-
+// manual set up
 const todayReminder = async ()=>{
     try {
     // Get all sessions for tomorrow
@@ -203,6 +209,142 @@ const allSessionForTomorrow = async ()=>{
 }
 
 
+// Send Christmas wishes to all active users
+const sendChristmasWishes = async () => {
+    try {
+      const  users = await User.lisAllVerified()
+        for (let user of users) {
+            try {
+                await sendEmail(
+                    user.email,
+                    "Season's Greetings from True Series Academy",
+                    christmasWishesTemplate(user)
+                );
+                console.log(`Christmas wishes sent to ${user.email}`);
+            } catch (error) {
+                console.error(`Failed to send Christmas email to ${user.email}:`, error.message);
+            }
+        }
+
+        console.log(`Christmas wishes sent to ${users.length} users`);
+    } catch (error) {
+        console.error('Error sending Christmas wishes:', error.message);
+    }
+}
+
+
+// Send Christmas break announcement
+const sendChristmasBreakAnnouncement = async () => {
+    try {
+        // Calculate resume date (typically January 2nd or 3rd)
+        const currentYear = new Date().getFullYear();
+        const resumeDate = new Date(currentYear + 1, 0, 3); // January 3rd of next year
+
+        const  users = await User.lisAllVerified()
+
+        for (let user of users) {
+            try {
+                await sendEmail(
+                    user.email,
+                    "Holiday Break",
+                    christmasBreakAnnouncementTemplate(user, resumeDate)
+                );
+                console.log(`Christmas break announcement sent to ${user.email}`);
+            } catch (error) {
+                console.error(`Failed to send break announcement to ${user.email}:`, error.message);
+            }
+        }
+
+        console.log(`Christmas break announcements sent to ${users.length} users`);
+    } catch (error) {
+        console.error('Error sending Christmas break announcement:', error.message);
+    }
+}
+
+
+
+// Send New Year resumption email
+const sendNewYearResumption = async () => {
+    try {
+        const  users = await User.lisAllVerified()
+
+        for (let user of users) {
+            try {
+                await sendEmail(
+                    user.email,
+                    "Welcome Back! Classes Resume",
+                    newYearResumptionTemplate(user)
+                );
+                console.log(`New Year resumption email sent to ${user.email}`);
+            } catch (error) {
+                console.error(`Failed to send New Year email to ${user.email}:`, error.message);
+            }
+        }
+
+        console.log(`New Year resumption emails sent to ${users.length} users`);
+    } catch (error) {
+        console.error('Error sending New Year resumption emails:', error.message);
+    }
+}
+
+
+// Send Easter wishes
+const sendEasterWishes = async () => {
+    try {
+        const { rows: users } = await pool.query(`
+            SELECT email, full_name FROM users 
+            WHERE status = 'active' AND email IS NOT NULL
+        `);
+
+        for (let user of users) {
+            try {
+                await sendEmail(
+                    user.email,
+                    "Happy Easter from True Series Academy",
+                    easterWishesTemplate(user)
+                );
+                console.log(`Easter wishes sent to ${user.email}`);
+            } catch (error) {
+                console.error(`Failed to send Easter email to ${user.email}:`, error.message);
+            }
+        }
+
+        console.log(`Easter wishes sent to ${users.length} users`);
+    } catch (error) {
+        console.error('Error sending Easter wishes:', error.message);
+    }
+}
+
+
+// Send World Teachers' Day email
+const sendWorldTeachersDay = async () => {
+    try {
+        const { rows: users } = await pool.query(`
+            SELECT email, full_name FROM users 
+            WHERE status = 'active' AND email IS NOT NULL
+        `);
+
+        for (let user of users) {
+            try {
+                await sendEmail(
+                    user.email,
+                    "Celebrating World Teachers' Day",
+                    worldTeachersDayTemplate(user)
+                );
+                console.log(`World Teachers' Day email sent to ${user.email}`);
+            } catch (error) {
+                console.error(`Failed to send Teachers' Day email to ${user.email}:`, error.message);
+            }
+        }
+
+        console.log(`World Teachers' Day emails sent to ${users.length} users`);
+    } catch (error) {
+        console.error(`Error sending World Teachers' Day emails:, ${error.message}`);
+    }
+}
+
+
+
 // 2️⃣ Every 5 minutes – Send welcome email to new class joiners
 cron.schedule('*/5 * * * *', async () => {
  await joinedNotifier()
@@ -218,7 +360,9 @@ await allSessionForTomorrow()
 // // manual runner
 cron.schedule('* * * * *', async () => {
   console.log("running 1 minu");
-  
+//  await sendChristmasBreakAnnouncement()
+//  await sendChristmasWishes()
+//  await sendNewYearResumption()
 //  await todayReminder()
 });
 

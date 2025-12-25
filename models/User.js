@@ -114,8 +114,17 @@ class User {
   
   static async lisAll() {
     try {
-      const res = await pool.query(`SELECT * FROM users`);
-      return res.rows[0];
+      const {rows: res} = await pool.query(`SELECT * FROM users`);
+      return res;
+    } catch (error) {
+      console.log(`error getting user: ${error.message}`);
+
+    }
+  }
+  static async lisAllVerified() {
+    try {
+      const {rows:res} = await pool.query(`SELECT * FROM users WHERE is_email_verified = TRUE`);
+      return res;
     } catch (error) {
       console.log(`error getting user: ${error.message}`);
 

@@ -1,63 +1,382 @@
+<style>
+    :root {
+        --primary: #3bf689;
+        --secondary: #e0ec3a;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #0ea5e9;
+    }
+    
+    .app-card {
+        transition: all 0.2s ease;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .app-card:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+    }
+    
+    .status-pending { background-color: #fef3c7; color: #92400e; }
+    .status-approved { background-color: #d1fae5; color: #065f46; }
+    .status-rejected { background-color: #fee2e2; color: #991b1b; }
+    .status-review { background-color: #dbeafe; color: #1e40af; }
+    
+    .table-row {
+        transition: all 0.2s ease;
+    }
+    
+    .table-row:hover {
+        background-color: #f9fafb;
+    }
+</style>
 
-  <!-- Navbar -->
-   <%-include('./partials/topnav') %>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <%-include('./partials/topnav') %>
 
-  <!-- Sidebar -->
-  <%-include('./partials/sidenav') %>
+    <!-- Sidebar -->
+    <%-include('./partials/sidenav') %>
 
-  <!-- Main Content -->
-  <div class="container-fluid mt-4">
-    <div class="row">
-      <!-- Static Sidebar -->
-      <div class="col-lg-3 d-none d-lg-block">
-          <%-include('./partials/staticsidebar') %>
-      </div>
-
-      <!-- Main Dashboard Section -->
-      <div class="col-lg-9">
-        
-        <main class="p-3">
-          <%- include('../partials/messages') %>
-            <div class="mb-5">
-              <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Status</th>
-                      <th>Date & Time</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% applicationList.forEach(function(data, index) { %>
-                      <tr>
-                        <td><%= index + 1 %></td>
-                        <td><%= data.status %></td>
-                        <td><%= data.created_at.toLocaleString() %></td>
-                        <td><a href="/admin/affiliate/applications/<%= data.id %>">View</a></td>
-                      </tr>
-                    <% }); %>
-                  </tbody>
-                </table>
-              </div>
-            
+    <!-- Main Content -->
+    <div class="container mx-auto px-2 py-4 mt-4">
+        <div class="flex flex-col lg:flex-row gap-4">
+            <!-- Static Sidebar -->
+            <div class="hidden lg:block lg:w-1/4">
+                <%-include('./partials/staticsidebar') %>
             </div>
-        </main>
 
-      </div>
+            <!-- Main Content Area -->
+            <div class="lg:w-3/4">
+                <!-- Header -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <a href="/admin" 
+                               class="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors mb-2">
+                                <i class="fas fa-arrow-left text-xs"></i>
+                                Back
+                            </a>
+                            <h1 class="text-xl font-semibold text-gray-900">Affiliate Applications</h1>
+                            <p class="text-sm text-gray-500 mt-1"><%= applicationList.length %> application(s) total</p>
+                        </div>
+                    </div>
+                </div>
 
+                <%- include('../partials/messages') %>
+
+                <!-- Applications Table -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <% if (applicationList.length === 0) { %>
+                        <!-- Empty State -->
+                        <div class="text-center py-12">
+                            <div class="mb-4">
+                                <i class="fas fa-file-alt text-gray-300 text-3xl"></i>
+                            </div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-2">No applications yet</h3>
+                            <p class="text-xs text-gray-500">No affiliate applications have been submitted</p>
+                        </div>
+                    <% } else { %>
+                        <!-- Table for Desktop -->
+                        <div class="hidden md:block overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            #
+                                        </th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status
+                                        </th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Date & Time
+                                        </th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <% 
+                                    applicationList.forEach(function(data, index) { 
+                                        const statusClass = data.status.toLowerCase().includes('pending') ? 'status-pending' :
+                                                            data.status.toLowerCase().includes('approve') ? 'status-approved' :
+                                                            data.status.toLowerCase().includes('reject') ? 'status-rejected' :
+                                                            data.status.toLowerCase().includes('review') ? 'status-review' : 'status-pending';
+                                    %>
+                                        <tr class="table-row">
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                <%= index + 1 %>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <span class="inline-flex items-center status-badge <%= statusClass %> rounded-full">
+                                                    <span class="w-1.5 h-1.5 rounded-full mr-1.5 
+                                                        <%= data.status.toLowerCase().includes('pending') ? 'bg-amber-500' :
+                                                           data.status.toLowerCase().includes('approve') ? 'bg-green-500' :
+                                                           data.status.toLowerCase().includes('reject') ? 'bg-red-500' :
+                                                           data.status.toLowerCase().includes('review') ? 'bg-blue-500' : 'bg-gray-500' %>"></span>
+                                                    <%= data.status %>
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <div class="text-sm text-gray-900">
+                                                    <%= data.created_at.toLocaleDateString('en-US', { 
+                                                        month: 'short', 
+                                                        day: 'numeric',
+                                                        year: 'numeric'
+                                                    }) %>
+                                                </div>
+                                                <div class="text-xs text-gray-500">
+                                                    <%= data.created_at.toLocaleTimeString('en-US', { 
+                                                        hour: 'numeric',
+                                                        minute: '2-digit',
+                                                        hour12: true
+                                                    }) %>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <a href="/admin/affiliate/applications/<%= data.id %>" 
+                                                   class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-medium rounded hover:bg-blue-100 transition-colors">
+                                                    <i class="fas fa-eye text-xs"></i>
+                                                    View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Cards for Mobile -->
+                        <div class="md:hidden">
+                            <div class="p-4 space-y-3">
+                                <% 
+                                applicationList.forEach(function(data, index) { 
+                                    const statusClass = data.status.toLowerCase().includes('pending') ? 'status-pending' :
+                                                        data.status.toLowerCase().includes('approve') ? 'status-approved' :
+                                                        data.status.toLowerCase().includes('reject') ? 'status-rejected' :
+                                                        data.status.toLowerCase().includes('review') ? 'status-review' : 'status-pending';
+                                %>
+                                    <div class="app-card bg-white rounded-lg p-4">
+                                        <div class="flex items-start justify-between mb-3">
+                                            <div>
+                                                <div class="flex items-center gap-2 mb-2">
+                                                    <span class="text-xs font-medium text-gray-500">#<%= index + 1 %></span>
+                                                    <span class="inline-flex items-center status-badge <%= statusClass %> rounded-full">
+                                                        <span class="w-1.5 h-1.5 rounded-full mr-1.5 
+                                                            <%= data.status.toLowerCase().includes('pending') ? 'bg-amber-500' :
+                                                               data.status.toLowerCase().includes('approve') ? 'bg-green-500' :
+                                                               data.status.toLowerCase().includes('reject') ? 'bg-red-500' :
+                                                               data.status.toLowerCase().includes('review') ? 'bg-blue-500' : 'bg-gray-500' %>"></span>
+                                                        <%= data.status %>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="space-y-2 mb-4">
+                                            <div>
+                                                <label class="text-xs text-gray-500">Submitted</label>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm text-gray-900">
+                                                        <%= data.created_at.toLocaleDateString('en-US', { 
+                                                            month: 'short', 
+                                                            day: 'numeric'
+                                                        }) %>
+                                                    </span>
+                                                    <span class="text-xs text-gray-500">•</span>
+                                                    <span class="text-xs text-gray-500">
+                                                        <%= data.created_at.toLocaleTimeString('en-US', { 
+                                                            hour: 'numeric',
+                                                            minute: '2-digit',
+                                                            hour12: true
+                                                        }) %>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex gap-2">
+                                            <a href="/admin/affiliate/applications/<%= data.id %>" 
+                                               class="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 bg-blue-50 text-blue-600 text-xs font-medium rounded hover:bg-blue-100 transition-colors">
+                                                <i class="fas fa-eye text-xs"></i>
+                                                View Application
+                                            </a>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Stats Summary -->
+                <% if (applicationList.length > 0) { %>
+                    <%
+                    const pendingCount = applicationList.filter(app => 
+                        app.status.toLowerCase().includes('pending')).length;
+                    const approvedCount = applicationList.filter(app => 
+                        app.status.toLowerCase().includes('approve')).length;
+                    const rejectedCount = applicationList.filter(app => 
+                        app.status.toLowerCase().includes('reject')).length;
+                    const reviewCount = applicationList.filter(app => 
+                        app.status.toLowerCase().includes('review')).length;
+                    %>
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="text-sm text-gray-600">
+                                <span class="font-medium text-gray-900"><%= applicationList.length %></span> total applications
+                            </div>
+                            <div class="flex flex-wrap gap-4 text-xs text-gray-500">
+                                <% if (pendingCount > 0) { %>
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+                                        <span class="font-medium text-amber-600"><%= pendingCount %></span>
+                                        pending
+                                    </div>
+                                <% } %>
+                                <% if (reviewCount > 0) { %>
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                        <span class="font-medium text-blue-600"><%= reviewCount %></span>
+                                        in review
+                                    </div>
+                                <% } %>
+                                <% if (approvedCount > 0) { %>
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                        <span class="font-medium text-green-600"><%= approvedCount %></span>
+                                        approved
+                                    </div>
+                                <% } %>
+                                <% if (rejectedCount > 0) { %>
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                                        <span class="font-medium text-red-600"><%= rejectedCount %></span>
+                                        rejected
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
     </div>
-  </div>
 
-
-
-
-
-
-
-
-
- 
-
-
+    <script>
+        // Search functionality
+        function searchApplications() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput?.value.toLowerCase();
+            
+            if (!searchTerm) return;
+            
+            const rows = document.querySelectorAll('.table-row, .app-card');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+                if (row.parentElement) {
+                    row.parentElement.style.display = text.includes(searchTerm) ? '' : 'none';
+                }
+            });
+        }
+        
+        // Filter by status
+        function filterApplications(status) {
+            const rows = document.querySelectorAll('.table-row, .app-card');
+            rows.forEach(row => {
+                if (status === 'all') {
+                    row.style.display = '';
+                    if (row.parentElement) row.parentElement.style.display = '';
+                    return;
+                }
+                
+                const statusElement = row.querySelector('.status-badge');
+                const statusText = statusElement ? statusElement.textContent.toLowerCase() : '';
+                
+                let show = false;
+                if (status === 'pending' && statusText.includes('pending')) show = true;
+                if (status === 'approved' && statusText.includes('approve')) show = true;
+                if (status === 'rejected' && statusText.includes('reject')) show = true;
+                if (status === 'review' && statusText.includes('review')) show = true;
+                
+                row.style.display = show ? '' : 'none';
+                if (row.parentElement) {
+                    row.parentElement.style.display = show ? '' : 'none';
+                }
+            });
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add search and filter if applications exist
+            if (applicationList.length > 0) {
+                const header = document.querySelector('.lg\\:w-3\\/4 .mb-6');
+                const controlsContainer = document.createElement('div');
+                controlsContainer.className = 'flex flex-col sm:flex-row gap-3 mb-4';
+                
+                // Calculate counts for filter buttons
+                const pendingCount = applicationList.filter(app => 
+                    app.status.toLowerCase().includes('pending')).length;
+                const approvedCount = applicationList.filter(app => 
+                    app.status.toLowerCase().includes('approve')).length;
+                const rejectedCount = applicationList.filter(app => 
+                    app.status.toLowerCase().includes('reject')).length;
+                const reviewCount = applicationList.filter(app => 
+                    app.status.toLowerCase().includes('review')).length;
+                
+                controlsContainer.innerHTML = `
+                    <div class="flex-1">
+                        <div class="relative">
+                            <input type="text" 
+                                   id="searchInput" 
+                                   placeholder="Search applications..."
+                                   class="w-full px-4 py-2 pl-10 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                   onkeyup="searchApplications()">
+                            <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                                <i class="fas fa-search text-gray-400 text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="filterApplications('all')" class="px-3 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded hover:bg-gray-200 transition-colors">
+                            All (<%= applicationList.length %>)
+                        </button>
+                        ${pendingCount > 0 ? `
+                            <button onclick="filterApplications('pending')" class="px-3 py-2 bg-amber-100 text-amber-700 text-xs font-medium rounded hover:bg-amber-200 transition-colors">
+                                Pending (${pendingCount})
+                            </button>
+                        ` : ''}
+                        ${reviewCount > 0 ? `
+                            <button onclick="filterApplications('review')" class="px-3 py-2 bg-blue-100 text-blue-700 text-xs font-medium rounded hover:bg-blue-200 transition-colors">
+                                Review (${reviewCount})
+                            </button>
+                        ` : ''}
+                        ${approvedCount > 0 ? `
+                            <button onclick="filterApplications('approved')" class="px-3 py-2 bg-green-100 text-green-700 text-xs font-medium rounded hover:bg-green-200 transition-colors">
+                                Approved (${approvedCount})
+                            </button>
+                        ` : ''}
+                        ${rejectedCount > 0 ? `
+                            <button onclick="filterApplications('rejected')" class="px-3 py-2 bg-red-100 text-red-700 text-xs font-medium rounded hover:bg-red-200 transition-colors">
+                                Rejected (${rejectedCount})
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                
+                if (header) {
+                    header.parentNode.insertBefore(controlsContainer, header.nextSibling);
+                }
+            }
+            
+            console.log('Applications page loaded');
+        });
+    </script>
+</body>

@@ -3,23 +3,16 @@ const pool = require('../config/db');
 const axios = require('axios');
 const { ensureVerifiedEmail } = require('../middleware/auth')
 const { ensureAuthenticated } = require("../config/auth");
+const indexController = require('../controllers/indexController')
 
 
 
 // Admin creates a class
-router.get('/', async (req, res) => {
-  
-  const joinCommunityModal = !req.session.showJoinCommunity
-
-  res.render('index', {
-    joinCommunityModal
-  })
-});
-router.get('/read-more', async (req, res) => {
-  res.render('read-more')
-});
-
-
+router.get('/', indexController.landingPage)
+router.get('/read-more', indexController.readmorePage)
+router.get('/info/terms', indexController.termsPage)
+router.get('/info/affiliate', indexController.affiliateInfoPage)
+router.get('/info/affiliate/terms', indexController.affiliateTermsPage)
 
 
 router.get('/handler', (req, res) => {
@@ -46,31 +39,6 @@ router.get('/handler', (req, res) => {
     return res.redirect('/auth/login')
   }
 })
-
-// Logout route
-router.get('/logout', (req, res) => {
-  req.logout(err => {
-    if (err) {
-      return next(err);
-    }
-    req.flash('success_msg', 'You have logged out successfully.');
-    res.redirect('/');
-  });
-});
-
-
-
-router.get('/info/affiliate', (req, res) => {
-  res.render('affiliate')
-});
-
-router.get('/info/affiliate/terms', (req, res) => {
-  res.render('affiliate-terms')
-});
-router.get('/info/terms', (req, res) => {
-  res.render('terms')
-});
-
 
 
 

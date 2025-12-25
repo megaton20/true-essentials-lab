@@ -1,347 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Class Management | Super Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #4361ee;
-            --primary-dark: #3a56d4;
-            --secondary: #7209b7;
-            --success: #4cc9f0;
-            --warning: #f72585;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
-            --light-gray: #e9ecef;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --gradient-danger: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-            --gradient-dark: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            --transition: all 0.3s ease;
-        }
+<style>
+    :root {
+        --primary: #3bf689;
+        --secondary: #e0ec3a;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #0ea5e9;
+    }
+    
+    .detail-card {
+        transition: all 0.2s ease;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .detail-card:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    
+    .status-active { background-color: #10b981; }
+    .status-inactive { background-color: #6b7280; }
+    
+    .video-thumb {
+        width: 60px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+    
+    .upload-area {
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .upload-area:hover {
+        border-color: #3b82f6;
+        background-color: #f8fafc;
+    }
+    
+    .playlist-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        transition: all 0.2s ease;
+    }
+    
+    .playlist-item:hover {
+        border-color: #3b82f6;
+        background-color: #f8fafc;
+    }
+    
+    .playlist-item.active {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+    }
+</style>
 
-        body {
-            background: #f8fafc;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-        }
-
-        .card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .card-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 1.25rem 1.5rem;
-        }
-
-        .card-header.bg-gradient-primary {
-            background: var(--gradient-primary) !important;
-        }
-
-        .card-header.bg-gradient-success {
-            background: var(--gradient-success) !important;
-        }
-
-        .card-header.bg-gradient-warning {
-            background: var(--gradient-warning) !important;
-        }
-
-        .card-header.bg-gradient-danger {
-            background: var(--gradient-danger) !important;
-        }
-
-        .card-header.bg-gradient-dark {
-            background: var(--gradient-dark) !important;
-        }
-
-        .btn {
-            border-radius: 10px;
-            font-weight: 600;
-            transition: var(--transition);
-            padding: 0.6rem 1.25rem;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-outline-danger:hover {
-            background: var(--warning);
-            border-color: var(--warning);
-        }
-
-        .file-upload-area {
-            border: 2px dashed var(--light-gray);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            transition: var(--transition);
-            cursor: pointer;
-            background: #fafbfc;
-        }
-
-        .file-upload-area:hover {
-            border-color: var(--primary);
-            background: rgba(67, 97, 238, 0.03);
-        }
-
-        .file-upload-area i {
-            margin-bottom: 1rem;
-            opacity: 0.7;
-        }
-
-        .video-container {
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .video-playlist-item {
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            transition: var(--transition);
-            cursor: pointer;
-            background: white;
-        }
-
-        .video-playlist-item:hover {
-            border-color: var(--primary);
-            transform: translateX(5px);
-        }
-
-        .video-playlist-item.active {
-            border-color: var(--primary);
-            background: rgba(67, 97, 238, 0.05);
-        }
-
-        .progress {
-            height: 12px;
-            border-radius: 10px;
-            background: var(--light-gray);
-        }
-
-        .progress-bar {
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        .badge {
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            font-weight: 600;
-        }
-
-        .form-control {
-            border-radius: 10px;
-            border: 2px solid var(--light-gray);
-            padding: 0.75rem 1rem;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-        }
-
-        .form-control-lg {
-            padding: 1rem 1.25rem;
-            font-size: 1.1rem;
-        }
-
-        .toast {
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .attendance-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .attendance-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .attendance-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-
-        .attendance-list::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 3px;
-        }
-
-        .attendance-list::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
-
-        .cursor-pointer {
-            cursor: pointer;
-        }
-
-        .text-gradient {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .icon-circle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-        }
-
-        .icon-circle-primary {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary);
-        }
-
-        .icon-circle-success {
-            background: rgba(76, 201, 240, 0.1);
-            color: var(--success);
-        }
-
-        .icon-circle-warning {
-            background: rgba(247, 37, 133, 0.1);
-            color: var(--warning);
-        }
-
-        .icon-circle-danger {
-            background: rgba(255, 107, 107, 0.1);
-            color: #ff6b6b;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        .stats-number {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--primary);
-            line-height: 1;
-        }
-
-        .stats-label {
-            font-size: 0.9rem;
-            color: var(--gray);
-            font-weight: 600;
-        }
-
-        .class-details-card {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-        }
-
-        .attendance-item {
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            transition: var(--transition);
-            background: white;
-        }
-
-        .attendance-item:hover {
-            border-color: var(--primary);
-            transform: translateX(5px);
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background-color: var(--primary);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(26px);
-        }
-
-        .modal-header {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-footer {
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
-    </style>
-</head>
-<body>
     <!-- Navbar -->
     <%-include('./partials/topnav') %>
 
@@ -349,451 +72,305 @@
     <%-include('./partials/sidenav') %>
 
     <!-- Main Content -->
-    <div class="container-fluid mt-4">
-        <div class="row">
+    <div class="container mx-auto px-2 py-4 mt-4">
+        <div class="flex flex-col lg:flex-row gap-4">
             <!-- Static Sidebar -->
-            <div class="col-lg-3 d-none d-lg-block">
+            <div class="hidden lg:block lg:w-1/4">
                 <%-include('./partials/staticsidebar') %>
             </div>
 
-            <!-- Class Details Section -->
-            <div class="col-lg-9">
-                <main class="p-3">
-                    <!-- Header Section -->
-                    <div class="d-flex justify-content-between align-items-center mb-4 fade-in">
+            <!-- Main Content Area -->
+            <div class="lg:w-3/4">
+                <!-- Header -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center">
                         <div>
-                            <a href="/<%=backUrl%>" class="btn btn-light btn-sm me-3">
-                                <i class="fas fa-arrow-left me-2"></i>Back
+                            <a href="/<%= backUrl %>" 
+                               class="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors mb-2">
+                                <i class="fas fa-arrow-left text-xs"></i>
+                                Back
                             </a>
-                            <h1 class="h3 mb-0 text-dark fw-bold"><%= singleClass.title %></h1>
-                            <p class="text-muted mb-0 mt-1"><%= singleClass.description || 'No description provided' %></p>
+                            <h1 class="text-xl font-semibold text-gray-900"><%= singleClass.title %></h1>
+                            <p class="text-sm text-gray-500 mt-1"><%= singleClass.description || 'No description provided' %></p>
                         </div>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editClassModal">
-                                <i class="fas fa-edit me-2"></i>Edit Class
+                        <div class="flex gap-2">
+                            <button onclick="openEditModal()" 
+                                    class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                                <i class="fas fa-edit text-xs"></i>
+                                Edit
                             </button>
-                            <form action="/admin/class/<%= singleClass.id %>" method="post">
+                            <form action="/admin/class/<%= singleClass.id %>" method="post" 
+                                  onsubmit="return confirm('Delete this session?')">
                                 <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this class?')">
-                                    <i class="fas fa-trash me-2"></i>Delete Class
+                                <input type="hidden" name="courseId" value="<%= courseId %>">
+                                <input type="hidden" name="backUrl" value="<%= backUrl %>">
+                                <button type="submit" 
+                                        class="inline-flex items-center gap-2 px-3 py-2 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors text-sm">
+                                    <i class="fas fa-trash text-xs"></i>
+                                    Delete
                                 </button>
                             </form>
                         </div>
                     </div>
+                </div>
 
-                    <%- include('../partials/messages') %>
+                <%- include('../partials/messages') %>
 
-                    <!-- Stats Overview -->
-                    <div class="row g-3 mb-4 fade-in">
-                        <div class="col-md-3">
-                            <div class="card bg-primary text-white">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="icon-circle bg-white bg-opacity-20">
-                                            <i class="fas fa-users"></i>
-                                        </div>
-                                        <div>
-                                            <div class="stats-number"><%= attendance.length %></div>
-                                            <div class="stats-label">Students Attended</div>
-                                        </div>
-                                    </div>
-                                </div>
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+                    <div class="detail-card bg-white rounded-lg p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-lg bg-blue-100">
+                                <i class="fas fa-users text-blue-500 text-sm"></i>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-success text-white">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="icon-circle bg-white bg-opacity-20">
-                                            <i class="fas fa-play-circle"></i>
-                                        </div>
-                                        <div>
-                                            <div class="stats-number"><%= courseVideos ? courseVideos.length : 0 %></div>
-                                            <div class="stats-label">Video Parts</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-info text-white">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="icon-circle bg-white bg-opacity-20">
-                                            <i class="fas fa-calendar-check"></i>
-                                        </div>
-                                        <div>
-                                            <div class="stats-number">
-                                                <%= singleClass.status ? 'Active' : 'Inactive' %>
-                                            </div>
-                                            <div class="stats-label">Class Status</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-warning text-white">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="icon-circle bg-white bg-opacity-20">
-                                            <i class="fas fa-clock"></i>
-                                        </div>
-                                        <div>
-                                            <div class="stats-number">
-                                                <%= new Date(singleClass.scheduled_at).toLocaleDateString() %>
-                                            </div>
-                                            <div class="stats-label">Scheduled Date</div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div>
+                                <div class="text-lg font-semibold text-gray-900"><%= attendance.length %></div>
+                                <div class="text-xs text-gray-500">Attended</div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Main Content Grid -->
-                    <div class="row g-4">
-                        <!-- Left Column -->
-                        <div class="col-lg-8">
-                            <!-- Video Player Section -->
-                            <div class="card mb-4 fade-in">
-                                <div class="card-header bg-gradient-dark text-white py-3">
-                                    <h5 class="card-title mb-0">
-                                        <i class="fas fa-play-circle me-2"></i>program Video Content
-                                    </h5>
-                                </div>
-                                <div class="card-body p-0">
-                                    <% if (courseVideos && courseVideos.length > 0) { %>
-                                        <div class="video-container">
-                                            <video
-                                                id="mainVideo"
-                                                class="w-100"
-                                                style="height: 400px; object-fit: contain;"
-                                                controls
-                                                poster="<%= courseVideos[0]?.thumbnail_url %>"
-                                            >
-                                                <source src="<%= courseVideos[0]?.video_url %>" type="video/mp4">
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        </div>
-                                        <div class="p-4">
-                                            <h4 class="text-dark mb-2" id="currentVideoTitle"><%= courseVideos[0].title || 'Part 1' %></h4>
-                                            <div class="d-flex align-items-center text-muted">
-                                                <span class="me-3">
-                                                    <i class="fas fa-film me-1"></i>
-                                                    Part <span class="part-number"><%= courseVideos[0].part_number %></span>
-                                                </span>
-                                                <span>
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    <%= courseVideos[0].duration || 'Duration not available' %>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    <% } else { %>
-                                        <div class="text-center py-5">
-                                            <i class="fas fa-video-slash fa-4x text-muted mb-4"></i>
-                                            <h4 class="text-muted">No Videos Available</h4>
-                                            <p class="text-muted mb-4">Upload your first video to get started with the program content.</p>
-                                        </div>
-                                    <% } %>
-                                </div>
+                    
+                    <div class="detail-card bg-white rounded-lg p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-lg bg-green-100">
+                                <i class="fas fa-video text-green-500 text-sm"></i>
                             </div>
-
-                            <!-- Upload Section -->
-                            <div class="card mb-4 fade-in">
-                                <div class="card-header bg-gradient-primary text-white py-3">
-                                    <h5 class="card-title mb-0">
-                                        <i class="fas fa-cloud-upload-alt me-2"></i>Upload New Video Part
-                                    </h5>
+                            <div>
+                                <div class="text-lg font-semibold text-gray-900">
+                                    <%= courseVideos ? courseVideos.length : 0 %>
                                 </div>
-                                <div class="card-body">
-                                    <!-- Cloudinary Configuration -->
-                                    <script>
-                                        const cloudName = '<%= process.env.CLOUD_NAME %>';
-                                        const uploadPreset = '<%= process.env.CLOUDINARY_UPLOAD_PRESET || "admin-videos" %>';
-                                        
-                                        if (!cloudName || cloudName === '' || !uploadPreset || uploadPreset === '') {
-                                            document.write(`
-                                                <div class="alert alert-warning">
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
-                                                        <div>
-                                                            <h6 class="alert-heading mb-1">Upload Configuration Error</h6>
-                                                            <p class="mb-0">Cloudinary upload is not configured. Please contact administrator.</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            `);
-                                        }
-                                    </script>
-
-                                    <form id="videoUploadForm">
-                                        <input type="hidden" name="classeId" value="<%= singleClass.id %>">
-
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="title" class="form-label fw-semibold">Video Title</label>
-                                                    <input type="text" name="title" id="title" class="form-control" placeholder="Enter a descriptive title...">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="part_number" class="form-label fw-semibold">Part Number</label>
-                                                    <input type="number" name="part_number" id="part_number" class="form-control" required min="1" placeholder="1">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-semibold">Video File</label>
-                                                    <div class="file-upload-area" onclick="document.getElementById('video').click()">
-                                                        <i class="fas fa-file-video fa-3x text-primary mb-3"></i>
-                                                        <h6 class="mb-2">Click to upload video file</h6>
-                                                        <p class="text-muted small mb-3">MP4, MOV, AVI • Maximum 500MB</p>
-                                                        <input type="file" name="video" id="video" class="d-none" accept="video/*" required>
-                                                        <div id="videoFileName" class="small text-muted mt-2"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-semibold">Thumbnail Image</label>
-                                                    <div class="file-upload-area" onclick="document.getElementById('thumbnail').click()">
-                                                        <i class="fas fa-image fa-3x text-success mb-3"></i>
-                                                        <h6 class="mb-2">Click to upload thumbnail</h6>
-                                                        <p class="text-muted small mb-3">JPG, PNG, WebP • Maximum 10MB</p>
-                                                        <input type="file" name="thumbnail" id="thumbnail" class="d-none" accept="image/*" required>
-                                                        <div id="thumbnailFileName" class="small text-muted mt-2"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Progress Bar -->
-                                        <div id="uploadProgressContainer" class="mb-4" style="display: none;">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <span class="fw-semibold">Upload Progress</span>
-                                                <span id="uploadPercentage" class="text-primary fw-bold">0%</span>
-                                            </div>
-                                            <div class="progress">
-                                                <div id="uploadProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
-                                            </div>
-                                            <div class="mt-2">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <small id="uploadStatus" class="text-muted">Preparing upload...</small>
-                                                    <small id="uploadSpeed" class="text-muted fw-semibold"></small>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold" id="uploadBtn">
-                                            <span id="uploadBtnText">
-                                                <i class="fas fa-cloud-upload-alt me-2"></i>Upload Video Part
-                                            </span>
-                                            <span id="uploadSpinner" style="display: none;">
-                                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                                Uploading...
-                                            </span>
-                                        </button>
-                                    </form>
-                                </div>
+                                <div class="text-xs text-gray-500">Video Parts</div>
                             </div>
-
-                            <!-- Class Details Card -->
-                            <div class="card fade-in">
-                                <div class="card-header bg-gradient-primary text-white py-3">
-                                    <h5 class="card-title mb-0">
-                                        <i class="fas fa-info-circle me-2"></i>Class Information
-                                    </h5>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-card bg-white rounded-lg p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-lg bg-purple-100">
+                                <i class="fas <%= singleClass.status ? 'fa-play-circle' : 'fa-pause-circle' %> text-purple-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-lg font-semibold text-gray-900">
+                                    <%= singleClass.status ? 'Active' : 'Inactive' %>
                                 </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-4">
-                                                <label class="form-label text-muted small mb-1">Class Title</label>
-                                                <h5 class="mb-0 text-dark"><%= singleClass.title %></h5>
-                                            </div>
-                                            <div class="mb-4">
-                                                <label class="form-label text-muted small mb-1">Description</label>
-                                                <p class="mb-0"><%= singleClass.description || 'No description provided' %></p>
-                                            </div>
-                                            <div class="mb-4">
-                                                <label class="form-label text-muted small mb-1">Created By</label>
-                                                <p class="mb-0">
-                                                    <i class="fas fa-user-tie text-primary me-2"></i>
-                                                    <%= singleClass.crated_by %>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-4">
-                                                <label class="form-label text-muted small mb-1">Scheduled Time</label>
-                                                <p class="mb-0">
-                                                    <i class="fas fa-calendar text-primary me-2"></i>
-                                                    <%= new Date(singleClass.scheduled_at).toLocaleString() %>
-                                                </p>
-                                            </div>
-                                            <div class="mb-4">
-                                                <label class="form-label text-muted small mb-1">Meeting Link</label>
-                                                <p class="mb-0">
-                                                    <a href="<%= singleClass.meet_link %>" target="_blank" class="text-decoration-none">
-                                                        <i class="fas fa-video text-success me-2"></i>Join Meeting
-                                                    </a>
-                                                </p>
-                                            </div>
-                                            <div class="mb-4">
-                                                <label class="form-label text-muted small mb-1">Join Code</label>
-                                                <p class="mb-0">
-                                                    <i class="fas fa-key text-warning me-2"></i>
-                                                    <%= singleClass.join_code || 'Not available' %>
-                                                </p>
-                                            </div>
+                                <div class="text-xs text-gray-500">Status</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-card bg-white rounded-lg p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-lg bg-amber-100">
+                                <i class="fas fa-calendar text-amber-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">
+                                    <%= new Date(singleClass.scheduled_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
+                                </div>
+                                <div class="text-xs text-gray-500">Scheduled</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <!-- Left Column (2/3) -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <!-- Video Player -->
+                        <div class="detail-card bg-white rounded-lg">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="fas fa-play-circle text-blue-500 text-sm"></i>
+                                    Program Video
+                                </h3>
+                            </div>
+                            
+                            <div class="p-4">
+                                <% if (courseVideos && courseVideos.length > 0) { %>
+                                    <div class="bg-black rounded-lg overflow-hidden mb-4">
+                                        <video id="mainVideo" 
+                                               class="w-full h-64 object-contain"
+                                               controls
+                                               poster="<%= courseVideos[0]?.thumbnail_url %>">
+                                            <source src="<%= courseVideos[0]?.video_url %>" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-gray-900 mb-1" id="currentVideoTitle">
+                                            <%= courseVideos[0].title || 'Part ' + courseVideos[0].part_number %>
+                                        </h4>
+                                        <div class="flex items-center gap-3 text-xs text-gray-500">
+                                            <span>Part <%= courseVideos[0].part_number %></span>
+                                            <% if (courseVideos[0].duration) { %>
+                                                <span><i class="fas fa-clock text-xs"></i> <%= courseVideos[0].duration %></span>
+                                            <% } %>
                                         </div>
                                     </div>
-                                    
-                                    <div class="border-top pt-3 mt-3">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label text-muted mb-0">Link Visibility</label>
-                                                    <form action="/admin/class/<%= singleClass.id %>/<%= singleClass.show_link ? 'false' : 'true' %>" method="post">
-                                                        <input type="hidden" name="_method" value="PUT">
-                                                        <input type="hidden" name="courseId" value="<%=courseId%>">
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" id="toggleShowLink" onchange="this.form.submit()" <%= singleClass.show_link ? 'checked' : '' %>>
-                                                            <label class="form-check-label small" for="toggleShowLink">
-                                                                <%= singleClass.show_link ? 'Visible' : 'Hidden' %>
-                                                            </label>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label text-muted mb-0">Class Status</label>
-                                                    <span class="badge <%= singleClass.status ? 'bg-success' : 'bg-secondary' %>">
-                                                        <%= singleClass.status ? 'Active' : 'Inactive' %>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <% } else { %>
+                                    <div class="text-center py-8">
+                                        <i class="fas fa-video-slash text-gray-300 text-3xl mb-3"></i>
+                                        <p class="text-sm text-gray-500">No videos uploaded yet</p>
                                     </div>
-                                </div>
+                                <% } %>
                             </div>
                         </div>
 
-                        <!-- Right Column -->
-                        <div class="col-lg-4">
-                            <!-- Video Playlist -->
-                            <% if (courseVideos && courseVideos.length > 0) { %>
-                                <div class="card mb-4 fade-in">
-                                    <div class="card-header bg-gradient-info text-white py-3">
-                                        <h5 class="card-title mb-0 d-flex justify-content-between align-items-center">
-                                            <span><i class="fas fa-list me-2"></i>Video Playlist</span>
-                                            <span class="badge bg-light text-dark"><%= courseVideos.length %> videos</span>
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="playlist-container" style="max-height: 400px; overflow-y: auto;">
-                                            <% courseVideos.forEach((video, index) => { %>
-                                                <div class="video-playlist-item <%= index === 0 ? 'active' : '' %>"
-                                                     onclick="loadVideo('<%= video.video_url %>', '<%= video.thumbnail_url %>', '<%= video.title %>', <%= video.part_number %>, this)">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="position-relative me-3">
-                                                            <img src="<%= video.thumbnail_url %>" alt="Thumbnail" class="rounded-2" style="width: 60px; height: 45px; object-fit: cover;">
-                                                            <div class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 text-white px-1 rounded-start">
-                                                                <small><%= video.duration || '--:--' %></small>
-                                                            </div>
-                                                        </div>
-                                                        <div class="flex-grow-1">
-                                                            <h6 class="mb-1 text-truncate" style="max-width: 180px;"><%= video.title || `Part ${video.part_number}` %></h6>
-                                                            <small class="text-muted">Part <%= video.part_number %></small>
-                                                        </div>
-                                                        <form action="/admin/class/video/delete" method="POST" class="ms-2">
-                                                            <input type="hidden" name="_method" value="DELETE">
-                                                            <input type="hidden" name="classVideoId" value="<%= video.id %>">
-                                                            <input type="hidden" name="class_id" value="<%= video.class_id %>">
-                                                            <input type="hidden" name="video_public_id" value="<%= video.video_public_id %>">
-                                                            <input type="hidden" name="thumbnail_public_id" value="<%= video.thumbnail_public_id %>">
-                                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this video?')">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            <% }) %>
-                                        </div>
-                                    </div>
-                                </div>
-                            <% } %>
-
-                            <!-- Attendance -->
-                            <div class="card mb-4 fade-in">
-                                <div class="card-header bg-gradient-warning text-white py-3">
-                                    <h5 class="card-title mb-0 d-flex justify-content-between align-items-center">
-                                        <span><i class="fas fa-users me-2"></i>Attendance</span>
-                                        <span class="badge bg-light text-dark"><%= attendance.length %></span>
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <% if (attendance.length === 0) { %>
-                                        <div class="text-center py-3">
-                                            <i class="fas fa-user-slash fa-2x text-muted mb-3"></i>
-                                            <p class="text-muted mb-0">No students have joined yet</p>
-                                        </div>
-                                    <% } else { %>
-                                        <div class="attendance-list">
-                                            <% attendance.forEach(function(user) { %>
-                                                <div class="attendance-item">
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <div class="flex-grow-1">
-                                                            <h6 class="mb-1"><%= user.full_name || 'Unnamed Student' %></h6>
-                                                            <small class="text-muted d-block"><%= user.email %></small>
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-clock me-1"></i>
-                                                                <%= new Date(user.joined_at).toLocaleString() %>
-                                                            </small>
-                                                        </div>
-                                                        <form action="/admin/class/<%= singleClass.id %>/grant-access/<%= user.id %>" method="post">
-                                                            <input type="hidden" name="_method" value="PUT">
-                                                            <div class="toggle-switch">
-                                                                <input type="checkbox" name="granted" onchange="this.form.submit()" <%= user.status ? 'checked' : '' %>>
-                                                                <span class="toggle-slider"></span>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            <% }) %>
-                                        </div>
-                                    <% } %>
-                                </div>
+                        <!-- Upload Section -->
+                        <div class="detail-card bg-white rounded-lg">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="fas fa-cloud-upload-alt text-green-500 text-sm"></i>
+                                    Upload Video Part
+                                </h3>
                             </div>
+                            
+                            <div class="p-4">
+                                <!-- Removed the inline script here -->
 
-                            <!-- Quick Actions -->
-                            <div class="card fade-in">
-                                <div class="card-header bg-gradient-danger text-white py-3">
-                                    <h5 class="card-title mb-0">
-                                        <i class="fas fa-bolt me-2"></i>Quick Actions
-                                    </h5>
+                                <form id="uploadForm">
+                                    <input type="hidden" name="classeId" value="<%= singleClass.id %>">
+                                    
+                                    <div class="space-y-4">
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-700 mb-1">Title</label>
+                                                <input type="text" 
+                                                       name="title" 
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                                       placeholder="Video title">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-700 mb-1">Part #</label>
+                                                <input type="number" 
+                                                       name="part_number" 
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                                       min="1"
+                                                       required>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Video Upload -->
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-700 mb-1">Video File</label>
+                                            <div class="upload-area p-4 text-center" onclick="document.getElementById('videoInput').click()">
+                                                <input type="file" 
+                                                       id="videoInput" 
+                                                       class="hidden"
+                                                       accept="video/*"
+                                                       required>
+                                                <i class="fas fa-file-video text-gray-400 text-lg mb-2"></i>
+                                                <p class="text-xs text-gray-500">Click to select video</p>
+                                                <p class="text-xs text-gray-400 mt-1" id="videoFileName">No file chosen</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Thumbnail Upload -->
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-700 mb-1">Thumbnail</label>
+                                            <div class="upload-area p-4 text-center" onclick="document.getElementById('thumbnailInput').click()">
+                                                <input type="file" 
+                                                       id="thumbnailInput" 
+                                                       class="hidden"
+                                                       accept="image/*"
+                                                       required>
+                                                <i class="fas fa-image text-gray-400 text-lg mb-2"></i>
+                                                <p class="text-xs text-gray-500">Click to select thumbnail</p>
+                                                <p class="text-xs text-gray-400 mt-1" id="thumbnailFileName">No file chosen</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Progress -->
+                                        <div id="progressContainer" class="hidden">
+                                            <div class="flex justify-between text-xs text-gray-600 mb-1">
+                                                <span id="progressStatus">Uploading...</span>
+                                                <span id="progressPercent">0%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                                <div id="progressBar" class="bg-blue-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" 
+                                                id="uploadBtn"
+                                                class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors">
+                                            <i class="fas fa-cloud-upload-alt text-xs"></i>
+                                            Upload Video Part
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Session Details -->
+                        <div class="detail-card bg-white rounded-lg">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="fas fa-info-circle text-gray-500 text-sm"></i>
+                                    Session Details
+                                </h3>
+                            </div>
+                            
+                            <div class="p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="text-xs text-gray-500">Title</label>
+                                            <p class="text-sm text-gray-900"><%= singleClass.title %></p>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-gray-500">Description</label>
+                                            <p class="text-sm text-gray-900"><%= singleClass.description || '—' %></p>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-gray-500">Created By</label>
+                                            <p class="text-sm text-gray-900"><%= singleClass.crated_by || '—' %></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="text-xs text-gray-500">Scheduled</label>
+                                            <p class="text-sm text-gray-900">
+                                                <%= new Date(singleClass.scheduled_at).toLocaleString('en-US', { 
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    hour: 'numeric',
+                                                    minute: '2-digit'
+                                                }) %>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-gray-500">Meeting Link</label>
+                                            <a href="<%= singleClass.meet_link %>" 
+                                               target="_blank"
+                                               class="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1">
+                                                <i class="fas fa-external-link-alt text-xs"></i>
+                                                Join Meeting
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-gray-500">Join Code</label>
+                                            <p class="text-sm text-gray-900"><%= singleClass.join_code || '—' %></p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="d-grid gap-2">
-                                        <a href="<%= singleClass.meet_link %>" target="_blank" class="btn btn-outline-primary text-start">
-                                            <i class="fas fa-video me-2"></i>Join Meeting
-                                        </a>
-                                        <button class="btn btn-outline-success text-start" data-bs-toggle="modal" data-bs-target="#editClassModal">
-                                            <i class="fas fa-edit me-2"></i>Edit Class Details
-                                        </button>
-                                        <button class="btn btn-outline-warning text-start" data-bs-toggle="modal" data-bs-target="#completeModal" <%= singleClass.is_complete ? 'disabled' : '' %>>
-                                            <i class="fas fa-check me-2"></i>Mark as Complete
-                                        </button>
-                                        <form action="/admin/class/<%= singleClass.id %>" method="post">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <button type="submit" class="btn btn-outline-danger text-start w-100" onclick="return confirm('Are you sure you want to delete this class?')">
-                                                <i class="fas fa-trash me-2"></i>Delete Class
+                                
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <label class="text-xs text-gray-500">Link Visibility</label>
+                                            <span class="text-xs font-medium <%= singleClass.show_link ? 'text-green-600' : 'text-gray-600' %>">
+                                                <%= singleClass.show_link ? 'Visible' : 'Hidden' %>
+                                            </span>
+                                        </div>
+                                        <form action="/admin/class/<%= singleClass.id %>/<%= singleClass.show_link ? 'false' : 'true' %>" method="post">
+                                            <input type="hidden" name="_method" value="PUT">
+                                            <input type="hidden" name="courseId" value="<%= courseId %>">
+                                            <button type="submit" 
+                                                    class="text-xs text-blue-600 hover:text-blue-700">
+                                                <%= singleClass.show_link ? 'Hide' : 'Show' %>
                                             </button>
                                         </form>
                                     </div>
@@ -801,448 +378,462 @@
                             </div>
                         </div>
                     </div>
-                </main>
+
+                    <!-- Right Column (1/3) -->
+                    <div class="space-y-4">
+                        <!-- Video Playlist -->
+                        <% if (courseVideos && courseVideos.length > 0) { %>
+                            <div class="detail-card bg-white rounded-lg">
+                                <div class="p-4 border-b border-gray-200">
+                                    <h3 class="text-sm font-semibold text-gray-900 flex items-center justify-between">
+                                        <span class="flex items-center gap-2">
+                                            <i class="fas fa-list text-gray-500 text-sm"></i>
+                                            Playlist
+                                        </span>
+                                        <span class="text-xs text-gray-500"><%= courseVideos.length %> videos</span>
+                                    </h3>
+                                </div>
+                                
+                                <div class="p-4">
+                                    <div class="space-y-2 max-h-96 overflow-y-auto">
+                                        <% courseVideos.forEach((video, index) => { %>
+                                            <div class="playlist-item <%= index === 0 ? 'active' : '' %>"
+                                                 onclick="loadVideo('<%= video.video_url %>', '<%= video.thumbnail_url %>', '<%= video.title %>', <%= video.part_number %>, this)">
+                                                <div class="flex items-center gap-3">
+                                                    <img src="<%= video.thumbnail_url %>" 
+                                                         alt="Thumbnail"
+                                                         class="video-thumb">
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                                            <%= video.title || 'Part ' + video.part_number %>
+                                                        </p>
+                                                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                                                            <span>Part <%= video.part_number %></span>
+                                                            <% if (video.duration) { %>
+                                                                <span><i class="fas fa-clock text-xs"></i> <%= video.duration %></span>
+                                                            <% } %>
+                                                        </div>
+                                                    </div>
+                                                    <form action="/admin/class/video/delete" 
+                                                          method="POST"
+                                                          onsubmit="return confirm('Delete this video?')">
+                                                        <input type="hidden" name="_method" value="DELETE">
+                                                        <input type="hidden" name="classVideoId" value="<%= video.id %>">
+                                                        <input type="hidden" name="backUrl" value="<%= backUrl %>">                                                        <input type="hidden" name="class_id" value="<%= video.class_id %>">
+                                                        <input type="hidden" name="video_public_id" value="<%= video.video_public_id %>">
+                                                        <input type="hidden" name="thumbnail_public_id" value="<%= video.thumbnail_public_id %>">
+                                                        <button type="submit" 
+                                                                class="text-red-500 hover:text-red-600">
+                                                            <i class="fas fa-trash text-xs"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <!-- Attendance -->
+                        <div class="detail-card bg-white rounded-lg">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-900 flex items-center justify-between">
+                                    <span class="flex items-center gap-2">
+                                        <i class="fas fa-users text-gray-500 text-sm"></i>
+                                        Attendance
+                                    </span>
+                                    <span class="text-xs text-gray-500"><%= attendance.length %> students</span>
+                                </h3>
+                            </div>
+                            
+                            <div class="p-4">
+                                <% if (attendance.length === 0) { %>
+                                    <div class="text-center py-4">
+                                        <i class="fas fa-user-slash text-gray-300 text-lg mb-2"></i>
+                                        <p class="text-xs text-gray-500">No students attended</p>
+                                    </div>
+                                <% } else { %>
+                                    <div class="space-y-3 max-h-64 overflow-y-auto">
+                                        <% attendance.forEach(function(user) { %>
+                                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900"><%= user.full_name || 'Student' %></p>
+                                                    <p class="text-xs text-gray-500"><%= user.email %></p>
+                                                    <p class="text-xs text-gray-400 mt-1">
+                                                        <%= new Date(user.joined_at).toLocaleTimeString('en-US', { 
+                                                            hour: 'numeric',
+                                                            minute: '2-digit'
+                                                        }) %>
+                                                    </p>
+                                                </div>
+                                                <form action="/admin/class/<%= singleClass.id %>/grant-access/<%= user.id %>" 
+                                                      method="post">
+                                                    <input type="hidden" name="_method" value="PUT">
+                                                    <label class="inline-flex items-center cursor-pointer">
+                                                        <input type="checkbox" 
+                                                               name="granted" 
+                                                               class="sr-only peer"
+                                                               onchange="this.form.submit()"
+                                                               <%= user.status ? 'checked' : '' %>>
+                                                        <div class="relative w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                                                    </label>
+                                                </form>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="detail-card bg-white rounded-lg">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="fas fa-bolt text-gray-500 text-sm"></i>
+                                    Quick Actions
+                                </h3>
+                            </div>
+                            
+                            <div class="p-4">
+                                <div class="space-y-2">
+                                    <a href="<%= singleClass.meet_link %>" 
+                                       target="_blank"
+                                       class="flex items-center gap-2 px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-lg text-sm transition-colors">
+                                        <i class="fas fa-video text-xs"></i>
+                                        Join Meeting
+                                    </a>
+                                    
+                                    <button onclick="openEditModal()"
+                                            class="w-full flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg text-sm transition-colors">
+                                        <i class="fas fa-edit text-xs"></i>
+                                        Edit Details
+                                    </button>
+                                    
+                                    <% if (!singleClass.is_complete) { %>
+                                        <form action="/admin/class/complete/<%= singleClass.id %>" method="post">
+                                            <input type="hidden" name="courseId" value="<%= courseId %>">
+                                            <button type="submit" 
+                                                    class="w-full flex items-center gap-2 px-3 py-2 text-green-600 hover:bg-green-50 rounded-lg text-sm transition-colors"
+                                                    onclick="return confirm('Mark session as complete?')">
+                                                <i class="fas fa-check text-xs"></i>
+                                                Mark Complete
+                                            </button>
+                                        </form>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Edit Modal -->
-    <div class="modal fade" id="editClassModal" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <form class="modal-content" method="post" action="/admin/class/<%= singleClass.id %>/edit">
-                <input type="hidden" name="_method" value="PUT">
-                <input type="hidden" name="courseId" value="<%=courseId%>">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-edit me-2"></i>Edit Session Details
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="classTitle" class="form-label fw-semibold">Class Title</label>
-                                <input type="text" class="form-control" id="classTitle" name="title" value="<%= singleClass.title %>" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="scheduledAt" class="form-label fw-semibold">Scheduled Date & Time</label>
-                                <input type="datetime-local" class="form-control" id="scheduledAt" name="scheduled_at"
-                                    value="<%= new Date(singleClass.scheduled_at).toISOString().slice(0, 16) %>" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="classDesc" class="form-label fw-semibold">Description</label>
-                        <textarea class="form-control" id="classDesc" name="description" rows="4" required><%= singleClass.description %></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="meetLink" class="form-label fw-semibold">Meeting Link</label>
-                        <input type="url" class="form-control" id="meetLink" name="meet_link" value="<%= singleClass.meet_link %>" placeholder="https://meet.google.com/abc-def-ghi">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i>Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Complete Modal -->
-    <div class="modal fade" id="completeModal" tabindex="-1" aria-labelledby="completeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-check-circle me-2"></i>Confirm Completion
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to mark this class as complete?</p>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Class:</strong> <%= singleClass.title %>
-                    </div>
-                    <p class="text-muted">Once completed, this action cannot be undone.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i>Cancel
-                    </button>
-                    <form action="/admin/class/complete/<%= singleClass.id %>" method="post">
-                        <input type="hidden" name="courseId" value="<%=courseId%>">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-check me-2"></i>Yes, Complete Class
+    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-lg max-w-lg w-full">
+                <div class="p-5">
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg font-semibold text-gray-900">Edit Session</h3>
+                        <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-500">
+                            <i class="fas fa-times"></i>
                         </button>
+                    </div>
+                    
+                    <form method="post" action="/admin/class/<%= singleClass.id %>/edit">
+                        <input type="hidden" name="_method" value="PUT">
+                        <input type="hidden" name="courseId" value="<%= courseId %>">
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                <input type="text" 
+                                       name="title" 
+                                       value="<%= singleClass.title %>"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                       required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Scheduled Date & Time</label>
+                                <input type="datetime-local" 
+                                       name="scheduled_at" 
+                                       value="<%= new Date(singleClass.scheduled_at).toISOString().slice(0, 16) %>"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                       required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea name="description" 
+                                          rows="3"
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                          required><%= singleClass.description %></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Meeting Link</label>
+                                <input type="url" 
+                                       name="meet_link" 
+                                       value="<%= singleClass.meet_link %>"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end gap-2 mt-6 pt-5 border-t border-gray-200">
+                            <button type="button" 
+                                    onclick="closeEditModal()"
+                                    class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600">
+                                Save Changes
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="uploadToast" class="toast border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <i id="toastIcon" class="fas fa-check-circle me-2 text-success"></i>
-                <strong id="toastTitle" class="me-auto">Success</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-            </div>
-            <div class="toast-body" id="toastMessage">
-                Upload completed successfully!
-            </div>
-        </div>
-    </div>
+<script>
+    // Cloudinary configuration - defined once at the top
+    const cloudName = '<%= process.env.CLOUD_NAME %>';
+    const uploadPreset = '<%= process.env.CLOUDINARY_UPLOAD_PRESET || "admin-videos" %>';
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Video loading function
-        function loadVideo(url, poster, title, partNumber, element) {
-            const video = document.getElementById('mainVideo');
+    // Check Cloudinary config and show warning if needed
+    if (!cloudName || !uploadPreset) {
+        console.warn('Cloudinary configuration is missing');
+        // You could optionally show a warning in the UI here
+    }
+
+    // Modal functions
+    function openEditModal() {
+        document.getElementById('editModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Video loading function
+    function loadVideo(url, poster, title, partNumber, element) {
+        const video = document.getElementById('mainVideo');
+        if (video) {
             video.src = url;
             video.poster = poster;
             video.load();
-            video.play();
             
-            // Update video info
-            document.getElementById('currentVideoTitle').innerText = title;
+            const titleElement = document.getElementById('currentVideoTitle');
+            if (titleElement) {
+                titleElement.textContent = title;
+            }
             
             // Update active state
-            document.querySelectorAll('.video-playlist-item').forEach(item => {
+            document.querySelectorAll('.playlist-item').forEach(item => {
                 item.classList.remove('active');
             });
             element.classList.add('active');
         }
+    }
 
-        // File input handlers
-        document.getElementById('video').addEventListener('change', function(e) {
-            const fileName = e.target.files[0]?.name || 'No file chosen';
-            document.getElementById('videoFileName').innerHTML = `<i class="fas fa-file-video me-1"></i>${fileName}`;
-        });
+    // File input handlers
+    document.addEventListener('DOMContentLoaded', function() {
+        const videoInput = document.getElementById('videoInput');
+        const thumbnailInput = document.getElementById('thumbnailInput');
+        
+        // File name display handlers
+        if (videoInput) {
+            videoInput.addEventListener('change', function(e) {
+                const fileName = e.target.files[0]?.name || 'No file chosen';
+                const fileNameElement = document.getElementById('videoFileName');
+                if (fileNameElement) {
+                    fileNameElement.textContent = fileName;
+                }
+            });
+        }
+        
+        if (thumbnailInput) {
+            thumbnailInput.addEventListener('change', function(e) {
+                const fileName = e.target.files[0]?.name || 'No file chosen';
+                const fileNameElement = document.getElementById('thumbnailFileName');
+                if (fileNameElement) {
+                    fileNameElement.textContent = fileName;
+                }
+            });
+        }
 
-        document.getElementById('thumbnail').addEventListener('change', function(e) {
-            const fileName = e.target.files[0]?.name || 'No file chosen';
-            document.getElementById('thumbnailFileName').innerHTML = `<i class="fas fa-image me-1"></i>${fileName}`;
-        });
-
-        // True Client-Side Cloudinary Upload
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('videoUploadForm');
-            const uploadBtn = document.getElementById('uploadBtn');
-            const btnText = document.getElementById('uploadBtnText');
-            const spinner = document.getElementById('uploadSpinner');
-            const progressContainer = document.getElementById('uploadProgressContainer');
-            const progressBar = document.getElementById('uploadProgressBar');
-            const uploadPercentage = document.getElementById('uploadPercentage');
-            const uploadStatus = document.getElementById('uploadStatus');
-            const uploadSpeed = document.getElementById('uploadSpeed');
-            
-            // Get Cloudinary configuration from EJS
-            const cloudName = '<%= process.env.CLOUD_NAME %>';
-            const uploadPreset = '<%= process.env.CLOUDINARY_UPLOAD_PRESET || "admin-videos" %>';
-
-            console.log('Cloudinary Config Loaded:', { cloudName, uploadPreset });
-
-            // Validate Cloudinary config
-            if (!cloudName || cloudName === '' || !uploadPreset || uploadPreset === '') {
-                console.error('Cloudinary configuration is missing!');
-                uploadBtn.disabled = true;
-                uploadBtn.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Upload Disabled - Configuration Error';
-                uploadBtn.className = 'btn btn-warning w-100';
+        // Upload form handling
+        const form = document.getElementById('uploadForm');
+        if (form) {
+            // Check if Cloudinary is configured
+            if (!cloudName || !uploadPreset) {
+                const uploadBtn = document.getElementById('uploadBtn');
+                if (uploadBtn) {
+                    uploadBtn.disabled = true;
+                    uploadBtn.innerHTML = '<i class="fas fa-exclamation-triangle text-xs"></i> Upload Disabled';
+                    uploadBtn.className = 'w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed';
+                    
+                    // Show warning message
+                    const warningDiv = document.createElement('div');
+                    warningDiv.className = 'mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg';
+                    warningDiv.innerHTML = `
+                        <div class="flex items-center gap-2 text-sm text-amber-700">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Upload configuration required</span>
+                        </div>
+                    `;
+                    form.parentNode.insertBefore(warningDiv, form);
+                }
                 return;
             }
 
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                if (!validateForm()) {
+                const videoFile = document.getElementById('videoInput')?.files[0];
+                const thumbnailFile = document.getElementById('thumbnailInput')?.files[0];
+                const partNumber = form.querySelector('input[name="part_number"]')?.value;
+                const title = form.querySelector('input[name="title"]')?.value;
+                const classeId = form.querySelector('input[name="classeId"]')?.value;
+                
+                // Basic validation
+                if (!videoFile || !thumbnailFile || !partNumber) {
+                    alert('Please fill all required fields');
                     return;
                 }
 
-                setUploadState(true);
-                showProgressContainer();
+                // Show progress
+                const progressContainer = document.getElementById('progressContainer');
+                const progressBar = document.getElementById('progressBar');
+                const progressPercent = document.getElementById('progressPercent');
+                const progressStatus = document.getElementById('progressStatus');
+                const uploadBtn = document.getElementById('uploadBtn');
+                
+                if (progressContainer) progressContainer.classList.remove('hidden');
+                if (uploadBtn) {
+                    uploadBtn.disabled = true;
+                    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i> Uploading...';
+                }
                 
                 try {
-                    const videoFile = document.getElementById('video').files[0];
-                    const thumbnailFile = document.getElementById('thumbnail').files[0];
-                    const title = document.getElementById('title').value;
-                    const partNumber = document.getElementById('part_number').value;
-                    const classeId = '<%= singleClass.id %>';
-
-                    uploadStatus.textContent = 'Uploading to Cloudinary...';
-
-                    // Upload both files to Cloudinary in parallel
+                    if (progressStatus) progressStatus.textContent = 'Uploading to Cloudinary...';
+                    
+                    // Upload files in parallel
                     const [videoResult, thumbnailResult] = await Promise.all([
                         uploadToCloudinary(videoFile, 'video'),
                         uploadToCloudinary(thumbnailFile, 'image')
                     ]);
-
-                    console.log('Cloudinary upload results:', { videoResult, thumbnailResult });
-
-                    uploadStatus.textContent = 'Saving to database...';
-                    updateProgress(100, 'Finalizing...');
-
-                    // Save to our database
-                    const saveResult = await saveVideoInfo({
-                        title,
-                        part_number: partNumber,
-                        classeId,
-                        videoUrl: videoResult.secure_url,
-                        thumbnailUrl: thumbnailResult.secure_url,
-                        videoPublicId: videoResult.public_id,
-                        thumbnailPublicId: thumbnailResult.public_id
+                    
+                    if (progressStatus) progressStatus.textContent = 'Saving to database...';
+                    if (progressBar) progressBar.style.width = '100%';
+                    if (progressPercent) progressPercent.textContent = '100%';
+                    
+                    // Save to database
+                    const saveResult = await fetch('/admin/class/video-part-save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title,
+                            part_number: partNumber,
+                            classeId,
+                            videoUrl: videoResult.secure_url,
+                            thumbnailUrl: thumbnailResult.secure_url,
+                            videoPublicId: videoResult.public_id,
+                            thumbnailPublicId: thumbnailResult.public_id
+                        })
                     });
-
-                    if (saveResult.success) {
-                        showToast('Success!', 'Video uploaded successfully', 'success');
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
+                    
+                    if (saveResult.ok) {
+                        alert('Video uploaded successfully!');
+                        window.location.reload();
                     } else {
-                        throw new Error(saveResult.message);
+                        throw new Error('Failed to save video');
                     }
-
+                    
                 } catch (error) {
-                    console.error('Upload error:', error);
-                    showToast('Upload Failed', error.message, 'error');
-                    resetUploadState();
+                    console.error('Upload failed:', error);
+                    alert('Upload failed: ' + error.message);
+                    resetForm();
                 }
             });
-
-            // Upload file directly to Cloudinary
-            async function uploadToCloudinary(file, resourceType) {
-                return new Promise((resolve, reject) => {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('upload_preset', uploadPreset);
-                    formData.append('resource_type', resourceType);
-
-                    const xhr = new XMLHttpRequest();
-                    const startTime = Date.now();
-                    
-                    // Progress tracking for Cloudinary upload
-                    xhr.upload.addEventListener('progress', function(e) {
-                        if (e.lengthComputable) {
-                            const percentComplete = (e.loaded / e.total) * 100;
-                            const fileType = resourceType === 'video' ? 'video' : 'thumbnail';
-                            updateProgress(percentComplete, `Uploading ${fileType} to Cloudinary...`);
-                            
-                            // Calculate upload speed
-                            const currentTime = Date.now();
-                            const timeElapsed = (currentTime - startTime) / 1000;
-                            const speed = e.loaded / timeElapsed;
-                            uploadSpeed.textContent = `Speed: ${formatBytes(speed)}/s`;
-                        }
-                    });
-
-                    xhr.addEventListener('load', function() {
-                        if (xhr.status === 200) {
-                            try {
-                                const result = JSON.parse(xhr.responseText);
-                                console.log(`Cloudinary ${resourceType} upload success:`, result.public_id);
-                                resolve(result);
-                            } catch (parseError) {
-                                console.error('Failed to parse Cloudinary response:', xhr.responseText);
-                                reject(new Error('Failed to parse Cloudinary response'));
-                            }
-                        } else {
-                            console.error(`Cloudinary upload failed: ${xhr.status} - ${xhr.statusText}`);
-                            reject(new Error(`Cloudinary upload failed: ${xhr.statusText}`));
-                        }
-                    });
-
-                    xhr.addEventListener('error', function() {
-                        console.error('Cloudinary upload network error');
-                        reject(new Error('Cloudinary upload failed - network error'));
-                    });
-
-                    xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`);
-                    xhr.send(formData);
-                });
-            }
-
-            // Save video info to our database
-            async function saveVideoInfo(videoData) {
-                try {
-                    const response = await fetch('/admin/class/video-part-save', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(videoData)
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Server responded with ${response.status}`);
-                    }
-                    
-                    return await response.json();
-                } catch (error) {
-                    console.error('Error saving video info:', error);
-                    throw new Error('Failed to save video information to database');
-                }
-            }
-
-            // Helper functions
-            function updateProgress(percent, status) {
-                const roundedPercent = Math.round(percent);
-                progressBar.style.width = `${roundedPercent}%`;
-                uploadPercentage.textContent = `${roundedPercent}%`;
-                uploadStatus.textContent = status;
-                
-                // Change color based on progress
-                if (percent < 30) {
-                    progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated bg-warning';
-                } else if (percent < 70) {
-                    progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated bg-info';
-                } else {
-                    progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated bg-success';
-                }
-            }
-
-            function showProgressContainer() {
-                progressContainer.style.display = 'block';
-                updateProgress(0, 'Preparing upload...');
-            }
-
-            function hideProgressContainer() {
-                progressContainer.style.display = 'none';
-            }
-
-            function setUploadState(uploading) {
-                if (uploading) {
-                    uploadBtn.disabled = true;
-                    btnText.style.display = 'none';
-                    spinner.style.display = 'inline-block';
-                    
-                    // Disable all form inputs during upload
-                    const inputs = form.querySelectorAll('input, button, textarea, select');
-                    inputs.forEach(input => {
-                        input.disabled = true;
-                    });
-                } else {
-                    uploadBtn.disabled = false;
-                    btnText.style.display = 'inline-block';
-                    spinner.style.display = 'none';
-                    
-                    // Enable all form inputs
-                    const inputs = form.querySelectorAll('input, button, textarea, select');
-                    inputs.forEach(input => {
-                        input.disabled = false;
-                    });
-                }
-            }
-
-            function resetUploadState() {
-                setUploadState(false);
-                hideProgressContainer();
-                uploadSpeed.textContent = '';
-            }
-
-            function validateForm() {
-                const videoFile = document.getElementById('video').files[0];
-                const thumbnailFile = document.getElementById('thumbnail').files[0];
-                const partNumber = document.getElementById('part_number').value;
-
-                // Basic validation
-                if (!videoFile || !thumbnailFile || !partNumber) {
-                    showToast('Validation Error', 'Please fill all required fields', 'error');
-                    return false;
-                }
-
-                // File size validation
-                const maxVideoSize = 500 * 1024 * 1024; // 500MB
-                const maxThumbSize = 10 * 1024 * 1024; // 10MB
-
-                if (videoFile.size > maxVideoSize) {
-                    showToast('File Too Large', 'Video file must be less than 500MB', 'error');
-                    return false;
-                }
-
-                if (thumbnailFile.size > maxThumbSize) {
-                    showToast('File Too Large', 'Thumbnail must be less than 10MB', 'error');
-                    return false;
-                }
-
-                // File type validation
-                const allowedVideoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/webm'];
-                const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-
-                if (!allowedVideoTypes.includes(videoFile.type)) {
-                    showToast('Invalid File Type', 'Please upload MP4, MOV, AVI, or WebM video files', 'error');
-                    return false;
-                }
-
-                if (!allowedImageTypes.includes(thumbnailFile.type)) {
-                    showToast('Invalid File Type', 'Please upload JPG, PNG, or WebP image files', 'error');
-                    return false;
-                }
-
-                return true;
-            }
-
-            function showToast(title, message, type = 'info') {
-                const toastEl = document.getElementById('uploadToast');
-                const toastIcon = document.getElementById('toastIcon');
-                const toastTitle = document.getElementById('toastTitle');
-                const toastMessage = document.getElementById('toastMessage');
-                
-                const icons = {
-                    success: 'fa-check-circle text-success',
-                    error: 'fa-exclamation-circle text-danger',
-                    warning: 'fa-exclamation-triangle text-warning',
-                    info: 'fa-info-circle text-info'
-                };
-                
-                toastIcon.className = `fas ${icons[type] || icons.info} me-2`;
-                toastTitle.textContent = title;
-                toastMessage.textContent = message;
-                
-                const toast = new bootstrap.Toast(toastEl);
-                toast.show();
-            }
-
-            function formatBytes(bytes, decimals = 2) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const dm = decimals < 0 ? 0 : decimals;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-            }
-
-            // Animation for stats cards
-            function animateStats() {
-                const statsNumbers = document.querySelectorAll('.stats-number');
-                statsNumbers.forEach(stat => {
-                    const finalValue = stat.textContent;
-                    if (!isNaN(finalValue)) {
-                        let current = 0;
-                        const increment = finalValue / 50;
-                        const timer = setInterval(() => {
-                            current += increment;
-                            if (current >= finalValue) {
-                                stat.textContent = finalValue;
-                                clearInterval(timer);
-                            } else {
-                                stat.textContent = Math.floor(current);
-                            }
-                        }, 30);
-                    }
-                });
-            }
-
-            // Initialize stats animation
-            setTimeout(animateStats, 500);
+        }
+        
+        // Close modal on outside click
+        const editModal = document.getElementById('editModal');
+        if (editModal) {
+            editModal.addEventListener('click', function(e) {
+                if (e.target === this) closeEditModal();
+            });
+        }
+        
+        // Escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeEditModal();
         });
-    </script>
-</body>
-</html>
+    });
+
+    // Cloudinary upload function
+    async function uploadToCloudinary(file, resourceType) {
+        return new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', uploadPreset);
+            
+            const xhr = new XMLHttpRequest();
+            
+            // Progress tracking
+            xhr.upload.addEventListener('progress', function(e) {
+                if (e.lengthComputable) {
+                    const percent = (e.loaded / e.total) * 100;
+                    const progressBar = document.getElementById('progressBar');
+                    const progressPercent = document.getElementById('progressPercent');
+                    if (progressBar && progressPercent) {
+                        progressBar.style.width = `${percent}%`;
+                        progressPercent.textContent = `${Math.round(percent)}%`;
+                    }
+                }
+            });
+            
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    resolve(JSON.parse(xhr.responseText));
+                } else {
+                    reject(new Error(`Upload failed: ${xhr.statusText}`));
+                }
+            };
+            
+            xhr.onerror = function() {
+                reject(new Error('Network error during upload'));
+            };
+            
+            xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`);
+            xhr.send(formData);
+        });
+    }
+
+    function resetForm() {
+        const form = document.getElementById('uploadForm');
+        if (form) form.reset();
+        
+        const progressContainer = document.getElementById('progressContainer');
+        const uploadBtn = document.getElementById('uploadBtn');
+        
+        if (progressContainer) progressContainer.classList.add('hidden');
+        if (uploadBtn) {
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt text-xs"></i> Upload Video Part';
+        }
+        
+        // Reset file name displays
+        const videoFileName = document.getElementById('videoFileName');
+        const thumbnailFileName = document.getElementById('thumbnailFileName');
+        if (videoFileName) videoFileName.textContent = 'No file chosen';
+        if (thumbnailFileName) thumbnailFileName.textContent = 'No file chosen';
+    }
+</script>

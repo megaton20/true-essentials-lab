@@ -27,7 +27,7 @@ const sendEmail = async (to, subject, html) => {
       },
     });
 
-    console.log(`Email sent to ${to}, message ID: ${response.data.messageId}`);
+    console.log(`Email sent, message ID: ${response.data.messageId}`);
     return true;
   } catch (err) {
     console.error(`Failed to send email to ${to}:`, err.response?.data || err.message);
