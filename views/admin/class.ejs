@@ -455,27 +455,31 @@
                                     </div>
                                 <% } else { %>
                                     <div class="space-y-3 max-h-64 overflow-y-auto">
-                                        <% attendance.forEach(function(user) { %>
+                                        <% attendance.forEach(function(userAttendance) { %>
                                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                                 <div>
-                                                    <p class="text-sm font-medium text-gray-900"><%= user.full_name || 'Student' %></p>
-                                                    <p class="text-xs text-gray-500"><%= user.email %></p>
+                                                    <p class="text-sm font-medium text-gray-900"><%= userAttendance.full_name || 'Student' %></p>
+                                                    <p class="text-xs text-gray-500"><%= userAttendance.email %></p>
                                                     <p class="text-xs text-gray-400 mt-1">
-                                                        <%= new Date(user.joined_at).toLocaleTimeString('en-US', { 
+                                                        <%= new Date(userAttendance.joined_at).toLocaleTimeString('en-US', { 
                                                             hour: 'numeric',
                                                             minute: '2-digit'
                                                         }) %>
                                                     </p>
                                                 </div>
-                                                <form action="/admin/class/<%= singleClass.id %>/grant-access/<%= user.id %>" 
+                                                <form action="/admin/class/<%= singleClass.id %>/grant-access/<%= userAttendance.id %>" 
                                                       method="post">
                                                     <input type="hidden" name="_method" value="PUT">
+                                                    <input type="hidden" name="courseId" value="<%= courseId %>">
                                                     <label class="inline-flex items-center cursor-pointer">
                                                         <input type="checkbox" 
                                                                name="granted" 
                                                                class="sr-only peer"
                                                                onchange="this.form.submit()"
-                                                               <%= user.status ? 'checked' : '' %>>
+                                                               <% if (userAttendance.status) { %>
+                                                                    checked
+                                                                <% } %>  
+                                                            >
                                                         <div class="relative w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
                                                     </label>
                                                 </form>

@@ -36,6 +36,30 @@
         left: 0;
         color: #3b82f6;
     }
+    
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+    }
+    
+    .status-open { background-color: #d1fae5; color: #065f46; }
+    .status-closed { background-color: #f3f4f6; color: #6b7280; }
+    
+    /* Confirmation Modal Styles */
+    .confirmation-modal {
+        animation: modalFadeIn 0.2s ease-out;
+    }
+    
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
 </style>
 
 <body class="bg-gray-50">
@@ -67,23 +91,57 @@
                             <h1 class="text-xl font-semibold text-gray-900">Program Details</h1>
                             <p class="text-sm text-gray-500 mt-1">Manage program information and assignments</p>
                         </div>
-                        <% if (course.teacher_id == user.id) { %>
-                            <button onclick="openEditModal()" 
-                                    class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm">
-                                <i class="fas fa-edit text-xs"></i>
-                                Edit
-                            </button>
-                        <% } else { %>
-                            <button disabled 
-                                    class="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-400 font-medium rounded-lg cursor-not-allowed text-sm">
-                                <i class="fas fa-edit text-xs"></i>
-                                Edit
-                            </button>
-                        <% } %>
+
+                <div class="flex gap-2">
+                    <!-- Open/Close Toggle -->
+                    <button onclick="openConfirmationModal()" 
+                            class="inline-flex items-center gap-2 px-3 py-2 <%= course.is_open ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-green-50 text-green-600 hover:bg-green-100' %> font-medium rounded-lg transition-colors text-sm">
+                        <i class="fas <%= course.is_open ? 'fa-lock' : 'fa-unlock' %> text-xs"></i>
+                        <%= course.is_open ? 'Close Program' : 'Open Program' %>
+                    </button>
+                    
+                    <% if (course.teacher_id == user.id) { %>
+                        <button onclick="openEditModal()" 
+                                class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                            <i class="fas fa-edit text-xs"></i>
+                            Edit
+                        </button>
+                    <% } else { %>
+                        <button disabled 
+                                class="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-400 font-medium rounded-lg cursor-not-allowed text-sm">
+                            <i class="fas fa-edit text-xs"></i>
+                            Edit
+                        </button>
+                    <% } %>
+                </div>
+
                     </div>
                 </div>
 
                 <%- include('../partials/messages') %>
+
+                <!-- Program Status Banner -->
+                <div class="mb-4">
+                    <div class="flex items-center justify-between p-3 <%= course.is_open ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200' %> rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 rounded-lg <%= course.is_open ? 'bg-green-100' : 'bg-gray-100' %>">
+                                <i class="fas <%= course.is_open ? 'fa-unlock text-green-600' : 'fa-lock text-gray-600' %> text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold <%= course.is_open ? 'text-green-800' : 'text-gray-800' %>">
+                                    <%= course.is_open ? 'Program is Open' : 'Program is Closed' %>
+                                </h3>
+                                <p class="text-xs <%= course.is_open ? 'text-green-600' : 'text-gray-600' %>">
+                                    <%= course.is_open ? 'Students can access this program' : 'Students cannot access this program' %>
+                                </p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center status-badge <%= course.is_open ? 'status-open' : 'status-closed' %> rounded-full">
+                            <span class="w-1.5 h-1.5 rounded-full mr-1.5 <%= course.is_open ? 'bg-green-500' : 'bg-gray-500' %>"></span>
+                            <%= course.is_open ? 'Active' : 'Inactive' %>
+                        </span>
+                    </div>
+                </div>
 
                 <!-- Main Content Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -115,6 +173,27 @@
                                                 day: 'numeric', 
                                                 year: 'numeric' 
                                             }) %>
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Level and Category -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-xs font-medium text-gray-500">Level</label>
+                                        <span class="inline-flex items-center status-badge <%= 
+                                            course.level === 'easy' ? 'bg-green-100 text-green-800' :
+                                            course.level === 'medium' ? 'bg-blue-100 text-blue-800' :
+                                            course.level === 'hard' ? 'bg-purple-100 text-purple-800' :
+                                            'bg-gray-100 text-gray-800'
+                                        %> rounded-full mt-1">
+                                            <%= course.level ? course.level.charAt(0).toUpperCase() + course.level.slice(1) : 'Not set' %>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-medium text-gray-500">Category</label>
+                                        <p class="text-sm text-gray-700 mt-1">
+                                            <%= course.category_name || 'Uncategorized' %>
                                         </p>
                                     </div>
                                 </div>
@@ -206,6 +285,18 @@
                                     </div>
                                     <div class="p-2 rounded-lg bg-green-100">
                                         <i class="fas fa-user-graduate text-green-500 text-sm"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs text-gray-500">Program Status</p>
+                                        <p class="text-lg font-semibold text-gray-900 <%= course.is_open ? 'text-green-600' : 'text-gray-600' %>">
+                                            <%= course.is_open ? 'Open' : 'Closed' %>
+                                        </p>
+                                    </div>
+                                    <div class="p-2 rounded-lg <%= course.is_open ? 'bg-green-100' : 'bg-gray-100' %>">
+                                        <i class="fas <%= course.is_open ? 'fa-check text-green-500' : 'fa-times text-gray-500' %> text-sm"></i>
                                     </div>
                                 </div>
                             </div>
@@ -421,6 +512,63 @@
         </div>
     </div>
 
+            <!-- Confirmation Modal -->
+            <div id="confirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+                <div class="flex items-center justify-center min-h-screen p-4">
+                    <div class="bg-white rounded-lg shadow-lg max-w-sm w-full confirmation-modal">
+                        <div class="p-5">
+                            <!-- Modal Icon -->
+                            <div class="flex items-center justify-center w-12 h-12 rounded-full <%= course.is_open ? 'bg-red-100' : 'bg-green-100' %> mx-auto mb-4">
+                                <i class="fas <%= course.is_open ? 'fa-lock text-red-500' : 'fa-unlock text-green-500' %>"></i>
+                            </div>
+                            
+                            <!-- Modal Title -->
+                            <h3 class="text-lg font-semibold text-gray-900 text-center mb-3">
+                                <%= course.is_open ? 'Close Program?' : 'Open Program?' %>
+                            </h3>
+                            
+                            <!-- Modal Message -->
+                            <div class="mb-6">
+                                <p class="text-sm text-gray-600 text-center">
+                                    <%= course.is_open 
+                                        ? 'Students won\'t be able to access this program. Are you sure you want to close it?' 
+                                        : 'Students will be able to access this program. Are you sure you want to open it?' %>
+                                </p>
+                                <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                                    <div class="text-xs text-gray-500">Program:</div>
+                                    <div class="text-sm font-medium text-gray-900"><%= course.title %></div>
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        Currently: <span class="font-medium <%= course.is_open ? 'text-green-600' : 'text-gray-600' %>">
+                                            <%= course.is_open ? 'Open' : 'Closed' %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Form -->
+                            <form id="statusToggleForm" method="post" action="/admin/course/<%= course.id %>">
+                                <input type="hidden" name="_method" value="PUT">
+                                <!-- Send current boolean state -->
+                                <input type="hidden" name="currentStatus" value="<%= course.is_open %>">
+                                
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" 
+                                            onclick="closeConfirmationModal()"
+                                            class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" 
+                                            class="px-4 py-2 <%= course.is_open ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600' %> text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1">
+                                        <i class="fas <%= course.is_open ? 'fa-lock' : 'fa-unlock' %> text-xs"></i>
+                                        <%= course.is_open ? 'Close Program' : 'Open Program' %>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
     <script>
         // Modal functions
         function openEditModal() {
@@ -430,6 +578,16 @@
 
         function closeEditModal() {
             document.getElementById('editModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openConfirmationModal() {
+            document.getElementById('confirmationModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
 
@@ -446,24 +604,41 @@
             container.appendChild(newInput);
         }
 
-        // Close modal on outside click
+        // Close modals on outside click
         document.getElementById('editModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeEditModal();
             }
         });
 
-        // Escape key to close modal
+        document.getElementById('confirmationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConfirmationModal();
+            }
+        });
+
+        // Escape key to close modals
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeEditModal();
+                closeConfirmationModal();
             }
         });
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Any additional initialization
             console.log('Course details page loaded');
+            
+            // Optional: Auto-focus on cancel button in confirmation modal for better UX
+            const confirmationModal = document.getElementById('confirmationModal');
+            if (confirmationModal) {
+                confirmationModal.addEventListener('show', function() {
+                    setTimeout(() => {
+                        const cancelBtn = confirmationModal.querySelector('button[onclick="closeConfirmationModal()"]');
+                        if (cancelBtn) cancelBtn.focus();
+                    }, 100);
+                });
+            }
         });
     </script>
 </body>

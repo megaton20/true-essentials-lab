@@ -25,7 +25,7 @@ class Attendance {
 
 
   static async approveAttendance(classId, userId, grant) {
-
+    
 
     try {
       const result = await pool.query(`
@@ -110,7 +110,7 @@ static async getBySessionIds(studentId, sessionIds = []) {
   // admin
   static async getAttendanceForSession(sessionId) {
     const res = await pool.query(`
-      SELECT u.id, u.full_name,u.email, a.joined_at
+      SELECT u.id, u.full_name,u.email, a.joined_at, a.status
       FROM class_attendance a
       JOIN users u ON a.user_id = u.id
       WHERE a.session_id = $1

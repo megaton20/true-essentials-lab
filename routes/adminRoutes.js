@@ -2,46 +2,37 @@ const router = require('express').Router();
 const adminController = require('../controllers/adminController');
 const affiliateController = require('../controllers/affiliateController');
 const {ensureAdmin} = require('../middleware/auth');
-const TeacherController = require('../controllers/TeacherController');
+const teacherController = require('../controllers/teacherController');
 const pool = require('../config/db');
 const cloudinary = require('cloudinary').v2;
 
-
-router.get('/success',ensureAdmin, (req,res)=>{
-    return res.render('./admin/success') 
-})
-router.get('/error',ensureAdmin, (req,res)=>{
-    return res.render('./admin/error') 
-})
-
-router.get('/', ensureAdmin, adminController.adminDashboard);
-router.get('/users', ensureAdmin, adminController.getAllUsers);
-router.get('/users/:id', ensureAdmin, adminController.findOneUsers);
-router.delete('/users/delete/:id', ensureAdmin, adminController.deleteUser);
-
-router.post('/class', ensureAdmin, adminController.createClass);
-router.get('/class/:id/:course', ensureAdmin, adminController.getClassSession);
-router.put('/class/:id/edit', ensureAdmin, adminController.updateClassSessionById);
-router.put('/class/:classId/:status', ensureAdmin, adminController.toggleClasssVisibility);
-router.delete('/class/:id', ensureAdmin, adminController.deleteClass);
-router.post('/class/complete/:classId', ensureAdmin, adminController.completeClass);
-
-router.put('/class/:classId/grant-access/:userId', ensureAdmin, adminController.grantAccess);
-
-router.post('/referral', ensureAdmin, adminController.createReferral);
-router.get('/referral', ensureAdmin, adminController.getReferrals);
-router.put('/referral/:id', ensureAdmin, adminController.findReferralCode);
+router.use(ensureAdmin)
 
 
-router.get('/courses', ensureAdmin, adminController.getAllCourse);
-router.get('/courses/details/:id', ensureAdmin, adminController.getOneCourse); // to get the course deatials
-router.post('/courses/create', ensureAdmin, adminController.createCourse);
-router.put('/courses/:id', ensureAdmin, adminController.editCourse);
-router.put('/course/:courseId', ensureAdmin, adminController.openCourseAction); // todo
+router.get('/',  adminController.adminDashboard);
+router.get('/users',  adminController.getAllUsers);
+router.get('/users/:id',  adminController.findOneUsers);
+router.delete('/users/delete/:id',  adminController.deleteUser);
 
-// router.post('/courses/video', ensureAdmin, adminController.createCourseVideo);
 
-router.post('/class/video-part-save', ensureAdmin, async (req, res) => {
+router.get('/categories',  adminController.getAllCategories);
+router.post('/categories',  adminController.createCategories);
+router.put('/categories/:id',  adminController.editCategories);
+router.delete('/categories/:id',  adminController.deleteCategories);
+
+
+router.post('/class',  adminController.createClass);
+router.get('/class/:id/:course',  adminController.getClassSession);
+router.put('/class/:id/edit',  adminController.updateClassSessionById);
+router.put('/class/:classId/:status',  adminController.toggleClasssVisibility);
+router.delete('/class/:id',  adminController.deleteClass);
+router.post('/class/complete/:classId',  adminController.completeClass);
+router.put('/class/:classId/grant-access/:userId',  adminController.grantAccess);
+
+
+// router.post('/courses/video',  adminController.createCourseVideo);
+
+router.post('/class/video-part-save',  async (req, res) => {
   try {
     const { title, part_number, classeId, videoUrl, thumbnailUrl, videoPublicId, thumbnailPublicId } = req.body;
     
@@ -82,13 +73,13 @@ router.post('/class/video-part-save', ensureAdmin, async (req, res) => {
     // Insert into database
     const videoId = uuidv4();
     const videoTitle = title || `Part ${part_number}`;
-
+    
     await pool.query(
       `INSERT INTO class_videos (
         id, class_id, title, video_url, video_public_id,
         thumbnail_url, thumbnail_public_id, part_number, created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
-      [
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
+        [
         videoId,
         classeId,
         videoTitle,
@@ -117,7 +108,7 @@ router.post('/class/video-part-save', ensureAdmin, async (req, res) => {
 
 router.delete('/class/video/delete',async (req, res)=>{
 
-    const {classVideoId, video_public_id, thumbnail_public_id, class_id, backUrl } = req.body
+  const {classVideoId, video_public_id, thumbnail_public_id, class_id, backUrl } = req.body
     
     
   try {
@@ -126,17 +117,17 @@ router.delete('/class/video/delete',async (req, res)=>{
       'SELECT video_public_id, thumbnail_public_id FROM class_videos WHERE id = $1',
       [classVideoId]
     );
-
+    
     if (rows.length === 0) {
       req.flash('error_msg', 'Video not found');
       return res.redirect(`/${backUrl}`);
     }
 
-        // Delete both from Cloudinary
+    // Delete both from Cloudinary
     if (video_public_id) {
       await cloudinary.uploader.destroy(video_public_id, { resource_type: 'video' });
     }
-
+    
     if (thumbnail_public_id) {
       await cloudinary.uploader.destroy(thumbnail_public_id, { resource_type: 'image' });
     }
@@ -148,15 +139,21 @@ router.delete('/class/video/delete',async (req, res)=>{
   } catch (err) {
     console.error('Error deleting video:', err);
     req.flash('error_msg', 'Failed to delete video');
-      return res.redirect(`/${backUrl}`);
+    return res.redirect(`/${backUrl}`);
   }
 
-
+  
 })
 
-router.put('/courses/:id', ensureAdmin, adminController.editCourse);
-router.get('/course/class/:id', ensureAdmin, adminController.getCourseSchedule);  // to get the class schedule
-router.delete('/course/:id', ensureAdmin, adminController.deleteCourse);
+
+router.get('/courses',  adminController.getAllProgram);
+router.get('/courses/details/:id',  adminController.getOneProgram); // to get the course deatials
+router.post('/courses/create',  adminController.createProgram);
+router.put('/courses/:id',  adminController.editProgram);
+router.get('/course/class/:id',  adminController.getProgramSchedule);  // to get the class schedule
+router.delete('/course/:id',  adminController.deleteProgram);
+router.put('/course/:courseId',  adminController.openProgramAction); // todo
+
 
 
 
@@ -167,23 +164,15 @@ router.post('/affiliate/mark-paid/:userId',  affiliateController.markReferredUse
 router.post('/affiliate/mark-paid/:userId',  affiliateController.markReferredUserAsPaid); 
 
 
-// router.get('/attendance', ensureAdmin, adminController.);
-router.get('/session/:id/attendance',ensureAdmin, adminController.getAttendanceForSession);
+// router.get('/attendance',  adminController.);
+router.get('/session/:id/attendance', adminController.getAttendanceForSession);
 
 
 
-router.post('/teacher/assign', ensureAdmin, TeacherController.assign);
-router.get('/teacher', TeacherController.index);
-router.post('/teacher', TeacherController.store);
-router.put('/teacher/:id', TeacherController.update);
-router.delete('/teacher/:id/delete', TeacherController.destroy);
+// router.post('/teacher/assign',  teacherController.assign);
+// router.delete('/teacher/:id/delete', teacherController.destroy);
 
 
-
-router.get('/categories', ensureAdmin, adminController.getAllCategories);
-router.post('/categories', ensureAdmin, adminController.createCategories);
-router.put('/categories/:id', ensureAdmin, adminController.editCategories);
-router.delete('/categories/:id', ensureAdmin, adminController.deleteCategories);
 
 
 module.exports = router;

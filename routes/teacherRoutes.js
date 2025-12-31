@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const teachController = require('../controllers/teachController');
+const teacherController = require('../controllers/teacherController');
 const {ensureTeacher} = require('../middleware/auth');
 const { v4: uuidv4 } = require('uuid');
 const pool = require('../config/db');
@@ -19,23 +19,23 @@ router.get('/error',ensureTeacher, (req,res)=>{
 
 
 
-router.get('/', ensureTeacher, teachController.getDash);
-router.post('/courses/create', ensureTeacher, teachController.createCourse);
-router.get('/course/details/:id', ensureTeacher, teachController.getOneCourse); // to get the course deatials
-router.put('/courses/:id', ensureTeacher, teachController.editCourse);
-router.get('/courses', ensureTeacher, teachController.getAllCourse);
-router.get('/course/class/:id', ensureTeacher, teachController.getCourseSchedule);  // to get the class schedule
+router.get('/', ensureTeacher, teacherController.getDash);
+router.post('/courses/create', ensureTeacher, teacherController.createCourse);
+router.get('/course/details/:id', ensureTeacher, teacherController.getOneCourse); // to get the course deatials
+router.put('/courses/:id', ensureTeacher, teacherController.editCourse);
+router.get('/courses', ensureTeacher, teacherController.getAllCourse);
+router.get('/course/class/:id', ensureTeacher, teacherController.getCourseSchedule);  // to get the class schedule
 
-router.post('/class', ensureTeacher, teachController.createClass);
-router.delete('/class/:id', ensureTeacher, teachController.deleteClass);
-router.delete('/course/:id', ensureTeacher, teachController.deleteCourse);
+router.post('/class', ensureTeacher, teacherController.createClass);
+router.delete('/class/:id', ensureTeacher, teacherController.deleteClass);
+router.delete('/course/:id', ensureTeacher, teacherController.deleteCourse);
 
-router.get('/class/:id/:course', ensureTeacher, teachController.getClassSession);
-router.put('/class/:id/edit', ensureTeacher, teachController.updateById);
-router.put('/class/:id/:status', ensureTeacher, teachController.toggleClasssVisibility);
+router.get('/class/:id/:course', ensureTeacher, teacherController.getClassSession);
+router.put('/class/:id/edit', ensureTeacher, teacherController.updateById);
+router.put('/class/:id/:status', ensureTeacher, teacherController.toggleClasssVisibility);
 
-router.put('/class/:classId/grant-access/:userId', ensureTeacher, teachController.grantAccess);
-router.get('/session/:id/attendance',ensureTeacher, teachController.getAttendanceForSession);
+router.put('/class/:classId/grant-access/:userId', ensureTeacher, teacherController.grantAccess);
+router.get('/session/:id/attendance',ensureTeacher, teacherController.getAttendanceForSession);
 
 
 // Route to save video info after Cloudinary upload

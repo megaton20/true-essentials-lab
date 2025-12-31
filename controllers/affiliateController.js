@@ -1,7 +1,7 @@
 const Affiliate = require('../models/Affiliate');
 const pool = require('../config/db')
 const { v4: uuidv4 } = require('uuid');
-const { update } = require('./TeacherController');
+const { update } = require('../services/teacherService');
 const axios = require('axios');
 const Withdrawal = require('../models/Withdrawal');
 

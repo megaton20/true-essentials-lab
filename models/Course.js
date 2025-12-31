@@ -307,6 +307,7 @@ try {
   static async toggleCourseOpen(id, visible) {
    try {
      const result = await pool.query(`UPDATE courses SET is_open = $1 WHERE id = $2`, [visible, id]);
+     
     return result.rowCount
    } catch (error) {
 
