@@ -2,7 +2,7 @@ const router = require('express').Router();
 const adminController = require('../controllers/adminController');
 const affiliateController = require('../controllers/affiliateController');
 const {ensureAdmin} = require('../middleware/auth');
-const teacherController = require('../controllers/teacherController');
+// const teacherController = require('../controllers/teacherController');
 const pool = require('../config/db');
 const cloudinary = require('cloudinary').v2;
 
