@@ -81,14 +81,6 @@ app.use((req, res, next)=>{
 app.use('/', web); 
 app.use('/api', api); 
 
-// app.use('/', openRoutes); // open less secure routes
-// app.use('/auth', authRoutes); // open less secure routes
-// app.use('/user',ensureAuthenticated, userRoutes); //  secure routes
-// app.use('/class',ensureAuthenticated, classRoutes); //  secure routes
-// app.use('/admin',ensureAuthenticated, adminRoutes); // secure routes
-// app.use('/teacher',ensureAuthenticated, teacherRoutes); // secure routes
-// app.use('/affiliate', affiliateRoutes); // open less secure routes
-
 
 app.post('/api/update-join-status', (req, res) => {
   try {
