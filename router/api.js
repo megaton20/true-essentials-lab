@@ -7,7 +7,7 @@ const affiliateRouter = require('../routes/affiliateRoutes')
 const authRouter = require('../routes/authRoutes')
 const classRouter = require('../routes/classRoutes')
 const indexRoutes =  require('../routes/index')
-const teacherRouter = require('../routes/teacherRoutes')
+// const teacherRouter = require('../routes/teacherRoutes')
 const userRouter = require('../routes/userRoutes')
 
 
@@ -16,7 +16,7 @@ router.use('/admin', adminRouter)
 router.use('/affiliate', affiliateRouter)
 router.use('/auth', authRouter)
 router.use('/class', classRouter)
-router.use('/teacher', teacherRouter)
+// router.use('/teacher', teacherRouter)
 router.use('/user', userRouter)
 
 
