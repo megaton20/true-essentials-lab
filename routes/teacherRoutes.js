@@ -1,5 +1,6 @@
 const router = require('express').Router();
-const teacherController = require('../controllers/teacherController');
+// const teacherController = require('../controllers/teacherController');
+const teacherController = require('../controllers/indexController');
 const {ensureTeacher} = require('../middleware/auth');
 const { v4: uuidv4 } = require('uuid');
 const pool = require('../config/db');
