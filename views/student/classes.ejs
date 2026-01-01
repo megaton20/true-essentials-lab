@@ -1,699 +1,353 @@
-<style>
-    :root {
-        --primary: #3bf689;
-        --secondary: #e0ec3a;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --info: #0ea5e9;
-    }
-    
-    .status-badge {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.75rem;
-    }
-    
-    .session-card {
-        transition: all 0.3s ease;
-        border-left-width: 4px;
-    }
-    
-    .session-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-    
-    .course-header-gradient {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    
-    .takeaway-bullet {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-    }
-    
-    .empty-state-icon {
-        font-size: 5rem;
-        opacity: 0.1;
-    }
-    
-    /* Custom animations */
-    @keyframes pulse-subtle {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
-    }
-    
-    .pulse-subtle {
-        animation: pulse-subtle 2s infinite;
-    }
-    
-    /* Status colors */
-    .border-status-waiting { border-left-color: #f59e0b; }
-    .border-status-active { border-left-color: #10b981; }
-    .border-status-upcoming { border-left-color: #0ea5e9; }
-    .border-status-completed { border-left-color: #8b5cf6; }
-    .border-status-missed { border-left-color: #ef4444; }
-</style>
+<!-- Navbar -->
+<%-include('./partials/topnav') %>
 
-<body class="bg-gray-50">
-    <!-- Navbar -->
-    <%-include('./partials/topnav') %>
+<!-- Sidebar -->
+<%-include('./partials/sidenav') %>
 
-    <!-- Sidebar -->
-    <%-include('./partials/sidenav') %>
+<!-- Main Content -->
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Static Sidebar for Desktop -->
+      <div class="hidden lg:block lg:w-1/4">
+        <%-include('./partials/staticsidebar') %>
+      </div>
 
-    <!-- Main Content -->
-    <div class="container mx-auto px-2 py-3 mt-6">
-        <div class="flex flex-col lg:flex-row gap-6">
-            <!-- Static Sidebar for Desktop -->
-            <div class="hidden lg:block lg:w-1/4">
-                <%-include('./partials/staticsidebar') %>
+      <!-- Main Content Area -->
+      <div class="lg:w-3/4">
+        <!-- Header -->
+        <div class="mb-8">
+          <a href="/user/category/<%=categoryId%>" 
+             class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-4 group">
+            <i class="fas fa-arrow-left text-xs group-hover:-translate-x-1 transition-transform"></i>
+            Back
+          </a>
+          
+          <div class="mb-4">
+            <h1 class="text-xl font-bold text-gray-900">Schedules</h1>
+            <p class="text-sm text-gray-500">Class sessions for <span class="font-medium text-gray-700"><%= courses.title %></span></p>
+          </div>
+          
+          <%- include('../partials/messages') %>
+        </div>
+
+        <!-- Course Card -->
+        <div class="bg-gradient-to-r from-green-50 to-green-70 rounded-xl border border-green-100 p-5 mb-6 shadow-sm">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+              <i class="fas fa-graduation-cap text-white text-lg"></i>
             </div>
-
-            <!-- Main Content Area -->
-            <div class="lg:w-3/4">
-                <!-- Header -->
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                    <div class="flex items-center gap-3">
-                        <a href="/user/category/<%=categoryId%>" 
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                            <i class="fas fa-arrow-left text-gray-600"></i>
-                            <span class="text-sm font-medium text-gray-700">Back</span>
-                        </a>
-                        <div>
-                            <h1 class="text-2xl font-bold text-gray-900">Schedules</h1>
-                            <p class="text-sm text-gray-500">Manage your class sessions</p>
-                        </div>
-                    </div>
-                </div>
-
-                <%- include('../partials/messages') %>
-
-                <!-- Course Overview Card -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
-                    <div class="p-6">
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <div class="flex-shrink-0">
-                                <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="flex-grow">
-                                <h2 class="text-2xl font-bold text-gray-900 mb-2"><%= courses.title %></h2>
-                                <p class="text-gray-600 mb-4"><%= courses.description %></p>
-                                
-                                <!-- Takeaways -->
-                                <div class="mt-4">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                        <i class="fas fa-check-circle text-green-500"></i>
-                                        Program Takeaways
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        <% if (courses.takeaways && courses.takeaways.length > 0) { %>
-                                            <% courses.takeaways.forEach(function(takeaway, index) { %>
-                                                <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                                                    <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                                                        <span class="text-xs font-bold text-blue-600"><%= index + 1 %></span>
-                                                    </div>
-                                                    <span class="text-gray-700"><%= takeaway %></span>
-                                                </div>
-                                            <% }); %>
-                                        <% } else { %>
-                                            <div class="col-span-2 p-4 bg-gray-50 rounded-lg text-center">
-                                                <p class="text-gray-500 italic">No takeaways provided for this program.</p>
-                                            </div>
-                                        <% } %>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Program Completion Banner (if all sessions completed) -->
-                <% if (allSessionsComplete) { %>
-                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 mb-6">
-                        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                            <div class="flex items-center gap-4">
-                                <div class="flex-shrink-0">
-                                    <div class="w-16 h-16 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
-                                        <i class="fas fa-trophy text-green-600 text-2xl"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h2 class="text-xl font-bold text-white mb-1">Program Completed!</h2>
-                                    <p class="text-green-100">
-                                        Congratulations! You've successfully completed all sessions. You have lifetime access to all course materials and recordings.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <a href="/user" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-green-600 font-medium rounded-lg hover:bg-green-50 transition-colors">
-                                    <i class="fas fa-book-open"></i>
-                                    Explore More
-                                </a>
-                                <button class="inline-flex items-center gap-2 px-4 py-2 bg-white bg-opacity-20 text-green-600 font-medium rounded-lg hover:bg-opacity-30 transition-colors">
-                                    <i class="fas fa-download"></i>
-                                    Certificate
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                <% } %>
-
-                <!-- Sessions Section -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <!-- Section Header -->
-                    <div class="border-b border-gray-200 px-3 py-4">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                    <i class="fas fa-calendar-alt text-blue-500"></i>
-                                    Class Sessions
-                                </h2>
-                                <p class="text-sm text-gray-500 mt-1">
-                                    <% if (sessions.length > 0) { %>
-                                        <%= sessions.length %> session(s) scheduled
-                                        <% if (allSessionsComplete) { %>
-                                            • All sessions completed
-                                        <% } %>
-                                    <% } else { %>
-                                        No sessions scheduled yet
-                                    <% } %>
-                                </p>
-                            </div>
-                            
-                            <!-- Status Legend -->
-                            <div class="flex flex-wrap gap-2">
-                                <div class="flex items-center gap-1">
-                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                    <span class="text-xs text-gray-600">Active/Joinable</span>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                                    <span class="text-xs text-gray-600">Upcoming</span>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                                    <span class="text-xs text-gray-600">Completed</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sessions Content -->
-                    <div class="p-6">
-                        <% if (sessions.length === 0) { %>
-                            <!-- Empty State -->
-                            <div class="text-center py-12">
-                                <div class="mb-6">
-                                    <i class="fas fa-calendar-times empty-state-icon text-gray-400"></i>
-                                </div>
-                                <h3 class="text-xl font-semibold text-gray-700 mb-2">No Sessions Scheduled</h3>
-                                <p class="text-gray-500 mb-6 max-w-md mx-auto">
-                                    There are no class sessions scheduled for this program yet. Please check back later or contact the program administrator.
-                                </p>
-                                <a href="/user" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors">
-                                    <i class="fas fa-book-open"></i>
-                                    Explore Other Programs
-                                </a>
-                            </div>
-                        <% } else { %>
-                          <!-- Sessions Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<% 
-// Modified helper function - if program is completed, treat all past sessions as completed
-function getSessionStatus(data) {
-    const scheduled = new Date(data.scheduled_at);
-    const now = new Date();
-    const isToday = scheduled.toDateString() === now.toDateString();
-    const isFuture = scheduled > now;
-    const isPast = scheduled < now;
-    const timeDiff = scheduled.getTime() - now.getTime();
-    const hoursUntil = timeDiff / (1000 * 60 * 60);
-    const minutesLate = Math.floor((now - scheduled) / (1000 * 60));
-    
-    let status = {
-        type: '',
-        label: '',
-        color: 'gray',
-        icon: 'clock',
-        canJoin: false,
-        canRejoin: false,
-        canViewRecording: false,
-        buttonText: '',
-        buttonClass: 'gray',
-        timeMessage: ''
-    };
-    
-    // If program is completed, treat all past sessions as completed with recording access
-    if (allSessionsComplete && isPast) {
-        status = {
-            type: 'completed',
-            label: 'Completed',
-            color: 'purple',
-            icon: 'check-circle',
-            canJoin: false,
-            canRejoin: false,
-            canViewRecording: true,
-            buttonText: 'View Recording',
-            buttonClass: 'purple',
-            timeMessage: 'Recording available - Lifetime access'
-        };
-        return status;
-    }
-    
-    // Check if tutor hasn't started the session
-    if (!data.status) {
-        status = {
-            type: 'waiting',
-            label: 'Waiting for Tutor',
-            color: 'yellow',
-            icon: 'user-clock',
-            canJoin: false,
-            canRejoin: false,
-            canViewRecording: false,
-            buttonText: 'Awaiting Tutor',
-            buttonClass: 'yellow',
-            timeMessage: 'Tutor will start the session soon'
-        };
-    }
-    // If user has joined before - ALWAYS show rejoin option if session is today
-    else if (data.is_joined && isToday) {
-        status = {
-            type: 'active-rejoin',
-            label: 'Session Active',
-            color: 'green',
-            icon: 'play-circle',
-            canJoin: true,
-            canRejoin: true,
-            canViewRecording: false,
-            buttonText: 'Rejoin Class',
-            buttonClass: 'green',
-            timeMessage: 'You can rejoin this session'
-        };
-    }
-    // Check if session is TODAY and user hasn't joined yet
-    else if (!data.is_joined && isToday) {
-        const joinWindowStart = new Date(scheduled.getTime() - (15 * 60 * 1000)); // 15 min before
-        const joinWindowEnd = new Date(scheduled.getTime() + (30 * 60 * 1000)); // 30 min after
-        
-        if (now >= joinWindowStart && now <= joinWindowEnd) {
-            // Within join window (15 min before to 30 min after)
-            status = {
-                type: 'joinable',
-                label: 'Join Now',
-                color: 'green',
-                icon: 'calendar-day',
-                canJoin: true,
-                canRejoin: false,
-                canViewRecording: false,
-                buttonText: 'Join Class',
-                buttonClass: 'green',
-                timeMessage: 'Join window open (15 min before to 30 min after start)'
-            };
-        } else if (now < joinWindowStart) {
-            // Before join window starts
-            status = {
-                type: 'upcoming-today',
-                label: 'Upcoming Today',
-                color: 'blue',
-                icon: 'clock',
-                canJoin: false,
-                canRejoin: false,
-                canViewRecording: false,
-                buttonText: `Starts in ${Math.ceil((joinWindowStart.getTime() - now.getTime()) / (1000 * 60))} min`,
-                buttonClass: 'blue',
-                timeMessage: 'Join window opens 15 minutes before start'
-            };
-        } else {
-            // 30+ minutes late and hasn't joined before
-            status = {
-                type: 'too-late',
-                label: 'Too Late to Join',
-                color: 'red',
-                icon: 'clock',
-                canJoin: false,
-                canRejoin: false,
-                canViewRecording: true, // Still allow viewing recording
-                buttonText: 'View Recording',
-                buttonClass: 'purple',
-                timeMessage: `Class started ${minutesLate} minutes ago - Recording available`
-            };
-        }
-    }
-    // Check if session is in the future (not today)
-    else if (!data.is_joined && isFuture) {
-        status = {
-            type: 'upcoming',
-            label: 'Upcoming',
-            color: 'blue',
-            icon: 'calendar',
-            canJoin: false,
-            canRejoin: false,
-            canViewRecording: false,
-            buttonText: hoursUntil < 24 ? `Starts in ${Math.ceil(hoursUntil)}h` : 'Upcoming',
-            buttonClass: 'blue',
-            timeMessage: `Starts ${scheduled.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`
-        };
-    }
-    // Check if session is in the past (yesterday or earlier) and user attended
-    else if (isPast && data.is_joined && !isToday) {
-        status = {
-            type: 'completed',
-            label: 'Completed',
-            color: 'purple',
-            icon: 'check-circle',
-            canJoin: false,
-            canRejoin: false,
-            canViewRecording: true,
-            buttonText: 'View Recording',
-            buttonClass: 'purple',
-            timeMessage: 'Recording available - Lifetime access'
-        };
-    }
-    // Check if session is in the past (yesterday or earlier) and user missed it
-    else if (isPast && !data.is_joined && !isToday) {
-        status = {
-            type: 'missed',
-            label: 'Missed',
-            color: 'red',
-            icon: 'times-circle',
-            canJoin: false,
-            canRejoin: false,
-            canViewRecording: true,
-            buttonText: 'View Recording',
-            buttonClass: 'red',
-            timeMessage: 'Recording available - Lifetime access'
-        };
-    }
-    
-    return status;
-}
-
-sessions.forEach(function(data, index) {
-    const scheduled = new Date(data.scheduled_at);
-    const status = getSessionStatus(data);
-    const statusColors = {
-        green: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-status-active' },
-        yellow: { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-status-waiting' },
-        blue: { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-status-upcoming' },
-        purple: { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-status-completed' },
-        red: { bg: 'bg-red-100', text: 'text-red-800', border: 'border-status-missed' },
-        gray: { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-300' }
-    };
-    const color = statusColors[status.color] || statusColors.gray;
-%>
-    <div class="session-card bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden <%= color.border %>">
-        <div class="p-3">
-            <!-- Session Header -->
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <%= color.bg %> <%= color.text %>">
-                        <i class="fas fa-<%= status.icon %> mr-1.5"></i>
-                        <%= status.label %>
+            <div class="flex-1">
+              <h2 class="text-lg font-semibold text-gray-900 mb-1"><%= courses.title %></h2>
+              <p class="text-sm text-gray-600 mb-3"><%= courses.description %></p>
+              
+              <% if (courses.takeaways && courses.takeaways.length > 0) { %>
+                <div class="flex flex-wrap gap-2">
+                  <% courses.takeaways.slice(0, 3).forEach(function(takeaway) { %>
+                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-white border border-green-100 text-green-700 text-xs rounded-lg">
+                      <i class="fas fa-check text-xs"></i>
+                      <%= takeaway %>
                     </span>
-                    <div class="mt-2 flex items-center text-sm text-gray-500">
-                        <i class="fas fa-chalkboard-teacher mr-2"></i>
-                        <span>Host: <%= data.teacher %></span>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <span class="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg">
-                        <%= index + 1 %>
+                  <% }); %>
+                  <% if (courses.takeaways.length > 3) { %>
+                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-white border border-green-100 text-green-700 text-xs rounded-lg">
+                      +<%= courses.takeaways.length - 3 %> more
                     </span>
+                  <% } %>
                 </div>
+              <% } %>
             </div>
-            
-            <!-- Session Details -->
-            <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= data.title %></h3>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-2"><%= data.description %></p>
-            
-            <!-- Time Information -->
-            <div class="flex items-center text-sm text-gray-700 mb-4">
-                <div class="flex items-center mr-4">
-                    <i class="fas fa-clock text-gray-400 mr-2"></i>
-                    <span class="font-medium">
-                        <%= scheduled.toLocaleDateString('en-US', { 
-                            weekday: 'short', 
-                            month: 'short', 
-                            day: 'numeric' 
-                        }) %>
-                    </span>
+          </div>
+        </div>
+
+        <!-- Completion Banner -->
+        <% if (allSessionsComplete) { %>
+          <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-5 mb-6 shadow-md">
+            <div class="flex items-center gap-4">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+                  <i class="fas fa-trophy text-white text-lg"></i>
                 </div>
-                <div class="flex items-center">
-                    <i class="fas fa-hourglass-half text-gray-400 mr-2"></i>
-                    <span class="font-medium">
-                        <%= scheduled.toLocaleTimeString('en-US', { 
-                            hour: 'numeric', 
-                            minute: '2-digit',
-                            hour12: true 
-                        }) %>
-                    </span>
-                </div>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-semibold text-white mb-1">Program Completed!</h3>
+                <p class="text-sm text-green-100 opacity-90">You've successfully completed all sessions. Lifetime access to recordings and materials.</p>
+              </div>
             </div>
-            
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-3">
-                <% 
-                // Simplified logic based on status from getSessionStatus
-                if (status.canJoin && !allSessionsComplete) { 
-                    // User can join (either first time or rejoin)
-                    const joinUrl = `/class/${data.join_code}/${data.id}`;
-                    const buttonText = status.type === 'active-rejoin' ? 'Rejoin Class' : 'Join Class';
-                    const buttonColor = status.type === 'active-rejoin' ? 'green' : 'blue';
-                %>
-                    <a href="<%= joinUrl %>" 
-                       class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                              bg-<%= buttonColor %>-600 hover:bg-<%= buttonColor %>-700 
-                              text-white font-medium rounded-lg transition-colors shadow-sm">
-                        <i class="fas <%= status.type === 'active-rejoin' ? 'fa-redo' : 'fa-sign-in-alt' %>"></i>
+          </div>
+        <% } %>
+
+        <!-- Sessions -->
+       <div class="mb-8">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-base font-semibold text-gray-900">Class Sessions</h2>
+            <span class="text-sm text-gray-500">
+              <%= sessions.length %> session<%= sessions.length !== 1 ? 's' : '' %>
+            </span>
+          </div>
+          
+          <% if (sessions.length === 0) { %>
+            <!-- Empty State -->
+            <div class="bg-white rounded-lg border border-gray-200 p-8 text-center">
+              <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-calendar-times text-gray-400"></i>
+              </div>
+              <p class="text-sm text-gray-500">No sessions scheduled yet</p>
+            </div>
+          <% } else { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <% 
+              sessions.forEach(function(data, index) {
+                const scheduled = new Date(data.scheduled_at);
+                const now = new Date();
+                const isToday = scheduled.toDateString() === now.toDateString();
+                const isFuture = scheduled > now;
+                const isPast = scheduled < now;
+                const timeDiff = scheduled.getTime() - now.getTime();
+                const hoursUntil = timeDiff / (1000 * 60 * 60);
+                
+                // Determine status and colors
+                let status = '';
+                let cardColor = 'gray';
+                let borderColor = 'gray';
+                let icon = 'clock';
+                let action = 'none';
+                let buttonText = '';
+                let buttonLink = '#';
+                
+                // Status logic
+                if (allSessionsComplete && isPast) {
+                  status = 'Completed';
+                  cardColor = 'green';
+                  borderColor = 'green';
+                  icon = 'check-circle';
+                  action = 'recording';
+                  buttonText = 'Recording';
+                  buttonLink = `/user/class/${data.id}/course/${courseId}/category/${categoryId}`;
+                } 
+                else if (data.is_joined && isToday) {
+                  status = 'Active';
+                  cardColor = 'green';
+                  borderColor = 'green';
+                  icon = 'play-circle';
+                  action = 'join';
+                  buttonText = 'Rejoin';
+                  buttonLink = `/class/${data.join_code}/${data.id}`;
+                }
+                else if (!data.is_joined && isToday) {
+                  const joinWindowStart = new Date(scheduled.getTime() - (15 * 60 * 1000));
+                  const joinWindowEnd = new Date(scheduled.getTime() + (30 * 60 * 1000));
+                  
+                  if (now >= joinWindowStart && now <= joinWindowEnd) {
+                    status = 'Join Now';
+                    cardColor = 'green';
+                    borderColor = 'green';
+                    icon = 'sign-in-alt';
+                    action = 'join';
+                    buttonText = 'Join';
+                    buttonLink = `/class/${data.join_code}/${data.id}`;
+                  } else if (now < joinWindowStart) {
+                    status = 'Upcoming';
+                    cardColor = 'blue';
+                    borderColor = 'blue';
+                    icon = 'clock';
+                    buttonText = `In ${Math.ceil((joinWindowStart.getTime() - now.getTime()) / (1000 * 60))} min`;
+                  } else {
+                    status = 'Too Late';
+                    cardColor = 'red';
+                    borderColor = 'red';
+                    icon = 'clock';
+                    action = 'recording';
+                    buttonText = 'Recording';
+                    buttonLink = `/user/class/${data.id}/course/${courseId}/category/${categoryId}`;
+                  }
+                }
+                else if (isFuture) {
+                  status = 'Upcoming';
+                  cardColor = 'blue';
+                  borderColor = 'blue';
+                  icon = 'calendar';
+                  buttonText = hoursUntil < 24 ? `${Math.ceil(hoursUntil)}h` : 'Upcoming';
+                }
+                else if (isPast && data.is_joined && !isToday) {
+                  status = 'Completed';
+                  cardColor = 'green';
+                  borderColor = 'green';
+                  icon = 'check-circle';
+                  action = 'recording';
+                  buttonText = 'Recording';
+                  buttonLink = `/user/class/${data.id}/course/${courseId}/category/${categoryId}`;
+                }
+                else if (isPast && !data.is_joined && !isToday) {
+                  status = 'Missed';
+                  cardColor = 'red';
+                  borderColor = 'red';
+                  icon = 'times-circle';
+                  action = 'recording';
+                  buttonText = 'Recording';
+                  buttonLink = `/user/class/${data.id}/course/${courseId}/category/${categoryId}`;
+                }
+                
+                // Time display
+                const timeDisplay = scheduled.toLocaleDateString('en-US', { 
+                  month: 'short', 
+                  day: 'numeric' 
+                }) + ' • ' + scheduled.toLocaleTimeString([], { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                });
+              %>
+              
+              <!-- Session Card -->
+              <div class="bg-white rounded-lg border-l-4 <%= 
+                borderColor === 'green' ? 'border-green-500' :
+                borderColor === 'blue' ? 'border-blue-500' :
+                borderColor === 'red' ? 'border-red-500' :
+                'border-gray-300'
+              %> shadow-sm hover:shadow transition-shadow">
+                <div class="p-4">
+                  <!-- Header -->
+                  <div class="flex justify-between items-start mb-3">
+                    <div>
+                      <div class="flex items-center gap-2 mb-1">
+                        <div class="w-8 h-8 rounded-lg <%= 
+                          cardColor === 'green' ? 'bg-green-50 text-green-600' :
+                          cardColor === 'blue' ? 'bg-blue-50 text-blue-600' :
+                          cardColor === 'red' ? 'bg-red-50 text-red-600' :
+                          'bg-gray-50 text-gray-600'
+                        %> flex items-center justify-center">
+                          <i class="fas fa-<%= icon %> text-sm"></i>
+                        </div>
+                        <h3 class="text-sm font-semibold text-gray-900"><%= data.title %></h3>
+                      </div>
+                      <div class="text-xs text-gray-500">
+                        Session <%= index + 1 %> • <%= timeDisplay %>
+                      </div>
+                    </div>
+                    <span class="px-2 py-1 text-xs font-medium rounded <%= 
+                      cardColor === 'green' ? 'bg-green-100 text-green-800' :
+                      cardColor === 'blue' ? 'bg-blue-100 text-blue-800' :
+                      cardColor === 'red' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'
+                    %>">
+                      <%= status %>
+                    </span>
+                  </div>
+                  
+                  <!-- Description -->
+                  <% if (data.description) { %>
+                    <p class="text-sm text-gray-600 mb-4 line-clamp-2"><%= data.description %></p>
+                  <% } %>
+                  
+                  <!-- Details -->
+                  <div class="flex items-center gap-3 text-xs text-gray-500 mb-4">
+                    <div class="flex items-center gap-1">
+                      <i class="fas fa-user text-gray-400"></i>
+                      <span><%= data.teacher %></span>
+                    </div>
+                  </div>
+                  
+                  <!-- Action Button -->
+                  <div>
+                    <% if (action === 'join') { %>
+                      <a href="<%= buttonLink %>" 
+                         class="block w-full text-center text-sm font-medium text-white <%= 
+                           cardColor === 'green' ? 'bg-green-500 hover:bg-green-600' :
+                           'bg-blue-500 hover:bg-blue-600'
+                         %> py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sign-in-alt text-xs mr-2"></i>
                         <%= buttonText %>
-                    </a>
-                <% } else if (status.canViewRecording) { %>
-                    <!-- Show View Recording for past sessions -->
-                    <a href="/user/class/<%=data.id%>/course/<%=courseId%>/category/<%=categoryId%>" 
-                       class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                              <%= status.type === 'completed' ? 'bg-purple-500 hover:bg-purple-600' : 
-                                 status.type === 'too-late' ? 'bg-purple-500 hover:bg-purple-600' :
-                                 'bg-red-500 hover:bg-red-600' %>
-                              text-white font-medium rounded-lg transition-colors">
-                        <i class="fas fa-video"></i>
-                        <%= status.buttonText %>
-                    </a>
-                <% } else { %>
-                    <!-- Disabled button for other states -->
-                    <button class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 
-                                  <%= status.buttonClass === 'green' ? 'bg-gray-100 text-gray-500' : 
-                                     status.buttonClass === 'blue' ? 'bg-blue-100 text-blue-700' :
-                                     status.buttonClass === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
-                                     status.buttonClass === 'gray' ? 'bg-gray-100 text-gray-500' :
-                                     'bg-gray-100 text-gray-500' %> 
-                                  font-medium rounded-lg cursor-not-allowed" disabled>
-                        <i class="fas fa-<%= status.icon %>"></i>
-                        <%= status.buttonText %>
-                    </button>
-                <% } %>
-            </div>
-
-            <!-- Time Status Message -->
-            <div class="mt-3 text-xs <%= status.type === 'too-late' ? 'text-red-500' : 'text-gray-500' %>">
-                <% if (status.type === 'active-rejoin') { %>
-                    <i class="fas fa-redo mr-1"></i>
-                    You can rejoin this session anytime today
-                <% } else if (status.type === 'joinable') { %>
-                    <i class="fas fa-unlock mr-1 text-green-500"></i>
-                    Join window open (15 min before to 30 min after start)
-                <% } else if (status.type === 'too-late') { %>
-                    <i class="fas fa-clock mr-1"></i>
-                    <%= status.timeMessage %>
-                <% } else if (status.type === 'upcoming-today') { %>
-                    <i class="fas fa-clock mr-1"></i>
-                    <%= status.timeMessage %>
-                <% } else if (status.type === 'upcoming') { %>
-                    <i class="fas fa-calendar mr-1"></i>
-                    <%= status.timeMessage %>
-                <% } else if (status.type === 'waiting') { %>
-                    <i class="fas fa-user-clock mr-1"></i>
-                    <%= status.timeMessage %>
-                <% } else if (status.type === 'missed' || status.type === 'completed') { %>
-                    <% if (allSessionsComplete) { %>
-                        <i class="fas fa-infinity mr-1 text-purple-500"></i>
-                        Lifetime access to recording
+                      </a>
+                    <% } else if (action === 'recording') { %>
+                      <a href="<%= buttonLink %>" 
+                         class="block w-full text-center text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-video text-xs mr-2"></i>
+                        <%= buttonText %>
+                      </a>
                     <% } else { %>
-                        <i class="fas fa-video mr-1"></i>
-                        <%= status.timeMessage %>
+                      <div class="text-center text-sm font-medium <%= 
+                        cardColor === 'blue' ? 'text-blue-600 bg-blue-50' :
+                        cardColor === 'red' ? 'text-red-600 bg-red-50' :
+                        'text-gray-600 bg-gray-50'
+                      %> py-2 rounded-lg">
+                        <%= buttonText %>
+                      </div>
                     <% } %>
-                <% } %>
-            </div>
-        </div>
-    </div>
-<% }); %>
-                        </div>
-                        <% } %>
-                    </div>
+                  </div>
                 </div>
-
-                <!-- Course Resources Section (Always visible after completion) -->
-                <% if (allSessionsComplete) { %>
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mt-6">
-                        <div class="border-b border-gray-200 px-3 py-4">
-                            <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                <i class="fas fa-archive text-blue-500"></i>
-                                Course Resources
-                            </h2>
-                            <p class="text-sm text-gray-500 mt-1">
-                                Lifetime access to all course materials
-                            </p>
-                        </div>
-                        <div class="p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="p-4 bg-blue-50 rounded-lg">
-                                    <div class="flex items-center gap-3 mb-3">
-                                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                                            <i class="fas fa-video text-blue-500"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-semibold text-gray-900">Session Recordings</h4>
-                                            <p class="text-sm text-gray-600">All class recordings</p>
-                                        </div>
-                                    </div>
-                                    <a href="/user/course/<%=courseId%>/recordings" 
-                                       class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
-                                        View All Recordings
-                                        <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                </div>
-                                
-                                <div class="p-4 bg-green-50 rounded-lg">
-                                    <div class="flex items-center gap-3 mb-3">
-                                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                                            <i class="fas fa-file-alt text-green-500"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-semibold text-gray-900">Course Materials</h4>
-                                            <p class="text-sm text-gray-600">Downloadable resources</p>
-                                        </div>
-                                    </div>
-                                    <a href="/user/course/<%=courseId%>/materials" 
-                                       class="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-medium">
-                                        Access Materials
-                                        <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                </div>
-                                
-                                <div class="p-4 bg-purple-50 rounded-lg">
-                                    <div class="flex items-center gap-3 mb-3">
-                                        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                                            <i class="fas fa-certificate text-purple-500"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-semibold text-gray-900">Certificate</h4>
-                                            <p class="text-sm text-gray-600">Download your completion certificate</p>
-                                        </div>
-                                    </div>
-                                    <button class="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium">
-                                        Download Certificate
-                                        <i class="fas fa-download"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <% } %>
+              </div>
+              <% }); %>
             </div>
+          <% } %>
         </div>
-    </div>
 
-    <!-- Session Details Modal -->
-    <div id="sessionDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold text-gray-900">Session Details</h3>
-                        <button onclick="closeSessionDetails()" class="text-gray-400 hover:text-gray-500">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                    <div id="sessionDetailsContent">
-                        <!-- Dynamic content will be loaded here -->
-                    </div>
-                    <div class="mt-6 flex justify-end">
-                        <button onclick="closeSessionDetails()" class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
-                            Close
-                        </button>
-                    </div>
+        <!-- Resources Section -->
+        <% if (allSessionsComplete) { %>
+          <div class="mt-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Course Resources</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <a href="/user/course/<%=courseId%>/recordings" 
+                 class="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                    <i class="fas fa-video text-blue-500"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-gray-900">Session Recordings</h4>
+                    <p class="text-xs text-gray-500">All class recordings</p>
+                  </div>
                 </div>
+                <div class="flex items-center text-sm text-blue-600 group-hover:text-blue-700">
+                  View recordings
+                  <i class="fas fa-arrow-right ml-2 text-xs transition-transform group-hover:translate-x-1"></i>
+                </div>
+              </a>
+              
+              <a href="/user/course/<%=courseId%>/materials" 
+                 class="group bg-white border border-gray-200 rounded-xl p-5 hover:border-green-300 hover:shadow-md transition-all duration-200">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center group-hover:bg-green-100 transition-colors">
+                    <i class="fas fa-file-alt text-green-500"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-gray-900">Course Materials</h4>
+                    <p class="text-xs text-gray-500">Downloadable resources</p>
+                  </div>
+                </div>
+                <div class="flex items-center text-sm text-green-600 group-hover:text-green-700">
+                  Access materials
+                  <i class="fas fa-arrow-right ml-2 text-xs transition-transform group-hover:translate-x-1"></i>
+                </div>
+              </a>
+              
+              <button class="group bg-white border border-gray-200 rounded-xl p-5 hover:border-purple-300 hover:shadow-md transition-all duration-200 text-left">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center group-hover:bg-purple-100 transition-colors">
+                    <i class="fas fa-certificate text-purple-500"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-gray-900">Certificate</h4>
+                    <p class="text-xs text-gray-500">Completion certificate</p>
+                  </div>
+                </div>
+                <div class="flex items-center text-sm text-purple-600 group-hover:text-purple-700">
+                  Download certificate
+                  <i class="fas fa-download ml-2 text-xs"></i>
+                </div>
+              </button>
             </div>
-        </div>
+          </div>
+        <% } %>
+      </div>
     </div>
+  </div>
+</div>
 
-    <script>
-        // Function to show session details
-        function showSessionDetails(sessionId) {
-            // In a real implementation, you would fetch session details via AJAX
-            // For now, we'll show a placeholder
-            const modal = document.getElementById('sessionDetailsModal');
-            const content = document.getElementById('sessionDetailsContent');
-            
-            content.innerHTML = `
-                <div class="space-y-4">
-                    <div class="p-4 bg-blue-50 rounded-lg">
-                        <h4 class="font-semibold text-blue-800 mb-2">Session Information</h4>
-                        <p class="text-sm text-blue-700">Detailed session information would appear here.</p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">Session ID:</h4>
-                        <p class="text-gray-600">${sessionId}</p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">Additional Notes:</h4>
-                        <p class="text-gray-600">This modal would show complete session details, including materials, prerequisites, and special instructions.</p>
-                    </div>
-                </div>
-            `;
-            
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-        
-        // Function to close session details modal
-        function closeSessionDetails() {
-            const modal = document.getElementById('sessionDetailsModal');
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }
-        
-        // Close modal when clicking outside
-        document.getElementById('sessionDetailsModal').addEventListener('click', function(e) {
-            if (e.target.id === 'sessionDetailsModal') {
-                closeSessionDetails();
-            }
-        });
-        
-        // Keyboard shortcut to close modal
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeSessionDetails();
-            }
-        });
-        
-        // Update time-based status every minute
-        function updateSessionStatuses() {
-            // This function would update the UI based on current time
-            // For a full implementation, you might want to refresh the page or use AJAX
-            console.log('Updating session statuses based on current time...');
-        }
-        
-        // Update every minute
-        setInterval(updateSessionStatuses, 60000);
-        
-        // Initialize tooltips if using any
-        document.addEventListener('DOMContentLoaded', function() {
-            // Any initialization code
-            console.log('Schedules page loaded');
-        });
-    </script>
+<style>
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+</style>

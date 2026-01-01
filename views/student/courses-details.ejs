@@ -6,7 +6,7 @@
 
 <!-- Main Content -->
 <div class="min-h-screen bg-gray-50">
-  <div class="container mx-auto px-4 py-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex flex-col lg:flex-row gap-6">
       <!-- Static Sidebar for Desktop -->
       <div class="hidden lg:block lg:w-1/4">
@@ -16,138 +16,113 @@
       <!-- Main Content Area -->
       <div class="lg:w-3/4">
         <!-- Header -->
-        <div class="flex justify-between items-center mb-6">
+        <div class="mb-6">
           <a href="/user" 
-             class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-            <i class="fas fa-arrow-left text-gray-600"></i>
-            <span class="text-sm font-medium text-gray-700">Back</span>
+             class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-4">
+            <i class="fas fa-arrow-left text-xs"></i>
+            Back to Dashboard
           </a>
+          
+          <%- include('../partials/messages') %>
         </div>
 
-        <%- include('../partials/messages') %>
-
-        <!-- Course Banner -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-          <!-- Banner Image -->
-          <div class="relative h-64 md:h-80 overflow-hidden">
+        <!-- Course Header -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+          <!-- Banner -->
+          <div class="relative h-48 md:h-56">
             <% if (course.image_url == "default.jpg") { %>
               <img src="/images/thumbnail.png" 
-                   alt="Course banner" 
                    class="w-full h-full object-cover">
             <% } else { %>
-              <img src="/uploads/<%= course.image_url %>" 
-                   alt="Course banner" 
+              <img src="<%= course.image_url %>" 
                    class="w-full h-full object-cover">
             <% } %>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
             
-            <!-- Gradient Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-            
-            <!-- Course Title Overlay -->
             <div class="absolute bottom-0 left-0 right-0 p-6">
-              <h1 class="text-2xl md:text-3xl font-bold text-white mb-2"><%= course.title %></h1>
-              <p class="text-gray-200 text-sm">Created by <%= course.teacher_name || "Course Instructor" %></p>
+              <h1 class="text-xl md:text-2xl font-bold text-white mb-1"><%= course.title %></h1>
+              <p class="text-gray-200 text-sm">By <%= course.teacher_name || "Instructor" %></p>
             </div>
           </div>
 
-          <!-- Course Stats -->
+          <!-- Quick Stats -->
           <div class="p-6">
-            <div class="flex flex-wrap items-center gap-4 md:gap-6 mb-6">
-              <!-- Likes -->
-              <div class="flex items-center gap-2">
-                <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
-                  <i class="fas fa-heart text-red-500"></i>
-                </div>
-                <div>
-                  <p class="text-sm text-gray-500">Likes</p>
-                  <p class="font-bold text-gray-900"><%= course.like_count || "0" %></p>
-                </div>
-              </div>
-              
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
               <!-- Enrolled -->
-              <div class="flex items-center gap-2">
-                <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                  <i class="fas fa-users text-blue-500"></i>
+              <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <div class="text-lg font-semibold text-gray-900 mb-1">
+                  <%= (parseInt(course.enrolled_count) || 0) + 75 %>
                 </div>
-                <div>
-                  <p class="text-sm text-gray-500">Enrolled</p>
-                  <p class="font-bold text-gray-900"><%= (parseInt(course.enrolled_count) || 0) + 75 %></p>
-                </div>
+                <div class="text-xs text-gray-500">Enrolled</div>
               </div>
               
               <!-- Difficulty -->
-              <div class="flex items-center gap-2">
-                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+              <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center justify-center gap-2 mb-1">
                   <% if (course.difficulty === 'easy') { %>
-                    <i class="fas fa-leaf text-green-500"></i>
+                    <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Beginner</span>
                   <% } else if (course.difficulty === 'medium') { %>
-                    <i class="fas fa-balance-scale text-yellow-500"></i>
+                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Intermediate</span>
                   <% } else if (course.difficulty === 'hard') { %>
-                    <i class="fas fa-mountain text-red-500"></i>
+                    <span class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">Advanced</span>
                   <% } else { %>
-                    <i class="fas fa-question-circle text-gray-500"></i>
+                    <span class="text-xs px-2 py-1 bg-gray-100 text-gray-800 rounded-full">All Levels</span>
                   <% } %>
                 </div>
-                <div>
-                  <p class="text-sm text-gray-500">Difficulty</p>
-                  <span class="font-medium">
-                    <% if (course.difficulty === 'easy') { %>
-                      <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Easy</span>
-                    <% } else if (course.difficulty === 'medium') { %>
-                      <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Medium</span>
-                    <% } else if (course.difficulty === 'hard') { %>
-                      <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Hard</span>
-                    <% } else { %>
-                      <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">Unknown</span>
-                    <% } %>
-                  </span>
+                <div class="text-xs text-gray-500">Level</div>
+              </div>
+              
+              <!-- Price -->
+              <div class="text-center p-3 bg-gray-50 rounded-lg">
+                <div class="text-lg font-semibold text-gray-900 mb-1">
+                  <% if (course.price > 0) { %>
+                    ₦<%= course.price.toLocaleString() %>
+                  <% } else { %>
+                    Free
+                  <% } %>
                 </div>
+                <div class="text-xs text-gray-500">Price</div>
               </div>
             </div>
 
-            <!-- Divider -->
-            <div class="border-t border-gray-200 pt-6">
-              <!-- Tab Navigation -->
+            <!-- Tabs -->
+            <div>
               <div class="flex border-b border-gray-200 mb-6">
                 <button id="desc-tab" 
-                        class="tab-button flex-1 py-3 px-4 text-center font-medium text-gray-600 border-b-2 border-transparent hover:text-blue-600 hover:border-blue-600 transition-colors active"
+                        class="tab-button flex-1 pb-3 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition-colors active"
                         data-target="desc">
                   Description
                 </button>
                 <button id="takeaways-tab" 
-                        class="tab-button flex-1 py-3 px-4 text-center font-medium text-gray-600 border-b-2 border-transparent hover:text-blue-600 hover:border-blue-600 transition-colors"
+                        class="tab-button flex-1 pb-3 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition-colors"
                         data-target="takeaways">
                   Takeaways
                 </button>
               </div>
 
               <!-- Tab Content -->
-              <div id="tab-content" class="min-h-[200px]">
-                <!-- Description Tab -->
+              <div id="tab-content">
+                <!-- Description -->
                 <div id="desc-content" class="tab-content active">
-                  <h3 class="text-lg font-semibold text-gray-900 mb-4">Program Description</h3>
-                  <div class="prose max-w-none">
-                    <p class="text-gray-600 leading-relaxed"><%= course.description %></p>
+                  <div class="prose prose-sm max-w-none">
+                    <p class="text-gray-600"><%= course.description %></p>
                   </div>
                 </div>
 
-                <!-- Takeaways Tab -->
+                <!-- Takeaways -->
                 <div id="takeaways-content" class="tab-content hidden">
-                  <h3 class="text-lg font-semibold text-gray-900 mb-4">What You'll Learn</h3>
-                  <div class="space-y-3">
+                  <div class="space-y-2">
                     <% if (course.takeaways && course.takeaways.length > 0) { %>
                       <% course.takeaways.forEach(function(takeaway) { %>
-                        <div class="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                          <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                            <i class="fas fa-check text-white text-xs"></i>
+                        <div class="flex items-start gap-2">
+                          <div class="flex-shrink-0 mt-1">
+                            <i class="fas fa-check text-green-500 text-xs"></i>
                           </div>
-                          <span class="text-gray-700"><%= takeaway %></span>
+                          <span class="text-sm text-gray-600"><%= takeaway %></span>
                         </div>
                       <% }); %>
                     <% } else { %>
-                      <div class="p-4 bg-gray-50 rounded-lg text-center">
-                        <p class="text-gray-500 italic">No takeaways provided for this program.</p>
-                      </div>
+                      <p class="text-sm text-gray-500 italic">No takeaways provided.</p>
                     <% } %>
                   </div>
                 </div>
@@ -156,22 +131,22 @@
           </div>
         </div>
 
-        <!-- Enroll Section -->
+        <!-- Enrollment Section -->
         <% if (course.is_open) { %>
           <!-- Desktop Button -->
-          <div class="enroll-btn-desktop mb-8">
-            <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="enroll-btn-desktop">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
               <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <h3 class="text-lg font-bold text-gray-900 mb-1">Ready to Start Learning?</h3>
-                  <p class="text-gray-600">Join <%= (parseInt(course.enrolled_count) || 0) + 75 %> other students</p>
+                  <h3 class="text-base font-semibold text-gray-900 mb-1">Ready to Start?</h3>
+                  <p class="text-sm text-gray-500">Join <%= (parseInt(course.enrolled_count) || 0) + 75 %> students</p>
                 </div>
                 
                 <% if (isEnrolled) { %>
                   <a href="/user/course/<%= course.id %>/<%= course.category_id %>" 
-                     class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg">
-                    <i class="fas fa-calendar-alt"></i>
-                    View Course Schedules
+                     class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors">
+                    <i class="fas fa-calendar text-xs"></i>
+                    View Schedules
                   </a>
                 <% } else { %>
                   <form method="POST" 
@@ -186,14 +161,14 @@
                     
                     <% if (course.price > 0) { %>
                       <button type="submit" 
-                              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg w-full md:w-auto">
-                        <i class="fas fa-credit-card"></i>
-                        Enroll Now For ₦<%= course.price.toLocaleString() %>
+                              class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-credit-card text-xs"></i>
+                        Enroll - ₦<%= course.price.toLocaleString() %>
                       </button>
                     <% } else { %>
                       <button type="submit" 
-                              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg w-full md:w-auto">
-                        <i class="fas fa-graduation-cap"></i>
+                              class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors">
+                        <i class="fas fa-graduation-cap text-xs"></i>
                         Enroll For Free
                       </button>
                     <% } %>
@@ -203,13 +178,13 @@
             </div>
           </div>
 
-          <!-- Sticky Mobile Button -->
+          <!-- Mobile Sticky Button -->
           <div class="sticky-enroll-btn">
             <div class="bg-white border-t border-gray-200 px-4 py-3">
               <% if (isEnrolled) { %>
                 <a href="/user/course/<%= course.id %>/<%= course.category_id %>" 
-                   class="block w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all text-center">
-                  <i class="fas fa-calendar-alt mr-2"></i>
+                   class="block w-full py-2.5 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors text-center">
+                  <i class="fas fa-calendar text-xs mr-2"></i>
                   View Schedules
                 </a>
               <% } else { %>
@@ -225,14 +200,14 @@
                   
                   <% if (course.price > 0) { %>
                     <button type="submit" 
-                            class="block w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all">
-                      <i class="fas fa-credit-card mr-2"></i>
+                            class="block w-full py-2.5 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors">
+                      <i class="fas fa-credit-card text-xs mr-2"></i>
                       Enroll - ₦<%= course.price.toLocaleString() %>
                     </button>
                   <% } else { %>
                     <button type="submit" 
-                            class="block w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all">
-                      <i class="fas fa-graduation-cap mr-2"></i>
+                            class="block w-full py-2.5 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors">
+                      <i class="fas fa-graduation-cap text-xs mr-2"></i>
                       Enroll For Free
                     </button>
                   <% } %>
@@ -241,19 +216,17 @@
             </div>
           </div>
         <% } else { %>
-          <!-- Course Closed State -->
-          <div class="bg-white rounded-xl shadow-lg p-8 text-center">
-            <div class="mb-6">
-              <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100">
-                <i class="fas fa-lock text-3xl text-red-500"></i>
-              </div>
+          <!-- Course Closed -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
+              <i class="fas fa-lock text-gray-500"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Currently Closed</h3>
-            <p class="text-gray-600 mb-6">This program is not accepting new enrollments at the moment.</p>
+            <h3 class="text-base font-semibold text-gray-900 mb-2">Currently Closed</h3>
+            <p class="text-sm text-gray-500 mb-4">This program is not accepting new enrollments.</p>
             <a href="/user" 
-               class="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
-              <i class="fas fa-arrow-left"></i>
-              Browse Other Programs
+               class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+              <i class="fas fa-arrow-left text-xs"></i>
+              Browse Programs
             </a>
           </div>
         <% } %>
@@ -274,9 +247,9 @@
       bottom: 0;
       left: 0;
       right: 0;
-      z-index: 1000;
+      z-index: 50;
       background: white;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
     }
     
     .enroll-btn-desktop {
@@ -284,161 +257,145 @@
     }
     
     body {
-      padding-bottom: 80px;
+      padding-bottom: 72px;
     }
-  }
-
-  .enroll-btn-desktop {
-    display: block;
   }
 
   .tab-content {
     display: none;
-    animation: fadeIn 0.3s ease;
   }
 
   .tab-content.active {
     display: block;
+    animation: fadeIn 0.2s ease;
   }
 
   .tab-button.active {
-    color: #2563eb;
-    border-bottom-color: #2563eb;
-    font-weight: 600;
+    color: #111827;
+    border-bottom-color: #111827;
+    border-bottom-width: 2px;
   }
 
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(4px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
-
-  .prose {
-    line-height: 1.75;
-  }
-
-  .prose p {
-    margin-bottom: 1rem;
-  }
 </style>
 
 <script>
-  // Tab switching functionality
+  // Tab switching
   document.addEventListener('DOMContentLoaded', function() {
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
+    const tabs = document.querySelectorAll('.tab-button');
     
-    tabButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const targetId = this.getAttribute('data-target');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const target = this.dataset.target;
         
-        // Update button states
-        tabButtons.forEach(btn => btn.classList.remove('active'));
+        // Update tabs
+        tabs.forEach(t => t.classList.remove('active'));
         this.classList.add('active');
         
-        // Update content visibility
-        tabContents.forEach(content => {
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(content => {
           content.classList.remove('active');
-          content.classList.add('hidden');
         });
-        
-        const targetContent = document.getElementById(`${targetId}-content`);
-        targetContent.classList.remove('hidden');
-        targetContent.classList.add('active');
+        document.getElementById(`${target}-content`).classList.add('active');
       });
     });
   });
 
-  // Handle enrollment forms
+  // Enrollment form handling
   document.querySelectorAll('.enroll-form').forEach(form => {
-    form.addEventListener('submit', async function (e) {
+    form.addEventListener('submit', async function(e) {
       const price = parseFloat(form.dataset.price);
-      if (price <= 0) return; // Free course, submit normally
-
+      if (price <= 0) return; // Free course
+      
       e.preventDefault();
-
+      
       const email = form.querySelector('.user-email').value;
       const courseId = form.querySelector('.courseId').value;
       const userId = form.querySelector('.user-id').value;
       const amount = form.querySelector('.amount').value;
-      const payFor = 'course';
-
-      // Show loading state
+      
       const button = form.querySelector('button[type="submit"]');
       const originalText = button.innerHTML;
-      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
       button.disabled = true;
-
+      
       try {
         const response = await fetch(`/user/course/${courseId}/enroll`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, amount, courseId, payFor, userId })
+          body: JSON.stringify({ 
+            email, 
+            amount, 
+            courseId, 
+            payFor: 'course', 
+            userId 
+          })
         });
-
+        
         const data = await response.json();
-
+        
         if (data.status) {
           window.location.href = data.data.authorization_url;
         } else {
-          // Show error message
           showNotification(data.message || 'Payment failed.', 'error');
         }
       } catch (err) {
         console.error(err);
-        showNotification('Error processing payment. Please try again.', 'error');
+        showNotification('Error processing payment.', 'error');
       } finally {
-        // Restore button state
         button.innerHTML = originalText;
         button.disabled = false;
       }
     });
   });
 
-  // Notification function
+  // Simple notification
   function showNotification(message, type = 'error') {
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 ${
       type === 'error' ? 'bg-red-500' : 'bg-green-500'
-    } text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-slideIn`;
+    } text-white text-sm px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 animate-fadeIn`;
+    
     notification.innerHTML = `
       <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
       <span>${message}</span>
-      <button class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.remove()">
+      <button class="ml-3" onclick="this.parentElement.remove()">
         <i class="fas fa-times"></i>
       </button>
     `;
+    
     document.body.appendChild(notification);
     
-    // Auto remove after 5 seconds
     setTimeout(() => {
-      if (notification.parentNode) {
-        notification.remove();
-      }
+      if (notification.parentNode) notification.remove();
     }, 5000);
   }
 
-  // Add animation for notifications
+  // Add fade-in animation
   const style = document.createElement('style');
   style.textContent = `
-    @keyframes slideIn {
+    @keyframes fadeIn {
       from {
-        transform: translateX(100%);
         opacity: 0;
+        transform: translateY(-10px);
       }
       to {
-        transform: translateX(0);
         opacity: 1;
+        transform: translateY(0);
       }
     }
     
-    .animate-slideIn {
-      animation: slideIn 0.3s ease-out;
+    .animate-fadeIn {
+      animation: fadeIn 0.2s ease-out;
     }
   `;
   document.head.appendChild(style);

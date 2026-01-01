@@ -17,13 +17,59 @@ class UserService {
     try {
       const categories = await Category.allWithCourses();
       const freeCourses = await Course.findFree();
-      
+
+    
+
+      const getEnrolledCount = async () => {
+        return []
+      }
+      const getCompletedCount = async () => {
+        return []
+      }
+      const getHoursLearned = async () => {
+        return []
+      }
+      const getLearningStreak = async () => {
+        return []
+      }
+
+   
+      const getActiveCourses = async () => {
+        return []
+      }
+      const getUpcomingSessions = async () => {
+        return []
+      }
+      const getRecentlyViewed = async () => {
+        return []
+      }
+      const getAchievements = async () => {
+        return []
+      }
+      const getRecommendedCourses = async () => {
+        return []
+      }
+
+        const stats = {
+        enrolledCourses: await getEnrolledCount(userId),
+        completedCourses: await getCompletedCount(userId),
+        hoursLearned: await getHoursLearned(userId),
+        streak: await getLearningStreak(userId)
+      };
+
+
       return {
         success: true,
         data: {
           categories: categories || [],
           freeCourses: freeCourses || [],
-          customerToPay: 70000
+          customerToPay: 70000,
+          stats,
+          activeCourses: await getActiveCourses(userId),
+          upcomingSessions: await getUpcomingSessions(userId),
+          recentCourses: await getRecentlyViewed(userId),
+          achievements: await getAchievements(userId),
+          recommendedCourses: await getRecommendedCourses(userId),
         }
       };
     } catch (error) {
@@ -40,7 +86,7 @@ class UserService {
   static async getCategoryCourses(userId, categoryId) {
     try {
       const category = await Category.findById(categoryId);
-      
+
       if (!category) {
         return {
           success: false,
@@ -50,7 +96,7 @@ class UserService {
       }
 
       const courses = await Course.findByCategory(categoryId);
-      
+
       // Calculate progress for each course
       for (const course of courses) {
         const totalRes = await pool.query(
@@ -64,7 +110,7 @@ class UserService {
 
         const total = parseInt(totalRes.rows[0].count);
         const completed = parseInt(completeRes.rows[0].count);
-        
+
         course.total_sessions = total;
         course.completed_sessions = completed;
         course.progress = total > 0 ? Math.round((completed / total) * 100) : 0;
@@ -157,7 +203,7 @@ class UserService {
   static async getCourses(userId) {
     try {
       const enrolledCourses = await Enrollment.listEnrolledCourses(userId);
-      
+
       return {
         success: true,
         data: {
@@ -178,7 +224,7 @@ class UserService {
     try {
       const courseDetails = await Course.getCourseDetails(courseId);
       const isEnrolled = await Enrollment.isEnrolled(userId, courseId);
-      
+
       return {
         success: true,
         data: {
@@ -201,7 +247,7 @@ class UserService {
     try {
       const categories = await Category.allWithCourses();
       const freeCourses = await Course.allFreeCourses();
-      
+
       return {
         success: true,
         data: {
@@ -223,7 +269,7 @@ class UserService {
   static async editProfile(userId, profileData) {
     try {
       const { fullName, bio, phone } = profileData;
-      
+
       if (!fullName) {
         return {
           success: false,
@@ -233,12 +279,12 @@ class UserService {
       }
 
       const isEdited = await User.update(fullName, bio, phone, userId);
-      
+
       return {
         success: isEdited,
         data: {
-          message: isEdited 
-            ? 'Profile updated successfully' 
+          message: isEdited
+            ? 'Profile updated successfully'
             : 'Failed to update profile'
         }
       };
@@ -256,7 +302,7 @@ class UserService {
   static async getCourseSchedule(userId, categoryId, courseId) {
     try {
       const sessions = await ClassSession.listByCourse(courseId);
-      const allSessionsComplete = sessions.length > 0 && 
+      const allSessionsComplete = sessions.length > 0 &&
         sessions.every(session => session.is_complete);
 
       const sessionIds = sessions.map(s => s.id);
@@ -306,7 +352,7 @@ class UserService {
   static async getClassDetails(userId, classId, categoryId, courseId) {
     try {
       const session = await ClassSession.findById(classId);
-      
+
       const { rows: courseVideos } = await pool.query(
         `SELECT id, title, part_number, video_url, thumbnail_url
          FROM class_videos
@@ -347,7 +393,7 @@ class UserService {
       }
 
       const sessions = await Attendance.studentClassHistory(userId, course.id);
-      
+
       return {
         success: true,
         data: {
@@ -417,7 +463,7 @@ class UserService {
 
       const reference = uuidv4();
       const payment_id = uuidv4();
-      
+
       const callbackUrl = `${process.env.LIVE_DIRR || process.env.NGROK_URL || `http://localhost:${process.env.PORT}`}/user/course/verify`;
 
       const paystackRes = await axios.post(
@@ -492,7 +538,7 @@ class UserService {
 
       if (response.data.status && response.data.data.status === 'success') {
         const metadata = response.data.data.metadata;
-        
+
         await Enrollment.enroll({
           id: uuidv4(),
           user_id: metadata.userId,

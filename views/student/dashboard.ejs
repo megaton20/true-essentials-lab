@@ -1,161 +1,317 @@
 <!-- Navbar -->
 <%-include('./partials/topnav') %>
 
-  <!-- Sidebar -->
-  <%-include('./partials/sidenav') %>
+<!-- Sidebar -->
+<%-include('./partials/sidenav') %>
 
-    <!-- Main Content -->
-    <div class="container-fluid mt-4">
-
-
-      <div class="row">
+<!-- Main Content -->
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
         <!-- Static Sidebar for desktop -->
-        <div class="col-lg-3 d-none d-lg-block">
-          <%-include('./partials/staticsidebar') %>
+        <div class="hidden lg:block lg:w-1/4">
+            <%-include('./partials/staticsidebar') %>
         </div>
 
         <!-- Main Dashboard Section -->
-        <div class="col-lg-9">
-          <main class="p-0">
-            <!-- Welcome Banner -->
-            <div class="bg-grad text-center text-white rounded p-4 mb-4 shadow-sm">
-              <div class="text-center">
-                <p>Home</p>
-                <hr>
-                <p class="mb-0">Welcome <%= user.full_name %>!</p>
-              </div>
+        <div class="lg:w-3/4">
+            <!-- Welcome Section -->
+            <div class="mb-6">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl p-4 mb-4">
+                    <div class="text-center">
+                        <h1 class="text-lg font-medium">Welcome <%= user.full_name %>!</h1>
+                    </div>
+                </div>
+                
+                <%- include('../partials/messages') %>
             </div>
-            <%- include('../partials/messages') %>
 
-
-              <div class="mb-3">
-                <p class="mb-3 text-success" style="font-size: 17px;">Free Programs </p>
-                <div class="scroll-wrapper">
-                  <!-- Navigation buttons -->
-                  <button class="scroll-btn scroll-btn-left" onclick="scrollCourses(-1)">
-                    <i class="fas fa-chevron-left"></i>
-                  </button>
-                  <button class="scroll-btn scroll-btn-right" onclick="scrollCourses(1)">
-                    <i class="fas fa-chevron-right"></i>
-                  </button>
-
-                  <div class="scroll-container" id="coursesContainer">
-                    <% freeCourses.forEach(course=> { %>
-                      <div class="course-card">
-                             <% if (course.image_url == "default.jpg") { %>
-                              <img src="/images/thumbnail.png" alt="<%= course.title %>">
-                              <% } else { %>
-                                <img src="<%= course.image_url %>" alt="<%= course.title %>">
-                              <% } %>
-                              
-
-                        <div class="card-overlay">
-                          <div class="course-title text-warning">
-                            <%= course.title %>
-                          </div>
-                          <div class="course-meta">
-                            <% if (course.enrolled_count> 20) { %>
-                              <span><i class="fas fa-users text-light"></i>
-                                <%= (parseInt(course.enrolled_count) || 0) + 75 %>
-                              </span>
-                              <% } else { %>
-                                <% } %>
-
-                          </div>
-                          <a href="/user/course/<%= course.id %>/details" class="btn view-button">View Program</a>                       
-
+            <!-- Learning Progress -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-base font-semibold text-gray-900">Your Progress</h2>
+                    <a href="/user/progress" class="text-xs text-green-600 hover:text-green-700 font-medium">
+                        View details
+                    </a>
+                </div>
+                
+                <div class="space-y-4">
+                    <% if (activeCourses && activeCourses.length > 0) { %>
+                        <% activeCourses.forEach(course => { %>
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-600 mb-1">
+                                <span><%= course.title %></span>
+                                <span><%= course.progress %>%</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full transition-all" 
+                                    style="width: <%= course.progress %>%"></div>
+                            </div>
                         </div>
-                      </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-line text-gray-300 text-xl mb-2"></i>
+                            <p class="text-sm text-gray-500">No active courses</p>
+                            <a href="/user/course/free" class="text-xs text-green-600 hover:text-green-700 font-medium mt-2 inline-block">
+                                Browse programs
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Free Programs Section -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-base font-semibold text-gray-900">Free Programs</h2>
+                    <a href="/user/course/free" class="text-xs text-green-600 hover:text-green-700 font-medium">
+                        View all
+                    </a>
+                </div>
+
+                <div class="relative">
+                    <!-- Navigation buttons -->
+                    <button class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors"
+                            onclick="scrollCourses(-1)">
+                        <i class="fas fa-chevron-left text-xs text-gray-600"></i>
+                    </button>
+                    
+                    <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors"
+                            onclick="scrollCourses(1)">
+                        <i class="fas fa-chevron-right text-xs text-gray-600"></i>
+                    </button>
+
+                    <div class="flex gap-3 overflow-x-auto pb-4 scrollbar-hide" id="coursesContainer">
+                        <% freeCourses.forEach(course => { %>
+                        <div class="flex-shrink-0 w-48">
+                            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-sm transition-shadow">
+                                <div class="relative">
+                                    <img src="<%= course.image_url === 'default.jpg' ? '/images/thumbnail.png' : course.image_url %>"
+                                         alt="<%= course.title %>"
+                                         class="w-full h-32 object-cover">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+                                        <h3 class="text-xs font-medium text-white truncate"><%= course.title %></h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-3">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs text-gray-500">
+                                            <i class="fas fa-users text-gray-400 mr-1"></i>
+                                            <%= parseInt(course.enrolled_count || 0) + 75 %>
+                                        </span>
+                                    </div>
+                                    
+                                    <a href="/user/course/<%= course.id %>/details"
+                                       class="block w-full text-center text-xs font-medium text-white bg-green-500 hover:bg-green-600 py-2 rounded-lg transition-colors">
+                                        View Program
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                        
+                        <!-- View All Card -->
+                        <div class="flex-shrink-0 w-48">
+                            <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg p-4 h-full flex flex-col justify-center items-center text-center">
+                                <div class="mb-2">
+                                    <p class="text-xs opacity-90">We have more</p>
+                                    <h3 class="text-sm font-semibold">Free Programs</h3>
+                                </div>
+                                <a href="/user/course/free" class="text-xs font-medium text-white border border-white/30 hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors">
+                                    Explore more
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Sessions -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-base font-semibold text-gray-900">Upcoming Live Sessions</h2>
+                    <a href="/user/sessions" class="text-xs text-green-600 hover:text-green-700 font-medium">
+                        All sessions
+                    </a>
+                </div>
+                
+                <div class="space-y-3">
+                    <% if (upcomingSessions && upcomingSessions.length > 0) { %>
+                        <% upcomingSessions.forEach(session => { %>
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-video text-green-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-medium text-gray-900 truncate"><%= session.title %></h3>
+                                <div class="flex items-center gap-2 text-xs text-gray-500">
+                                    <i class="fas fa-calendar text-xs"></i>
+                                    <span><%= new Date(session.scheduled_at).toLocaleDateString() %></span>
+                                    <i class="fas fa-clock text-xs ml-2"></i>
+                                    <span><%= new Date(session.scheduled_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></span>
+                                </div>
+                            </div>
+                            <a href="<%= session.meet_link %>" 
+                              target="_blank"
+                              class="text-xs font-medium text-white bg-green-500 hover:bg-green-600 px-3 py-1.5 rounded-lg transition-colors">
+                                Join
+                            </a>
+                        </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times text-gray-300 text-xl mb-2"></i>
+                            <p class="text-sm text-gray-500">No upcoming sessions</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            <!-- TSA Categories Section -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                <h2 class="text-base font-semibold text-gray-900 mb-3">TSA Categories</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <%- include('../partials/courses') %>
+                </div>
+            </div>
+
+            <!-- Recommended For You -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-base font-semibold text-gray-900">Recommended For You</h2>
+                    <span class="text-xs text-gray-500">Based on your interests</span>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <% recommendedCourses.forEach(course => { %>
+                    <a href="/user/course/<%= course.id %>/details" 
+                      class="group block">
+                        <div class="border border-gray-200 rounded-lg overflow-hidden hover:border-green-500 hover:shadow-sm transition-all">
+                            <div class="relative">
+                                <img src="<%= course.image_url === 'default.jpg' ? '/images/thumbnail.png' : course.image_url %>"
+                                    alt="<%= course.title %>"
+                                    class="w-full h-32 object-cover">
+                                <div class="absolute top-2 right-2">
+                                    <span class="text-xs font-medium px-2 py-1 rounded-full bg-green-500 text-white">
+                                        <%= course.match %>% match
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="text-sm font-medium text-gray-900 group-hover:text-green-700 mb-1 truncate">
+                                    <%= course.title %>
+                                </h3>
+                                <div class="flex items-center justify-between text-xs text-gray-500">
+                                    <span><i class="fas fa-users mr-1"></i><%= course.enrolled_count %></span>
+                                    <span><%= course.duration %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <% }) %>
+                </div>
+            </div>
+
+            <!-- Continue Learning -->
+          <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+              <div class="flex justify-between items-center mb-4">
+                  <h2 class="text-base font-semibold text-gray-900">Continue Learning</h2>
+                  <a href="/user/learning" class="text-xs text-green-600 hover:text-green-700 font-medium">
+                      See all
+                  </a>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <% if (recentCourses && recentCourses.length > 0) { %>
+                      <% recentCourses.forEach(course => { %>
+                      <a href="/user/course/<%= course.id %>/details" 
+                        class="group flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all">
+                          <img src="<%= course.image_url === 'default.jpg' ? '/images/thumbnail.png' : course.image_url %>"
+                              alt="<%= course.title %>"
+                              class="w-12 h-12 object-cover rounded-lg">
+                          <div class="flex-1 min-w-0">
+                              <h3 class="text-sm font-medium text-gray-900 group-hover:text-green-700 truncate">
+                                  <%= course.title %>
+                              </h3>
+                              <p class="text-xs text-gray-500">Last viewed: <%= course.last_accessed %></p>
+                          </div>
+                          <i class="fas fa-arrow-right text-gray-400 group-hover:text-green-600 text-sm"></i>
+                      </a>
                       <% }) %>
-
-                        <div class="course-card-button bg-grad">
-                          <div class="text-warning">
-                            <p>we have more</p>
-                            <h1>Free Programs</h1>
-                          </div>
-                          <div class="course-meta">
-                            <a href="/user/course/free" class="btn text-warning">Explore more</a>
-                          </div>
-                        </div>
-                  </div>
-                </div>
+                  <% } else { %>
+                      <div class="col-span-2 text-center py-4">
+                          <i class="fas fa-book-open text-gray-300 text-xl mb-2"></i>
+                          <p class="text-sm text-gray-500">Start learning to see your progress here</p>
+                      </div>
+                  <% } %>
               </div>
-
-
-              <div class="mb-4 card shadow-sm p-2">
-                <p class="text-success mb-3"> TSA Categories</p>
-                <div class="row">
-                  <%- include('../partials/courses') %>
-                </div>
-
-              </div>
-          </main>
-
-
+          </div>
         </div>
-      </div>
+
     </div>
+</div>
+</div>
 
+<style>
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .bg-grad {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+</style>
 
-    <script>
-      const scrollContainer = document.getElementById('free-courses-scroll');
-      const cards = scrollContainer.querySelectorAll('.course-card');
-
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            cards.forEach(card => card.classList.remove('focused'));
-            entry.target.classList.add('focused');
-          }
-        });
-      }, {
-        root: scrollContainer,
-        threshold: 0.5
-      });
-
-      cards.forEach(card => observer.observe(card));
-    </script>
-
-    <script>
-      function scrollCourses(direction) {
+<script>
+    function scrollCourses(direction) {
         const container = document.getElementById('coursesContainer');
-        const scrollAmount = 300; // Adjust this value as needed
-
+        const scrollAmount = 200; // Card width + gap
+        
         container.scrollBy({
-          left: direction * scrollAmount,
-          behavior: 'smooth'
+            left: direction * scrollAmount,
+            behavior: 'smooth'
         });
-      }
+    }
 
-      // Optional: Hide buttons when at the edges
-      function updateButtonVisibility() {
+    // Update button visibility on scroll
+    function updateButtonVisibility() {
         const container = document.getElementById('coursesContainer');
-        const leftBtn = document.querySelector('.scroll-btn-left');
-        const rightBtn = document.querySelector('.scroll-btn-right');
-
-        // Show/hide left button
+        const leftBtn = container.previousElementSibling;
+        const rightBtn = container.nextElementSibling;
+        
+        if (!leftBtn || !rightBtn) return;
+        
+        // Left button
         if (container.scrollLeft <= 10) {
-          leftBtn.style.opacity = '0.5';
-          leftBtn.style.pointerEvents = 'none';
+            leftBtn.style.opacity = '0.5';
+            leftBtn.style.pointerEvents = 'none';
         } else {
-          leftBtn.style.opacity = '1';
-          leftBtn.style.pointerEvents = 'auto';
+            leftBtn.style.opacity = '1';
+            leftBtn.style.pointerEvents = 'auto';
         }
-
-        // Show/hide right button
+        
+        // Right button
         if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) {
-          rightBtn.style.opacity = '0.5';
-          rightBtn.style.pointerEvents = 'none';
+            rightBtn.style.opacity = '0.5';
+            rightBtn.style.pointerEvents = 'none';
         } else {
-          rightBtn.style.opacity = '1';
-          rightBtn.style.pointerEvents = 'auto';
+            rightBtn.style.opacity = '1';
+            rightBtn.style.pointerEvents = 'auto';
         }
-      }
+    }
 
-      // Initialize button visibility and add scroll event listener
-      document.addEventListener('DOMContentLoaded', function () {
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('coursesContainer');
-        container.addEventListener('scroll', updateButtonVisibility);
-        updateButtonVisibility();
-      });
-    </script>
+        if (container) {
+            container.addEventListener('scroll', updateButtonVisibility);
+            updateButtonVisibility();
+        }
+    });
+</script>

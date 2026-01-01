@@ -5,12 +5,10 @@ const session = require('express-session');
 const bodyParser = require('body-parser')
 const ejsLayouts = require('express-ejs-layouts');
 const env = process.env
-// const database = require("./config/db")
 const flash = require('connect-flash');
 const passport = require('passport');
 const path = require('path')
 const methodOverride = require('method-override');
-const { ensureAuthenticated } = require("./config/auth");
 
 
 
@@ -21,14 +19,7 @@ require('./jobs/scheduler');
 
 
 const PORT = env.PORT
-// const user = require('./models/User')
-const openRoutes = require('./routes/index')
-const authRoutes = require('./routes/authRoutes')
-const userRoutes = require('./routes/userRoutes')
-const classRoutes = require('./routes/classRoutes')
-const adminRoutes = require('./routes/adminRoutes')
-const teacherRoutes = require('./routes/teacherRoutes')
-const affiliateRoutes = require('./routes/affiliateRoutes')
+
 
 app.set('view engine', 'ejs');
 app.use(ejsLayouts);

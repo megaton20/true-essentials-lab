@@ -1,250 +1,375 @@
-
-
 <script>
   function copyRefLink() {
     const text = document.getElementById('refLink').innerText;
     navigator.clipboard.writeText(text).then(() => {
-      alert('Referral link copied to clipboard!');
+      // Toast notification instead of alert
+      showToast('Referral link copied to clipboard!', 'success');
     });
   }
 </script>
 
+<!-- Navbar -->
+<%-include('./partials/topnav') %>
 
-  <!-- Navbar -->
-  <%-include('./partials/topnav') %>
-  
-  <!-- Sidebar -->
-  <%-include('./partials/sidenav') %>
-  
+<!-- Sidebar -->
+<%-include('./partials/sidenav') %>
 
-  <!-- Main Content -->
-  <div class="container-fluid mt-4">
-    <div class="row">
-      <!-- Static Sidebar for desktop -->
-      <div class="col-lg-3 d-none d-lg-block">
+<!-- Main Content -->
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Static Sidebar for Desktop -->
+      <div class="hidden lg:block lg:w-1/4">
         <%-include('./partials/staticsidebar') %>
-         <!-- Sidebar -->
-        </div>
-
-      <!-- Main Dashboard Section -->
-      <div class="col-lg-9">
-
-        <main class="p-0">
-        
-          <%- include('./partials/messages') %>
-          <!-- Stats -->         
-
-              <div class="bg-white shadow-sm p-2 rounded mb-4">
-
-                    <div class="container my-4">
-
-                      <!-- Balance Jumbotron -->
-                    <div class="p-4 mb-4 bg-light rounded-3 shadow-sm d-flex justify-content-between align-items-center">
-                      <div>
-                            <h4 class="mb-1" style="font-size: 11px;">Your Available Balance</h4>
-                          <h2 class="fw-bold text-success">
-                            NGN <%= Number(referrer.balance).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
-                          </h2>
-
-                      </div>
-                   
-                      <% if (referrer.bank_name && referrer.account_number && referrer.account_name) { %>
-                          <!-- Show Withdraw Confirmation Modal -->
-                           <% if (referrer.balance <= 0) { %>
-                              <button class="btn btn-success btn-sm" disabled>
-                            <i class="bi bi-bank"></i> Low balance
-                          </button>
-                             <% } else { %>
-
-                          <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmWithdrawModal">
-                            <i class="bi bi-bank"></i> Withdraw
-                          </button>
-                            <% } %>
-                        <% } else { %>
-                          <!-- Show Edit Bank Info Modal -->
-                          <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#bankDetailsModal">
-                            <i class="bi bi-pencil-square"></i> Add Bank Info
-                          </button>
-                        <% } %>
-
-
-                    </div>
-
-
-                      <!-- Referral Link -->
-                      <div class="mb-4">
-                        <h5>Your Referral Link</h5>
-                        <div class="referral-link-box d-flex justify-content-between align-items-center">
-                          <span id="refLink" class="text-truncate"><%=referralLink%></span>
-                          <button class="btn btn-outline-success btn-sm" onclick="copyRefLink()">
-                            <i class="bi bi-clipboard"></i> Copy
-                          </button>
-                        </div>
-                      </div>
-
-                      <!-- Stats Cards -->
-                      <div class="row mb-4">
-                        <div class="col-md-3 mb-3">
-                          <div class="card card-stat text-center p-3">
-                            <i class="bi bi-person-plus fs-2 text-primary"></i>
-                            <h4 class="fw-bold"><%=referees.length%></h4>
-                            <p class="text-muted">Referrals</p>
-                          </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                          <div class="card card-stat text-center p-3">
-                            <i class="bi bi-currency-dollar fs-2 text-success"></i>
-                            <h4 class="fw-bold">
-                            NGN <%= Number(referrer.balance).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
-                            </h4>
-                            <p class="text-muted">Total Earnings</p>
-                          </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                          <div class="card card-stat text-center p-3">
-                            <i class="bi bi-cash-coin fs-2 text-warning"></i>
-                            <h4 class="fw-bold">
-                           NGN <%= Number(pending).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
-
-                            </h4>
-                            <p class="text-muted">Pending Payout</p>
-                          </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                          <div class="card card-stat text-center p-3">
-                            <i class="bi bi-wallet2 fs-2 text-danger"></i>
-                            <h4 class="fw-bold">
-                            
-                                                       NGN <%= Number(paidout).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
-
-                                                      </h4>
-                            <p class="text-muted">Paid Out</p>
-                          </div>
-                        </div>
-                      </div>
-
-                        <h4>Your Referrals</h4>
-
-                        <div class="table-responsive">
-                          <table class="table table-striped table-hover align-middle">
-                            <thead class="table-light">
-                              <tr>
-                                <th>Name</th>
-                                <th>Earned</th>
-                                <th>Redeem</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <% referees.forEach(ref => { %>
-                                <tr>
-                                  <td><%= ref.full_name %></td>
-                                  <td>
-                                    <%- ref.has_earned 
-                                      ? '<span class="badge bg-success">Yes</span>' 
-                                      : '<span class="badge bg-secondary">No</span>' 
-                                    %>
-                                  </td>
-
-                                  <td>
-                                    <%- ref.paid 
-                                      ? '<span class="badge bg-success">Claimed</span>' 
-                                      : '<span class="badge bg-warning text-dark">Pending</span>' 
-                                    %>
-                                  </td>
-
-                                  <td>
-                                    <% if (ref.has_earned && !ref.paid) { %>
-                                      <form action="/affiliate/claim" method="POST" class="d-inline">
-                                        <input type="hidden" name="referralId" value="<%= ref.id %>">
-                                        <button class="btn btn-sm btn-outline-primary">
-                                          <i class="bi bi-cash-coin"></i> Claim
-                                        </button>
-                                      </form>
-                                    <% } else { %>
-                                      <button class="btn btn-sm btn-outline-danger" disabled>
-                                        <i class="bi bi-cash-coin"></i> Claim
-                                      </button>
-                                    <% } %>
-                                  </td>
-                                </tr>
-                              <% }) %>
-                            </tbody>
-                          </table>
-                        </div>
-
-
-                    </div>
-
-                    <!-- Bank Details Modal -->
-                    <div class="modal fade" id="bankDetailsModal" tabindex="-1" aria-labelledby="bankDetailsModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="bankDetailsModalLabel"><i class="bi bi-bank2 me-2"></i>Your Bank Details</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                        
-                              <div class="alert alert-warning" role="alert">
-                                Your bank details are incomplete. Please update them to proceed with withdrawal.
-                              </div>
-                          </div>
-                          <div class="modal-footer">
-                            <a href="/user/profile" class="btn btn-outline-primary">
-                              <i class="bi bi-pencil-square"></i> Update Bank Info
-                            </a>
-                    
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-
-                    <div class="modal fade" id="confirmWithdrawModal" tabindex="-1" aria-labelledby="confirmWithdrawModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="confirmWithdrawModalLabel">
-                              <i class="bi bi-wallet me-2"></i> Confirm Withdrawal
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            <p>
-                              You're about to withdraw <strong>NGN <%= Number(referrer.balance).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %></strong> to:
-                            </p>
-                            <ul class="list-unstyled">
-                              <li><strong>Bank:</strong> <%= referrer.bank_name %></li>
-                              <li><strong>Account Name:</strong> <%= referrer.account_name %></li>
-                              <li><strong>Account Number:</strong> <%= referrer.account_number %></li>
-                            </ul>
-                            <p class="text-muted small">Are you sure you want to proceed?</p>
-                          </div>
-                          <div class="modal-footer">
-                            <form action="/affiliate/redeem" method="POST" class="d-inline">
-                              <input type="hidden" name="amount" id="" value="<%=referrer.balance%>">
-                              <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check2-circle"></i> Yes, Withdraw
-                              </button>
-                            </form>
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-
-
-              </div>
-        
-        </main>
-
       </div>
 
+      <!-- Main Content -->
+      <div class="lg:w-3/4">
+        <%- include('./partials/messages') %>
+
+        <!-- Balance Card -->
+        <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div class="text-sm text-gray-500 mb-1">Available Balance</div>
+              <div class="text-2xl font-bold text-green-600">
+                ₦<%= Number(referrer.balance).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
+              </div>
+            </div>
+            
+            <% if (referrer.bank_name && referrer.account_number && referrer.account_name) { %>
+              <% if (referrer.balance <= 0) { %>
+                <button class="text-sm text-gray-400 bg-gray-100 px-4 py-2 rounded-lg cursor-not-allowed" disabled>
+                  Low balance
+                </button>
+              <% } else { %>
+                <button onclick="document.getElementById('withdrawModal').classList.remove('hidden')"
+                        class="text-sm text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition-colors">
+                  Withdraw
+                </button>
+              <% } %>
+            <% } else { %>
+              <button onclick="document.getElementById('bankModal').classList.remove('hidden')"
+                      class="text-sm text-white bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg transition-colors">
+                Add Bank Info
+              </button>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Referral Link -->
+        <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+          <div class="text-sm font-medium text-gray-900 mb-2">Your Referral Link</div>
+          <div class="flex gap-2">
+            <div class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 overflow-x-auto">
+              <span id="refLink" class="text-sm text-gray-600"><%=referralLink%></span>
+            </div>
+            <button onclick="copyRefLink()"
+                    class="text-sm text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-lg transition-colors">
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div class="bg-white rounded-lg border border-gray-200 p-3">
+            <div class="text-sm text-gray-500 mb-1">Referrals</div>
+            <div class="text-lg font-semibold text-blue-600"><%=referees.length%></div>
+          </div>
+          
+          <div class="bg-white rounded-lg border border-gray-200 p-3">
+            <div class="text-sm text-gray-500 mb-1">Total Earnings</div>
+            <div class="text-lg font-semibold text-green-600">
+              ₦<%= Number(referrer.balance).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-lg border border-gray-200 p-3">
+            <div class="text-sm text-gray-500 mb-1">Pending</div>
+            <div class="text-lg font-semibold text-yellow-600">
+              ₦<%= Number(pending).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-lg border border-gray-200 p-3">
+            <div class="text-sm text-gray-500 mb-1">Paid Out</div>
+            <div class="text-lg font-semibold text-purple-600">
+              ₦<%= Number(paidout).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Referrals Table -->
+        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div class="p-4 border-b border-gray-200">
+            <h3 class="text-base font-semibold text-gray-900">Your Referrals</h3>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Name</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Earned</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Status</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <% referees.forEach(ref => { %>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-sm text-gray-900"><%= ref.full_name %></td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center px-2 py-1 text-xs rounded <%= 
+                      ref.has_earned ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                    %>">
+                      <%= ref.has_earned ? 'Yes' : 'No' %>
+                    </span>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center px-2 py-1 text-xs rounded <%= 
+                      ref.paid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    %>">
+                      <%= ref.paid ? 'Claimed' : 'Pending' %>
+                    </span>
+                  </td>
+                  <td class="px-4 py-3">
+                    <% if (ref.has_earned && !ref.paid) { %>
+                      <form action="/affiliate/claim" method="POST" class="inline">
+                        <input type="hidden" name="referralId" value="<%= ref.id %>">
+                        <button type="submit" 
+                                class="text-xs text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded transition-colors">
+                          Claim
+                        </button>
+                      </form>
+                    <% } else { %>
+                      <button class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded cursor-not-allowed" disabled>
+                        Claim
+                      </button>
+                    <% } %>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 
+<!-- Bank Details Modal -->
+<div id="bankModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
+      <div class="p-5">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Bank Details Required</h3>
+          <button type="button" onclick="closeModal('bankModal')" 
+                  class="text-gray-400 hover:text-gray-500">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="mb-4">
+          <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+            Your bank details are incomplete. Please update them to proceed with withdrawal.
+          </div>
+        </div>
+        
+        <div class="flex justify-end">
+          <a href="/user/profile" 
+             class="text-sm text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors">
+            Update Bank Info
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- Withdraw Confirmation Modal -->
+<div id="withdrawModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
+      <form action="/affiliate/redeem" method="POST">
+        <div class="p-5">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Confirm Withdrawal</h3>
+            <button type="button" onclick="closeModal('withdrawModal')" 
+                    class="text-gray-400 hover:text-gray-500">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="mb-5">
+            <p class="text-sm text-gray-600 mb-3">
+              You're about to withdraw <span class="font-semibold text-green-600">
+                ₦<%= Number(referrer.balance).toLocaleString('en-NG', { minimumFractionDigits: 2 }) %>
+              </span> to:
+            </p>
+            
+            <div class="space-y-2 text-sm">
+              <div class="flex">
+                <span class="text-gray-500 w-24">Bank:</span>
+                <span class="text-gray-900"><%= referrer.bank_name %></span>
+              </div>
+              <div class="flex">
+                <span class="text-gray-500 w-24">Account Name:</span>
+                <span class="text-gray-900"><%= referrer.account_name %></span>
+              </div>
+              <div class="flex">
+                <span class="text-gray-500 w-24">Account Number:</span>
+                <span class="text-gray-900"><%= referrer.account_number %></span>
+              </div>
+            </div>
+            
+            <p class="text-xs text-gray-500 mt-4">Are you sure you want to proceed?</p>
+          </div>
+          
+          <input type="hidden" name="amount" value="<%=referrer.balance%>">
+          
+          <div class="flex justify-end gap-2">
+            <button type="button" onclick="closeModal('withdrawModal')"
+                    class="text-sm text-gray-600 hover:text-gray-900">
+              Cancel
+            </button>
+            <button type="submit" 
+                    class="text-sm text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition-colors">
+              Yes, Withdraw
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
+<!-- Toast Notification Container (from previous code) -->
+<div id="toast-container" class="fixed z-[100] top-20 right-4 space-y-2"></div>
 
+<script>
+  // Modal functions
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+  }
+  
+  // Close modals when clicking outside
+  document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target.id === modal.id) {
+        closeModal(modal.id);
+      }
+    });
+  });
+  
+  // Close modals with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+        if (!modal.classList.contains('hidden')) {
+          closeModal(modal.id);
+        }
+      });
+    }
+  });
+
+  // Toast Notification System (from previous code)
+  function showToast(message, type = 'info', duration = 5000) {
+    const container = document.getElementById('toast-container');
+    if (!container) {
+      const newContainer = document.createElement('div');
+      newContainer.id = 'toast-container';
+      newContainer.className = 'fixed z-[100] top-20 right-4 space-y-2';
+      document.body.appendChild(newContainer);
+      return showToast(message, type, duration);
+    }
+    
+    const toastId = 'toast-' + Date.now();
+    const toast = document.createElement('div');
+    toast.id = toastId;
+    toast.className = `toast p-4 rounded-lg flex items-center justify-between ${
+      type === 'error' ? 'bg-red-500 text-white' :
+      type === 'success' ? 'bg-green-500 text-white' :
+      type === 'warning' ? 'bg-yellow-500 text-white' :
+      'bg-blue-500 text-white'
+    }`;
+    
+    const icon = type === 'error' ? 'fa-exclamation-circle' :
+                type === 'success' ? 'fa-check-circle' :
+                type === 'warning' ? 'fa-exclamation-triangle' :
+                'fa-info-circle';
+    
+    toast.innerHTML = `
+      <div class="flex items-center gap-3">
+        <i class="fas ${icon} text-lg"></i>
+        <span class="text-sm font-medium">${message}</span>
+      </div>
+      <button onclick="removeToast('${toastId}')" class="ml-4 text-white hover:text-gray-200">
+        <i class="fas fa-times"></i>
+      </button>
+    `;
+    
+    container.appendChild(toast);
+    
+    const autoRemove = setTimeout(() => {
+      removeToast(toastId);
+    }, duration);
+    
+    toast.dataset.timeoutId = autoRemove;
+  }
+  
+  function removeToast(toastId) {
+    const toast = document.getElementById(toastId);
+    if (toast) {
+      if (toast.dataset.timeoutId) {
+        clearTimeout(toast.dataset.timeoutId);
+      }
+      
+      toast.classList.add('fade-out');
+      
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 300);
+    }
+  }
+  
+  window.removeToast = removeToast;
+</script>
+
+<style>
+  /* Toast Animation Styles */
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  .toast {
+    animation: slideInRight 0.3s ease-out;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    max-width: 350px;
+  }
+  
+  .toast.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+  }
+</style>

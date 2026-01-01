@@ -6,7 +6,7 @@
 
 <!-- Main Content -->
 <div class="min-h-screen bg-gray-50">
-  <div class="container mx-auto px-4 py-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex flex-col lg:flex-row gap-6">
       <!-- Static Sidebar for Desktop -->
       <div class="hidden lg:block lg:w-1/4">
@@ -16,382 +16,176 @@
       <!-- Main Content Area -->
       <div class="lg:w-3/4">
         <!-- Header -->
-        <div class="flex justify-between items-center mb-6">
+        <div class="mb-8">
           <a href="/user" 
-             class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-            <i class="fas fa-arrow-left text-gray-600"></i>
-            <span class="text-sm font-medium text-gray-700">Back to Dashboard</span>
+             class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-4">
+            <i class="fas fa-arrow-left text-xs"></i>
+            Back to Dashboard
           </a>
           
-          <div class="flex items-center gap-3">
-            <span class="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
-              <%= courses.length %> Course<%= courses.length !== 1 ? 's' : '' %>
+          <div class="flex justify-between items-center mb-2">
+            <h1 class="text-xl font-bold text-gray-900">My Courses</h1>
+            <span class="text-sm text-gray-500">
+              <%= courses.length %> course<%= courses.length !== 1 ? 's' : '' %>
             </span>
           </div>
+          
+          <%- include('../partials/messages') %>
         </div>
 
-        <%- include('../partials/messages') %>
+        <% if (courses && courses.length > 0) { %>
+          <!-- Stats Overview -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
+              <div class="text-lg font-semibold text-gray-900 mb-1"><%= courses.length %></div>
+              <div class="text-xs text-gray-500">Total</div>
+            </div>
+            
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
+              <div class="text-lg font-semibold text-gray-900 mb-1">
+                <%= Math.round(courses.reduce((sum, course) => sum + (course.progress || 0), 0) / courses.length) || 0 %>%
+              </div>
+              <div class="text-xs text-gray-500">Progress</div>
+            </div>
+            
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
+              <div class="text-lg font-semibold text-gray-900 mb-1">
+                <%= courses.reduce((sum, course) => sum + (course.total_sessions || 0), 0) %>
+              </div>
+              <div class="text-xs text-gray-500">Classes</div>
+            </div>
+            
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
+              <div class="text-lg font-semibold text-gray-900 mb-1">
+                <%= courses.reduce((sum, course) => sum + (course.completed_sessions || 0), 0) %>
+              </div>
+              <div class="text-xs text-gray-500">Completed</div>
+            </div>
+          </div>
 
-        <!-- My Courses Section -->
-        <div class="mb-8">
-          <% if (courses && courses.length > 0) { %>
-            <!-- Section Header -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-              <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h1 class="text-2xl font-bold text-gray-900 mb-2">My Learning Dashboard</h1>
-                  <p class="text-gray-600">Track your progress across all enrolled programs</p>
+          <!-- Courses Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% courses.forEach(function (data) { %>
+            <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-sm transition-shadow">
+              <!-- Image -->
+              <div class="relative h-40">
+                <% if (data.image_url == "default.jpg") { %>
+                  <img src="/images/thumbnail.png" 
+                       class="w-full h-full object-cover">
+                <% } else { %>
+                  <img src="<%= data.image_url %>" 
+                       class="w-full h-full object-cover">
+                <% } %>
+                
+                <!-- Progress Badge -->
+                <% if (data.progress && data.progress > 0) { %>
+                <div class="absolute top-3 right-3">
+                  <span class="px-2 py-1 bg-blue-500 text-white text-xs font-medium rounded">
+                    <%= data.progress %>%
+                  </span>
                 </div>
-                <div class="flex items-center gap-3">
-                  <!-- Progress Summary -->
-                  <div class="text-center px-4 py-2 bg-blue-50 rounded-lg">
-                    <p class="text-sm text-gray-500">Overall Progress</p>
-                    <p class="text-xl font-bold text-blue-600">
-                      <%= courses.reduce((sum, course) => sum + (course.progress || 0), 0) / courses.length || 0 %>%
-                    </p>
-                  </div>
+                <% } %>
+                
+                <!-- Category Badge -->
+                <div class="absolute bottom-3 left-3">
+                  <span class="px-2 py-1 bg-gray-800/70 text-white text-xs rounded">
+                    <%= data.category_name?.slice(0, 12) || 'General' %>
+                  </span>
                 </div>
               </div>
-            </div>
 
-               <!-- Learning Summary -->
-            <div class="mt-8 bg-white rounded-xl shadow-lg p-6 mb-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-6">Learning Summary</h3>
-              
-              <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <!-- Total Courses -->
-                <div class="text-center p-4 bg-blue-50 rounded-xl">
-                  <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 mb-3">
-                    <i class="fas fa-book text-xl text-blue-600"></i>
-                  </div>
-                  <h4 class="text-2xl font-bold text-gray-900 mb-1"><%= courses.length %></h4>
-                  <p class="text-sm text-gray-600">Total Courses</p>
-                </div>
-                
-                <!-- Average Progress -->
-                <div class="text-center p-4 bg-green-50 rounded-xl">
-                  <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-3">
-                    <i class="fas fa-chart-line text-xl text-green-600"></i>
-                  </div>
-                  <h4 class="text-2xl font-bold text-gray-900 mb-1">
-                    <%= Math.round(courses.reduce((sum, course) => sum + (course.progress || 0), 0) / courses.length) || 0 %>%
-                  </h4>
-                  <p class="text-sm text-gray-600">Average Progress</p>
-                </div>
-                
-                <!-- Total Sessions -->
-                <div class="text-center p-4 bg-purple-50 rounded-xl">
-                  <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-100 mb-3">
-                    <i class="fas fa-video text-xl text-purple-600"></i>
-                  </div>
-                  <h4 class="text-2xl font-bold text-gray-900 mb-1">
-                    <%= courses.reduce((sum, course) => sum + (course.total_sessions || 0), 0) %>
-                  </h4>
-                  <p class="text-sm text-gray-600">Total Classes</p>
-                </div>
-                
-                <!-- Completed Sessions -->
-                <div class="text-center p-4 bg-yellow-50 rounded-xl">
-                  <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 mb-3">
-                    <i class="fas fa-check-circle text-xl text-yellow-600"></i>
-                  </div>
-                  <h4 class="text-2xl font-bold text-gray-900 mb-1">
-                    <%= courses.reduce((sum, course) => sum + (course.completed_sessions || 0), 0) %>
-                  </h4>
-                  <p class="text-sm text-gray-600">Completed Classes</p>
-                </div>
-              </div>
-              
-              <!-- Continue Learning CTA -->
-              <div class="mt-8 pt-6 border-t border-gray-200">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div>
-                    <h4 class="font-semibold text-gray-900 mb-1">Ready to continue learning?</h4>
-                    <p class="text-gray-600 text-sm">Pick up where you left off or explore new topics</p>
-                  </div>
-                  <div class="flex gap-3">
-                    <% if (courses.length > 0) { 
-                      // Find course with highest progress
-                      const highestProgressCourse = courses.reduce((prev, current) => 
-                        (prev.progress || 0) > (current.progress || 0) ? prev : current
-                      );
-                    %>
-                      <a href="/user/course/<%= highestProgressCourse.id %>/<%= highestProgressCourse.category_id %>" 
-                         class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">
-                        <i class="fas fa-play"></i>
-                        Continue Learning
-                      </a>
-                    <% } %>
-                    <a href="/user" 
-                       class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                      <i class="fas fa-plus"></i>
-                      Explore More
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            <!-- Courses Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <% courses.forEach(function (data) { %>
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300">
-                  <!-- Course Image -->
-                  <div class="relative h-48 overflow-hidden">
-                    <% if (data.image_url == "default.jpg") { %>
-                      <img src="/images/thumbnail.png" 
-                           alt="Program image" 
-                           class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
-                    <% } else { %>
-                      <img src="/uploads/<%= data.image_url %>" 
-                           alt="Program image" 
-                           class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
-                    <% } %>
-                    
-                    <!-- Progress Badge -->
-                    <% if (data.progress && data.progress > 0) { %>
-                      <div class="absolute top-4 right-4">
-                        <span class="px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow">
-                          <%= data.progress %>% Complete
-                        </span>
-                      </div>
-                    <% } %>
-                    
-                    <!-- Category Badge -->
-                    <div class="absolute bottom-4 left-4">
-                      <span class="px-3 py-1 bg-black bg-opacity-50 text-white text-xs rounded-full backdrop-blur-sm">
-                        <i class="fas fa-folder mr-1"></i>
-                        <%= data.category_name || 'General' %>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Course Content -->
-                  <div class="p-5">
-                    <!-- Course Title & Description -->
-                    <h3 class="font-bold text-gray-900 mb-2 line-clamp-1" title="<%= data.title %>">
-                      <%= data.title %>
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 line-clamp-2" title="<%= data.description %>">
-                      <%= data.description %>
-                    </p>
-
-                    <!-- Course Stats -->
-                    <div class="space-y-4">
-                      <!-- Sessions Progress -->
-                      <div>
-                        <div class="flex justify-between items-center mb-2">
-                          <span class="text-xs font-medium text-gray-700">Classes Progress</span>
-                          <span class="text-xs font-bold text-blue-600">
-                            <%= data.completed_sessions || 0 %>/<%= data.total_sessions || 0 %>
-                          </span>
-                        </div>
-                        
-                        <!-- Progress Bar -->
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                          <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300"
-                               style="width: <%= data.progress || 0 %>%"></div>
-                        </div>
-                      </div>
-
-                      <!-- Quick Stats -->
-                      <div class="grid grid-cols-2 gap-3">
-                        <!-- Total Classes -->
-                        <div class="text-center p-2 bg-gray-50 rounded-lg">
-                          <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-1">
-                            <i class="fas fa-video text-blue-500 text-sm"></i>
-                          </div>
-                          <p class="text-xs text-gray-500">Classes</p>
-                          <p class="text-sm font-bold text-gray-900"><%= data.total_sessions || 0 %></p>
-                        </div>
-                        
-                        <!-- Completed -->
-                        <div class="text-center p-2 bg-gray-50 rounded-lg">
-                          <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-1">
-                            <i class="fas fa-check-circle text-green-500 text-sm"></i>
-                          </div>
-                          <p class="text-xs text-gray-500">Completed</p>
-                          <p class="text-sm font-bold text-gray-900"><%= data.completed_sessions || 0 %></p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="mt-6 pt-4 border-t border-gray-100">
-                      <div class="flex gap-3">
-                        <!-- Primary Action -->
-                        <a href="/user/course/<%= data.id %>/<%= data.category_id %>" 
-                           class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all">
-                          <i class="fas fa-play-circle"></i>
-                          <% if (data.progress && data.progress > 0) { %>
-                            Continue
-                          <% } else { %>
-                            Start Learning
-                          <% } %>
-                        </a>
-                        
-                        <!-- Quick Actions -->
-                        <div class="flex gap-2">
-                          
-                          <!-- Details Button -->
-                          <a href="/user/course/<%= data.id %>/details" 
-                             class="inline-flex items-center justify-center w-10 h-10 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                             title="Course Details">
-                            <i class="fas fa-info-circle"></i>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <% }); %>
-            </div>
-
-         
-          <% } else { %>
-            <!-- Empty State -->
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-              <div class="text-center py-12">
-                <div class="mb-6">
-                  <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-50">
-                    <i class="fas fa-book-open text-4xl text-blue-400"></i>
-                  </div>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">No Enrolled Programs</h3>
-                <p class="text-gray-600 mb-6 max-w-md mx-auto">
-                  You haven't enrolled in any programs yet. Start your learning journey by exploring our available programs.
+              <!-- Content -->
+              <div class="p-4">
+                <!-- Title & Description -->
+                <h3 class="text-sm font-semibold text-gray-900 mb-2 truncate">
+                  <%= data.title %>
+                </h3>
+                <p class="text-xs text-gray-500 mb-4 line-clamp-2">
+                  <%= data.description %>
                 </p>
-                <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                  <a href="/user" 
-                     class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors">
-                    <i class="fas fa-search"></i>
-                    Browse Programs
-                  </a>
-                  <a href="/user/course/free" 
-                     class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                    <i class="fas fa-gift"></i>
-                    View Free Programs
-                  </a>
+
+                <!-- Progress -->
+                <div class="mb-4">
+                  <div class="flex justify-between text-xs text-gray-600 mb-1">
+                    <span>
+                      <%= data.completed_sessions || 0 %>/<%= data.total_sessions || 0 %> classes
+                    </span>
+                    <span><%= data.progress || 0 %>%</span>
+                  </div>
+                  <div class="w-full bg-gray-100 rounded-full h-1.5">
+                    <div class="bg-blue-500 h-1.5 rounded-full" 
+                         style="width: <%= data.progress || 0 %>%"></div>
+                  </div>
                 </div>
+
+                <!-- Button -->
+                <a href="/user/course/<%= data.id %>/<%= data.category_id %>" 
+                   class="block w-full text-center text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 py-2 rounded-lg transition-colors">
+                  <% if (data.progress && data.progress > 0) { %>
+                    Continue
+                  <% } else { %>
+                    Start
+                  <% } %>
+                </a>
               </div>
             </div>
-          <% } %>
-        </div>
+            <% }); %>
+          </div>
+          
+          <!-- Continue Learning -->
+          <% 
+            const highestProgressCourse = courses.reduce((prev, current) => 
+              (prev.progress || 0) > (current.progress || 0) ? prev : current
+            );
+          %>
+          <div class="mt-8 bg-white rounded-lg border border-gray-200 p-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <p class="text-sm text-gray-500 mb-1">Continue learning</p>
+                <p class="text-sm font-medium text-gray-900">
+                  <%= highestProgressCourse.title %>
+                </p>
+              </div>
+              <a href="/user/course/<%= highestProgressCourse.id %>/<%= highestProgressCourse.category_id %>" 
+                 class="text-sm text-blue-600 hover:text-blue-700">
+                Continue →
+              </a>
+            </div>
+          </div>
+          
+        <% } else { %>
+          <!-- Empty State -->
+          <div class="bg-white rounded-lg border border-gray-200 p-8 text-center">
+            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-book-open text-gray-400"></i>
+            </div>
+            <h3 class="text-base font-semibold text-gray-900 mb-2">No Courses</h3>
+            <p class="text-sm text-gray-500 mb-6">
+              You haven't enrolled in any programs yet.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="/user" 
+                 class="text-sm text-gray-600 hover:text-gray-900">
+                Browse Programs
+              </a>
+              <span class="hidden sm:block text-gray-300">•</span>
+              <a href="/user/course/free" 
+                 class="text-sm text-blue-600 hover:text-blue-700">
+                Free Programs
+              </a>
+            </div>
+          </div>
+        <% } %>
       </div>
     </div>
   </div>
 </div>
 
 <style>
-  .line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-  }
-  
   .line-clamp-2 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
-  
-  .hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-  
-  /* Progress bar animation */
-  @keyframes progressFill {
-    from {
-      width: 0%;
-    }
-  }
-  
-  .progress-bar-animated {
-    animation: progressFill 1s ease-out;
-  }
 </style>
-
-<script>
-  // Add hover effects and animations
-  document.addEventListener('DOMContentLoaded', function() {
-    // Add hover effects to course cards
-    const courseCards = document.querySelectorAll('.bg-white.rounded-xl');
-    courseCards.forEach(card => {
-      card.addEventListener('mouseenter', function() {
-        this.classList.add('hover-lift');
-      });
-      
-      card.addEventListener('mouseleave', function() {
-        this.classList.remove('hover-lift');
-      });
-      
-      // Add progress bar animation
-      const progressBar = card.querySelector('.bg-gradient-to-r.from-blue-500');
-      if (progressBar) {
-        progressBar.classList.add('progress-bar-animated');
-      }
-    });
-    
-    // Animate summary numbers
-    const summaryNumbers = document.querySelectorAll('.text-2xl.font-bold');
-    summaryNumbers.forEach(number => {
-      const target = parseInt(number.textContent.replace('%', ''));
-      if (!isNaN(target)) {
-        animateValue(number, 0, target, 1000);
-      }
-    });
-  });
-
-  // Number animation function
-  function animateValue(element, start, end, duration) {
-    let startTimestamp = null;
-    const step = (timestamp) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      const value = Math.floor(progress * (end - start) + start);
-      element.textContent = element.textContent.includes('%') ? value + '%' : value;
-      if (progress < 1) {
-        window.requestAnimationFrame(step);
-      }
-    };
-    window.requestAnimationFrame(step);
-  }
-
-  // Add CSS for animations
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .animate-fadeIn {
-      animation: fadeIn 0.5s ease-out;
-    }
-    
-    @keyframes progressFill {
-      from {
-        width: 0%;
-      }
-    }
-    
-    .progress-bar-animated {
-      animation: progressFill 1s ease-out;
-    }
-  `;
-  document.head.appendChild(style);
-</script>

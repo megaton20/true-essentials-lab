@@ -5,7 +5,7 @@
 
 <!-- Main Content -->
 <div class="min-h-screen bg-gray-50">
-  <div class="container mx-auto px-4 py-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex flex-col lg:flex-row gap-6">
       <!-- Static Sidebar for Desktop -->
       <div class="hidden lg:block lg:w-1/4">
@@ -16,388 +16,223 @@
       <div class="lg:w-3/4">
         <%- include('../partials/messages') %>
 
-        <!-- Profile Header Section -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+        <!-- Profile Header -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
+          <div class="flex flex-col md:flex-row items-center md:items-start gap-4">
             <!-- Avatar -->
             <div class="flex-shrink-0">
               <div class="relative">
-                <img src="/images/zap.png" alt="User Avatar" class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
-                <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                  <i class="fas fa-camera text-white text-sm"></i>
-                </div>
+                <img src="/images/zap.png" alt="User Avatar" class="w-16 h-16 rounded-full border-2 border-white shadow">
               </div>
             </div>
             
             <!-- User Info -->
-            <div class="flex-grow">
-              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex-1">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
                 <div>
-                  <h1 class="text-2xl font-bold text-gray-900 mb-1"><%= user.full_name %></h1>
-                  <div class="flex flex-wrap items-center gap-2 mb-3">
-                    <span class="inline-flex items-center gap-1 text-gray-600">
-                      <i class="fas fa-envelope text-sm"></i>
-                      <span class="text-sm"><%= user.email %></span>
-                    </span>
-                    <span class="inline-flex items-center gap-1 text-gray-600">
-                      <i class="fas fa-phone text-sm"></i>
-                      <span class="text-sm"><%= user.phone || 'N/A' %></span>
-                    </span>
-                    <span class="inline-flex items-center gap-1 text-gray-600">
-                      <i class="fas fa-map-marker-alt text-sm"></i>
-                      <span class="text-sm"><%= user.location || 'N/A' %></span>
-                    </span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
-                      <i class="fas fa-user-tag mr-1"></i>
-                      <%= user.role || 'Student' %>
-                    </span>
-                    <span class="text-sm text-gray-500">
-                      <i class="far fa-calendar-alt mr-1"></i>
-                      Joined <%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
-                    </span>
+                  <h1 class="text-xl font-bold text-gray-900 mb-1"><%= user.full_name %></h1>
+                  <div class="text-sm text-gray-500">
+                    <%= user.email %> • Joined <%= new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) %>
                   </div>
                 </div>
                 <button onclick="document.getElementById('editUserModal').classList.remove('hidden')"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                  <i class="fas fa-edit"></i>
+                        class="text-sm text-gray-600 hover:text-gray-900">
                   Edit Profile
                 </button>
               </div>
               
               <!-- Bio -->
               <% if (user.bio) { %>
-                <div class="mt-4 pt-4 border-t border-gray-100">
-                  <p class="text-gray-600"><%= user.bio %></p>
-                </div>
+                <p class="text-sm text-gray-600"><%= user.bio %></p>
               <% } %>
             </div>
           </div>
         </div>
 
-        <!-- Stats Overview Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <!-- Courses Enrolled -->
-          <div class="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-500 mb-1">Courses Enrolled</p>
-                <h3 class="text-2xl font-bold text-blue-600"><%= profileStats.total_courses || 0 %></h3>
-              </div>
-              <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
-                <i class="fas fa-book-open text-xl text-blue-500"></i>
-              </div>
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div class="bg-white rounded-lg border border-gray-200 p-3">
+            <div class="text-sm text-gray-500 mb-1">Courses</div>
+            <div class="text-lg font-semibold text-blue-600"><%= profileStats.total_courses || 0 %></div>
+          </div>
+          
+          <div class="bg-white rounded-lg border border-gray-200 p-3">
+            <div class="text-sm text-gray-500 mb-1">Attendance</div>
+            <div class="text-lg font-semibold text-green-600">
+              <%= profileStats.attendance_rate || 0 %>%
             </div>
           </div>
           
-          <!-- Sessions Attended -->
-          <div class="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-500 mb-1">Sessions Attended</p>
-                <h3 class="text-2xl font-bold text-green-600">
-                  <%= profileStats.attended_sessions || 0 %>/<%= profileStats.total_sessions || 0 %>
-                </h3>
-                <p class="text-xs text-gray-500 mt-1">
-                  <i class="fas fa-chart-line mr-1"></i>
-                  <%= profileStats.attendance_rate || 0 %>% Attendance Rate
-                </p>
-              </div>
-              <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
-                <i class="fas fa-calendar-check text-xl text-green-500"></i>
-              </div>
-            </div>
+          <div class="bg-white rounded-lg border border-gray-200 p-3">
+            <div class="text-sm text-gray-500 mb-1">Badges</div>
+            <div class="text-lg font-semibold text-yellow-600"><%= profileStats.badges_earned || 0 %></div>
           </div>
           
-          <!-- Badges Earned -->
-          <div class="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-500 mb-1">Badges Earned</p>
-                <h3 class="text-2xl font-bold text-yellow-600"><%= profileStats.badges_earned || 0 %></h3>
-              </div>
-              <div class="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center">
-                <i class="fas fa-trophy text-xl text-yellow-500"></i>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Completion Rate -->
-          <div class="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-500 mb-1">Completion Rate</p>
-                <h3 class="text-2xl font-bold text-purple-600"><%= profileStats.approval_rate || 0 %>%</h3>
-              </div>
-              <div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center">
-                <i class="fas fa-chart-line text-xl text-purple-500"></i>
-              </div>
-            </div>
+          <div class="bg-white rounded-lg border border-gray-200 p-3">
+            <div class="text-sm text-gray-500 mb-1">Progress</div>
+            <div class="text-lg font-semibold text-purple-600"><%= profileStats.approval_rate || 0 %>%</div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Left Column - Courses Progress -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <!-- Left Column - Courses -->
           <div class="lg:col-span-2">
-            <!-- Courses Progress Section -->
-            <div class="bg-white rounded-xl shadow-lg mb-6">
-              <div class="p-6 border-b border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <i class="fas fa-graduation-cap text-blue-500"></i>
-                  My Courses & Progress
-                </h3>
+            <!-- Courses Section -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+              <div class="p-4 border-b border-gray-200">
+                <h3 class="text-base font-semibold text-gray-900">My Courses</h3>
               </div>
               
-              <div class="p-6">
+              <div class="p-4">
                 <% if (enrolledCourses.length > 0) { %>
-                  <div class="space-y-6">
+                  <div class="space-y-4">
                     <% enrolledCourses.forEach(course => { %>
-                      <div class="course-card p-4 border border-gray-200 rounded-xl hover:border-blue-300 transition-colors">
-                        <!-- Course Header -->
-                        <div class="flex justify-between items-start mb-4">
-                          <h4 class="font-semibold text-gray-900 line-clamp-1" title="<%= course.title %>">
-                            <%= course.title %>
-                          </h4>
-                          <span class="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
-                            <%= course.progress_percentage %>%
-                          </span>
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+                      <div class="flex justify-between items-start mb-3">
+                        <h4 class="text-sm font-semibold text-gray-900"><%= course.title %></h4>
+                        <span class="text-sm font-medium text-blue-600"><%= course.progress_percentage %>%</span>
+                      </div>
+                      
+                      <!-- Progress Bar -->
+                      <div class="mb-4">
+                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>Progress</span>
+                          <span><%= course.progress_percentage %>%</span>
                         </div>
-                        
-                        <!-- Progress Bar -->
-                        <div class="mb-4">
-                          <div class="flex justify-between text-sm text-gray-500 mb-1">
-                            <span>Progress</span>
-                            <span><%= course.progress_percentage %>%</span>
-                          </div>
-                          <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300"
-                                 style="width: <%= course.progress_percentage %>%"></div>
-                          </div>
-                        </div>
-                        
-                        <!-- Course Stats -->
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                              <i class="fas fa-video text-blue-500"></i>
-                            </div>
-                            <div>
-                              <p class="text-sm text-gray-500">Videos</p>
-                              <p class="font-bold text-gray-900"><%= course.total_videos || 0 %></p>
-                            </div>
-                          </div>
-                          
-                          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                              <i class="fas fa-calendar-check text-green-500"></i>
-                            </div>
-                            <div>
-                              <p class="text-sm text-gray-500">Sessions</p>
-                              <p class="font-bold text-gray-900"><%= course.attended_sessions %>/<%= course.total_sessions %></p>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <!-- Recent Sessions -->
-                        <div class="mt-4 pt-4 border-t border-gray-100">
-                          <h5 class="text-sm font-medium text-gray-700 mb-3">Recent Sessions</h5>
-                          <% if (course.sessions && course.sessions.length > 0) { %>
-                            <div class="space-y-2">
-                              <% course.sessions.slice(0, 3).forEach(session => { %>
-                                <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
-                                  <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate" title="<%= session.title %>">
-                                      <%= session.title %>
-                                    </p>
-                                    <p class="text-xs text-gray-500">
-                                      <%= new Date(session.scheduled_at).toLocaleDateString() %>
-                                    </p>
-                                  </div>
-                                  <span class="ml-2">
-                                    <% if (session.user_attended) { %>
-                                      <span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
-                                        <i class="fas fa-check mr-1"></i>
-                                        Attended
-                                      </span>
-                                    <% } else { %>
-                                      <span class="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                                        <i class="fas fa-times mr-1"></i>
-                                        Missed
-                                      </span>
-                                    <% } %>
-                                  </span>
-                                </div>
-                              <% }); %>
-                              
-                              <% if (course.sessions.length > 3) { %>
-                                <div class="text-center pt-2">
-                                  <button class="text-sm text-blue-600 hover:text-blue-700">
-                                    +<%= course.sessions.length - 3 %> more sessions
-                                  </button>
-                                </div>
-                              <% } %>
-                            </div>
-                          <% } else { %>
-                            <p class="text-sm text-gray-500 italic">No sessions scheduled yet</p>
-                          <% } %>
+                        <div class="w-full bg-gray-100 rounded-full h-1.5">
+                          <div class="bg-blue-500 h-1.5 rounded-full" 
+                               style="width: <%= course.progress_percentage %>%"></div>
                         </div>
                       </div>
+                      
+                      <!-- Stats -->
+                      <div class="flex gap-3 text-xs text-gray-500">
+                        <span><i class="fas fa-video text-gray-400 mr-1"></i><%= course.total_videos || 0 %> videos</span>
+                        <span><i class="fas fa-calendar-check text-gray-400 mr-1"></i><%= course.attended_sessions %>/<%= course.total_sessions %> sessions</span>
+                      </div>
+                      
+                      <!-- Recent Sessions -->
+                      <% if (course.sessions && course.sessions.length > 0) { %>
+                      <div class="mt-3 pt-3 border-t border-gray-100">
+                        <div class="space-y-2">
+                          <% course.sessions.slice(0, 2).forEach(session => { %>
+                          <div class="flex justify-between items-center text-xs">
+                            <span class="text-gray-600 truncate"><%= session.title %></span>
+                            <span class="px-2 py-1 rounded text-xs <%= 
+                              session.user_attended ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                            %>">
+                              <%= session.user_attended ? 'Attended' : 'Missed' %>
+                            </span>
+                          </div>
+                          <% }); %>
+                        </div>
+                      </div>
+                      <% } %>
+                    </div>
                     <% }); %>
                   </div>
                 <% } else { %>
-                  <!-- Empty State -->
-                  <div class="text-center py-8">
-                    <div class="mb-4">
-                      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100">
-                        <i class="fas fa-book-open text-2xl text-gray-400"></i>
-                      </div>
+                  <div class="text-center py-6">
+                    <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <i class="fas fa-book-open text-gray-400"></i>
                     </div>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">No Courses Enrolled</h4>
-                    <p class="text-gray-600 mb-4">Start your learning journey by enrolling in courses.</p>
-                    <a href="/courses" 
-                       class="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                      <i class="fas fa-search"></i>
-                      Browse Courses
-                    </a>
+                    <p class="text-sm text-gray-500">No courses enrolled</p>
                   </div>
                 <% } %>
               </div>
             </div>
           </div>
 
-          <!-- Right Column - Badges & Info -->
-          <div class="space-y-6">
-            <!-- Badge Progress -->
-            <div class="bg-white rounded-xl shadow-lg">
-              <div class="p-6 border-b border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <i class="fas fa-trophy text-yellow-500"></i>
-                  Badge Progress
-                </h3>
+          <!-- Right Column -->
+          <div class="space-y-4">
+            <!-- Badges -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+              <div class="p-4 border-b border-gray-200">
+                <h3 class="text-base font-semibold text-gray-900">Badges</h3>
               </div>
               
-              <div class="p-6">
-                <div class="space-y-4">
+              <div class="p-4">
+                <div class="space-y-3">
                   <% badgeProgress.forEach(badge => { %>
-                    <div class="p-4 border border-gray-200 rounded-xl hover:border-yellow-300 transition-colors">
-                      <div class="flex items-start gap-3 mb-3">
-                        <div class="flex-shrink-0 text-2xl">
-                          <%= badge.icon %>
-                        </div>
-                        <div class="flex-grow">
-                          <h4 class="font-semibold text-gray-900 mb-1"><%= badge.name %></h4>
-                          <p class="text-sm text-gray-600"><%= badge.description %></p>
-                        </div>
-                        <% if (badge.earned) { %>
-                          <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                            Earned!
-                          </span>
-                        <% } else { %>
-                          <span class="text-sm text-gray-500">
-                            <%= badge.progress %>%
-                          </span>
-                        <% } %>
+                  <div class="border border-gray-200 rounded-lg p-3">
+                    <div class="flex items-start gap-2 mb-2">
+                      <div class="text-lg"><%= badge.icon %></div>
+                      <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-900"><%= badge.name %></div>
+                        <div class="text-xs text-gray-500"><%= badge.description %></div>
                       </div>
-                      
-                      <% if (!badge.earned) { %>
-                        <div class="mt-3">
-                          <div class="flex justify-between text-sm text-gray-500 mb-1">
-                            <span>Progress</span>
-                            <span><%= badge.progress %>%</span>
-                          </div>
-                          <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full"
-                                 style="width: <%= badge.progress %>%"></div>
-                          </div>
-                          <div class="flex justify-between mt-2">
-                            <span class="text-xs text-gray-500">
-                              <%= badge.current %>/<%= badge.target %>
-                            </span>
-                            <span class="text-xs text-gray-500">
-                              <%= badge.target - badge.current %> to go
-                            </span>
-                          </div>
-                        </div>
+                      <% if (badge.earned) { %>
+                      <span class="text-xs text-green-600 font-medium">Earned</span>
                       <% } %>
                     </div>
+                    
+                    <% if (!badge.earned) { %>
+                    <div class="mt-2">
+                      <div class="flex justify-between text-xs text-gray-500 mb-1">
+                        <span>Progress</span>
+                        <span><%= badge.progress %>%</span>
+                      </div>
+                      <div class="w-full bg-gray-100 rounded-full h-1.5">
+                        <div class="bg-yellow-500 h-1.5 rounded-full" 
+                             style="width: <%= badge.progress %>%"></div>
+                      </div>
+                      <div class="text-xs text-gray-500 mt-1">
+                        <%= badge.current %>/<%= badge.target %>
+                      </div>
+                    </div>
+                    <% } %>
+                  </div>
                   <% }); %>
                 </div>
               </div>
             </div>
 
-            <!-- Additional Info -->
-            <div class="bg-white rounded-xl shadow-lg">
-              <div class="p-6 border-b border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <i class="fas fa-info-circle text-blue-500"></i>
-                  Account Information
-                </h3>
+            <!-- Account Info -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+              <div class="p-4 border-b border-gray-200">
+                <h3 class="text-base font-semibold text-gray-900">Account</h3>
               </div>
               
-              <div class="p-6">
-                <!-- Account Status -->
-                <div class="mb-6">
-                  <h4 class="font-medium text-gray-900 mb-2">Account Status</h4>
-                  <span class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full">
-                    <i class="fas fa-check-circle mr-2"></i>
-                    Active
-                  </span>
-                </div>
-                
-                <!-- Bio -->
-                <% if (user.bio) { %>
-                  <div class="mb-6">
-                    <h4 class="font-medium text-gray-900 mb-2">About</h4>
-                    <p class="text-gray-600 text-sm"><%= user.bio %></p>
+              <div class="p-4">
+                <div class="space-y-4">
+                  <!-- Status -->
+                  <div>
+                    <div class="text-xs text-gray-500 mb-1">Status</div>
+                    <div class="text-sm text-green-600 font-medium">Active</div>
                   </div>
-                <% } %>
-                
-                <!-- Bank Details -->
-                <% if (user.is_affiliate && affiliate) { %>
-                  <div class="pt-6 border-t border-gray-100">
-                    <h4 class="font-medium text-gray-900 mb-3">Bank Details</h4>
-                    <div class="space-y-3">
-                      <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                          <i class="fas fa-university text-blue-500"></i>
-                        </div>
-                        <div>
-                          <p class="text-sm text-gray-500">Bank Name</p>
-                          <p class="font-medium text-gray-900"><%= affiliate.bank_name || 'Not Set' %></p>
-                        </div>
-                      </div>
-                      
-                      <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
-                          <i class="fas fa-user text-green-500"></i>
-                        </div>
-                        <div>
-                          <p class="text-sm text-gray-500">Account Name</p>
-                          <p class="font-medium text-gray-900"><%= affiliate.account_name || 'Not Set' %></p>
-                        </div>
-                      </div>
-                      
-                      <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center">
-                          <i class="fas fa-credit-card text-purple-500"></i>
-                        </div>
-                        <div>
-                          <p class="text-sm text-gray-500">Account Number</p>
-                          <p class="font-medium text-gray-900">
-                            <%= affiliate.account_number ? '****' + affiliate.account_number.slice(-4) : 'Not Set' %>
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <button onclick="document.getElementById('editBankModal').classList.remove('hidden')"
-                              class="w-full mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
-                        <i class="fas fa-edit"></i>
-                        Edit Bank Details
-                      </button>
+                  
+                  <!-- Phone -->
+                  <% if (user.phone) { %>
+                  <div>
+                    <div class="text-xs text-gray-500 mb-1">Phone</div>
+                    <div class="text-sm text-gray-900"><%= user.phone %></div>
+                  </div>
+                  <% } %>
+                  
+                  <!-- Location -->
+                  <% if (user.location) { %>
+                  <div>
+                    <div class="text-xs text-gray-500 mb-1">Location</div>
+                    <div class="text-sm text-gray-900"><%= user.location %></div>
+                  </div>
+                  <% } %>
+                  
+                  <!-- Bank Details -->
+                  <% if (user.is_affiliate && affiliate) { %>
+                  <div class="pt-4 border-t border-gray-100">
+                    <div class="text-xs text-gray-500 mb-2">Bank Details</div>
+                    <div class="space-y-2 text-sm">
+                      <div><span class="text-gray-500">Bank:</span> <span class="text-gray-900"><%= affiliate.bank_name || 'Not set' %></span></div>
+                      <div><span class="text-gray-500">Account:</span> <span class="text-gray-900"><%= affiliate.account_name || 'Not set' %></span></div>
+                      <div><span class="text-gray-500">Number:</span> <span class="text-gray-900"><%= affiliate.account_number ? '****' + affiliate.account_number.slice(-4) : 'Not set' %></span></div>
                     </div>
+                    <button onclick="document.getElementById('editBankModal').classList.remove('hidden')"
+                            class="mt-3 text-sm text-blue-600 hover:text-blue-700">
+                      Edit Bank Details
+                    </button>
                   </div>
-                <% } %>
+                  <% } %>
+                </div>
               </div>
             </div>
           </div>
@@ -410,46 +245,46 @@
 <!-- Edit User Modal -->
 <div id="editUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
   <div class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+    <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
       <form action="/user/profile/update" method="POST">
-        <div class="p-6">
+        <div class="p-5">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold text-gray-900">Edit Profile</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Edit Profile</h3>
             <button type="button" onclick="closeModal('editUserModal')" 
                     class="text-gray-400 hover:text-gray-500">
-              <i class="fas fa-times text-xl"></i>
+              <i class="fas fa-times"></i>
             </button>
           </div>
           
-          <div class="space-y-4">
+          <div class="space-y-3">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Full Name</label>
               <input type="text" name="fullName" value="<%= user.full_name %>"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Phone</label>
               <input type="text" name="phone" value="<%= user.phone %>"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-              <textarea name="bio" rows="3" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Tell us about yourself..."><%= user.bio || '' %></textarea>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Bio</label>
+              <textarea name="bio" rows="2" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Tell us about yourself"><%= user.bio || '' %></textarea>
             </div>
           </div>
           
-          <div class="flex justify-end gap-3 mt-6">
+          <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-gray-200">
             <button type="button" onclick="closeModal('editUserModal')"
-                    class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                    class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900">
               Cancel
             </button>
             <button type="submit" 
-                    class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
-              Save Changes
+                    class="px-3 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-lg">
+              Save
             </button>
           </div>
         </div>
@@ -461,24 +296,24 @@
 <!-- Edit Bank Modal -->
 <div id="editBankModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 overflow-y-auto">
   <div class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+    <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
       <form action="/affiliate/update-bank" method="POST">
-        <div class="p-6">
+        <div class="p-5">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold text-gray-900">Edit Bank Details</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Bank Details</h3>
             <button type="button" onclick="closeModal('editBankModal')" 
                     class="text-gray-400 hover:text-gray-500">
-              <i class="fas fa-times text-xl"></i>
+              <i class="fas fa-times"></i>
             </button>
           </div>
           
-          <div class="space-y-4">
+          <div class="space-y-3">
             <!-- Bank Select -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Bank</label>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Bank</label>
               <select name="bank_code" 
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">-- Choose a Bank --</option>
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" id="bankSelect">
+                <option value="">Choose a Bank</option>
                 <% banks.forEach(bank => { %>
                   <option value="<%= bank.code %>" <%= user.bank_code === bank.code ? 'selected' : '' %>>
                     <%= bank.name %>
@@ -489,36 +324,36 @@
             
             <!-- Account Number -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Account Number</label>
               <input type="text" name="account_number" value="<%= user.account_number || '' %>"
-                     maxlength="10" pattern="\d{10}" required
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                     maxlength="10" pattern="\d{10}"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" id="accountInput">
             </div>
             
-            <!-- Account Name -->
+            <!-- Account Name (Resolved) -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Account Name</label>
-              <div id="accountNameDisplay" class="px-4 py-2 bg-gray-50 rounded-lg text-gray-700">
-                ....
+              <label class="block text-xs font-medium text-gray-700 mb-1">Account Name</label>
+              <div id="accountNameDisplay" class="px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700">
+                <%= user.account_name || 'Enter bank and account number' %>
               </div>
               <input type="hidden" id="accountName" name="account_name" value="<%= user.account_name || '' %>">
-              <div id="accountSpinner" class="text-sm text-gray-500 mt-1 hidden">
-                <i class="fas fa-spinner fa-spin mr-2"></i> Resolving account...
+              <div id="accountSpinner" class="text-xs text-gray-500 mt-1 hidden">
+                <i class="fas fa-spinner fa-spin mr-1"></i> Resolving account...
               </div>
-              <button id="retryResolveBtn" class="mt-2 text-sm text-red-600 hover:text-red-700 hidden">
+              <button id="retryResolveBtn" class="mt-1 text-xs text-blue-600 hover:text-blue-700 hidden">
                 Retry
               </button>
             </div>
           </div>
           
-          <div class="flex justify-end gap-3 mt-6">
+          <div class="flex justify-end gap-2 mt-5 pt-4 border-t border-gray-200">
             <button type="button" onclick="closeModal('editBankModal')"
-                    class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                    class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900">
               Cancel
             </button>
             <button type="submit" 
-                    class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
-              Save Bank Info
+                    class="px-3 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-lg">
+              Save
             </button>
           </div>
         </div>
@@ -526,28 +361,6 @@
     </div>
   </div>
 </div>
-
-<style>
-  .line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-  }
-  
-  .course-card {
-    transition: all 0.3s ease;
-  }
-  
-  .course-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-  
-  .progress-bar-animated {
-    transition: width 1s ease-in-out;
-  }
-</style>
 
 <script>
   // Modal functions
@@ -574,110 +387,130 @@
       });
     }
   });
-  
-  // Account resolution script
-  const accountInput = document.getElementById('editBankModal').querySelector('input[name="account_number"]');
-  const bankSelect = document.getElementById('editBankModal').querySelector('select[name="bank_code"]');
-  const nameDisplay = document.getElementById('accountNameDisplay');
-  const spinner = document.getElementById('accountSpinner');
-  const retryBtn = document.getElementById('retryResolveBtn');
-  const accountNameInput = document.getElementById('accountName');
-  
-  let lastBankCode = null;
-  let lastAccountNumber = null;
-  
-  async function resolveAccount(bankCodeOverride = null) {
-    const accountNumber = accountInput.value.trim();
-    const bankCode = bankCodeOverride || bankSelect.value;
-    
-    if (accountNumber.length === 10 && bankCode) {
-      lastAccountNumber = accountNumber;
-      lastBankCode = bankCode;
+
+  // Bank account resolution AJAX functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const editBankModal = document.getElementById('editBankModal');
+    if (!editBankModal) return;
+
+    const accountInput = editBankModal.querySelector('#accountInput');
+    const bankSelect = editBankModal.querySelector('#bankSelect');
+    const nameDisplay = editBankModal.querySelector('#accountNameDisplay');
+    const spinner = editBankModal.querySelector('#accountSpinner');
+    const retryBtn = editBankModal.querySelector('#retryResolveBtn');
+    const accountNameInput = editBankModal.querySelector('#accountName');
+
+    let lastBankCode = null;
+    let lastAccountNumber = null;
+
+    async function resolveAccount(bankCodeOverride = null) {
+      const accountNumber = accountInput.value.trim();
+      const bankCode = bankCodeOverride || bankSelect.value;
       
-      retryBtn.classList.add('hidden');
-      spinner.classList.remove('hidden');
-      nameDisplay.textContent = '...';
-      
-      try {
-        const res = await fetch(`/api/resolve-account?account_number=${accountNumber}&bank_code=${bankCode}`);
-        const data = await res.json();
+      // Only resolve if we have valid inputs
+      if (accountNumber.length === 10 && bankCode) {
+        lastAccountNumber = accountNumber;
+        lastBankCode = bankCode;
         
-        if (data.success) {
-          nameDisplay.textContent = data.data.account_name;
-          accountNameInput.value = data.data.account_name;
-          retryBtn.classList.add('hidden');
-        } else {
-          nameDisplay.textContent = 'Could not verify';
+        // Show loading state
+        retryBtn.classList.add('hidden');
+        spinner.classList.remove('hidden');
+        nameDisplay.textContent = '...';
+        
+        try {
+          // Call your backend API to resolve account
+          const res = await fetch(`/api/resolve-account?account_number=${accountNumber}&bank_code=${bankCode}`);
+          const data = await res.json();
+          
+          if (data.success && data.data && data.data.account_name) {
+            nameDisplay.textContent = data.data.account_name;
+            accountNameInput.value = data.data.account_name;
+            retryBtn.classList.add('hidden');
+          } else {
+            nameDisplay.textContent = 'Could not verify account';
+            retryBtn.classList.remove('hidden');
+            showNotification(data.message || 'Account verification failed', 'error');
+          }
+        } catch (err) {
+          console.error('Account resolution error:', err);
+          nameDisplay.textContent = 'Network error';
           retryBtn.classList.remove('hidden');
-          showNotification(data.message || 'Verification failed', 'error');
+          showNotification('Network or server error', 'error');
+        } finally {
+          spinner.classList.add('hidden');
         }
-      } catch (err) {
-        nameDisplay.textContent = 'Error';
-        retryBtn.classList.remove('hidden');
-        showNotification('Network or server error', 'error');
-      } finally {
-        spinner.classList.add('hidden');
+      } else {
+        // Clear display if inputs are invalid
+        nameDisplay.textContent = accountNumber && bankCode ? 'Enter valid 10-digit account number' : 'Enter bank and account number';
+        retryBtn.classList.add('hidden');
       }
-    } else {
-      nameDisplay.textContent = '';
-      retryBtn.classList.add('hidden');
     }
-  }
-  
-  // Event listeners
-  retryBtn.addEventListener('click', async () => {
-    if (lastAccountNumber && lastBankCode) {
-      await resolveAccount(lastBankCode);
-    }
+
+    // Retry button click handler
+    retryBtn.addEventListener('click', async () => {
+      if (lastAccountNumber && lastBankCode) {
+        await resolveAccount(lastBankCode);
+      }
+    });
+
+    // Account number input handler (with debounce)
+    let timeout;
+    accountInput.addEventListener('input', () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        if (bankSelect.value) {
+          resolveAccount();
+        }
+      }, 500); // 500ms debounce
+    });
+
+    // Bank select change handler
+    bankSelect.addEventListener('change', () => {
+      if (accountInput.value.trim().length === 10) {
+        resolveAccount();
+      }
+    });
+
+    // Initial resolve if modal opens with existing values
+    const modalObserver = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (!mutation.target.classList.contains('hidden')) {
+          // Modal is now visible
+          if (accountInput.value && bankSelect.value) {
+            // Small delay to ensure modal is fully rendered
+            setTimeout(() => resolveAccount(), 100);
+          }
+        }
+      });
+    });
+
+    modalObserver.observe(editBankModal, { attributes: true, attributeFilter: ['class'] });
   });
-  
-  accountInput.addEventListener('input', () => {
-    if (bankSelect.value) {
-      resolveAccount();
-    }
-  });
-  
-  bankSelect.addEventListener('change', resolveAccount);
-  
-  // Notification function
+
+  // Simple notification function
   function showNotification(message, type = 'error') {
+    // Remove any existing notifications
+    const existing = document.querySelector('.notification');
+    if (existing) existing.remove();
+
     const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 ${
+    notification.className = `notification fixed top-4 right-4 ${
       type === 'error' ? 'bg-red-500' : 'bg-green-500'
-    } text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-slideIn`;
+    } text-white text-sm px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50`;
+    
     notification.innerHTML = `
       <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
       <span>${message}</span>
-      <button class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.remove()">
+      <button class="ml-3" onclick="this.parentElement.remove()">
         <i class="fas fa-times"></i>
       </button>
     `;
+    
     document.body.appendChild(notification);
     
+    // Auto-remove after 5 seconds
     setTimeout(() => {
-      if (notification.parentNode) {
-        notification.remove();
-      }
+      if (notification.parentNode) notification.remove();
     }, 5000);
   }
-  
-  // Add animation for notifications
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes slideIn {
-      from {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-    
-    .animate-slideIn {
-      animation: slideIn 0.3s ease-out;
-    }
-  `;
-  document.head.appendChild(style);
 </script>

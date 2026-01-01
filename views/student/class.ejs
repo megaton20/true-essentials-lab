@@ -6,7 +6,7 @@
 
 <!-- Main Content -->
 <div class="min-h-screen bg-gray-50">
-  <div class="container mx-auto px-4 py-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex flex-col lg:flex-row gap-6">
       <!-- Static Sidebar for desktop -->
       <div class="hidden lg:block lg:w-1/4">
@@ -242,7 +242,7 @@
 
           <% } else { %>
             <!-- No Videos State -->
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="overflow-hidden">
               <div class="text-center py-12">
                 <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gray-100 mb-6">
                   <i class="fas fa-video-slash text-4xl text-gray-400"></i>
@@ -253,7 +253,7 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center p-3">
                   <a href="/user/course/<%=courseId%>/<%=categoryId%>" 
-                     class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                     class="inline-flex items-center gap-2 px-6 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors">
                     <i class="fas fa-arrow-left"></i>
                     Back to Programs
                   </a>
@@ -283,7 +283,7 @@
 
 .video-playlist-item.active {
   border-left-width: 4px;
-  border-left-color: #3b82f6;
+  border-left-color: #3bf683;
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
 }
 
